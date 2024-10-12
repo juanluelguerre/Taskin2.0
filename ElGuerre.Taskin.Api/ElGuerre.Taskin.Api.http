@@ -1,0 +1,102 @@
+@ElGuerre.Taskin.Api_HostAddress = http://localhost:5085/api
+
+### ProjectsController
+
+# Get all projects
+GET {{ElGuerre.Taskin.Api_HostAddress}}/projects
+Accept: application/json
+
+###
+
+# Create a new project
+POST {{ElGuerre.Taskin.Api_HostAddress}}/projects
+Content-Type: application/json
+
+{
+  "name": "New Project",
+  "description": "Description of the new project"
+}
+
+### TasksController
+
+# Get a task by ID
+GET {{ElGuerre.Taskin.Api_HostAddress}}/tasks/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Accept: application/json
+
+###
+
+# Get tasks by project ID
+GET {{ElGuerre.Taskin.Api_HostAddress}}/tasks?projectId=3fa85f64-5717-4562-b3fc-2c963f66afa6
+Accept: application/json
+
+###
+
+# Create a new task
+POST {{ElGuerre.Taskin.Api_HostAddress}}/tasks
+Content-Type: application/json
+
+{
+  "description": "New Task",
+  "projectId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "status": "Todo",
+  "deadline": "2023-12-31T23:59:59Z"
+}
+
+###
+
+# Update a task
+PUT {{ElGuerre.Taskin.Api_HostAddress}}/tasks/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "description": "Updated Task",
+  "status": "Doing",
+  "deadline": "2023-12-31T23:59:59Z"
+}
+
+###
+
+# Delete a task
+DELETE {{ElGuerre.Taskin.Api_HostAddress}}/tasks/3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+### PomodorosController
+
+# Get a pomodoro by ID
+GET {{ElGuerre.Taskin.Api_HostAddress}}/pomodoros/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Accept: application/json
+
+###
+
+# Get pomodoros by task ID
+GET {{ElGuerre.Taskin.Api_HostAddress}}/pomodoros?taskId=3fa85f64-5717-4562-b3fc-2c963f66afa6
+Accept: application/json
+
+###
+
+# Create a new pomodoro
+POST {{ElGuerre.Taskin.Api_HostAddress}}/pomodoros
+Content-Type: application/json
+
+{
+  "taskId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "startTime": "2023-12-31T23:59:59Z",
+  "durationInMinutes": 25
+}
+
+###
+
+# Update a pomodoro
+PUT {{ElGuerre.Taskin.Api_HostAddress}}/pomodoros/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "startTime": "2023-12-31T23:59:59Z",
+  "durationInMinutes": 30
+}
+
+###
+
+# Delete a pomodoro
+DELETE {{ElGuerre.Taskin.Api_HostAddress}}/pomodoros/3fa85f64-5717-4562-b3fc-2c963f66afa6
