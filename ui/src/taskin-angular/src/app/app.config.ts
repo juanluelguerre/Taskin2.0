@@ -1,66 +1,98 @@
-import localeEn from '@angular/common/locales/en';
-import localeEs from '@angular/common/locales/es';
-import {
-  ApplicationConfig,
-  isDevMode,
-  provideZoneChangeDetection,
-} from '@angular/core';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import {
-  PreloadAllModules,
-  provideRouter,
-  withInMemoryScrolling,
-  withPreloading,
-  withViewTransitions,
-} from '@angular/router';
-
-import { registerLocaleData } from '@angular/common';
-import { provideHttpClient } from '@angular/common/http';
-import { provideTransloco } from '@ngneat/transloco';
-import { provideStore } from '@ngrx/store';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { routes } from './app.routes';
-import { TranslocoHttpLoader } from './transloco-loader';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 
-registerLocaleData(localeEs);
-registerLocaleData(localeEn);
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { provideMomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { NgxPermissionsModule } from 'ngx-permissions';
+import { ToastrModule } from 'ngx-toastr';
+
+import { BASE_URL, appInitializerProviders, httpInterceptorProviders } from '@core';
+import { environment } from '@env/environment';
+import { PaginatorI18nService } from '@shared';
+import { InMemDataService } from '@shared/in-mem/in-mem-data.service';
+import { routes } from './app.routes';
+import { FormlyConfigModule } from './formly-config';
+
+// Required for AOT compilation
+export function TranslateHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'i18n/', '.json');
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    // Use of
-    // provideExperimentalZonelessChangeDetection(),
-
-    provideAnimations(),
-    provideHttpClient(),
+    provideAnimationsAsync(),
+    provideHttpClient(withInterceptorsFromDi()),
     provideRouter(
       routes,
-      withPreloading(PreloadAllModules),
-      withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
-      withViewTransitions()
-      //withDebugTracing(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
+      withComponentInputBinding()
     ),
-
-    provideStore(),
-    provideStoreDevtools({
-      maxAge: 25, // Retains last 25 states
-      logOnly: !isDevMode(), // Restrict extension to log-only mode
-      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
-      trace: false, //  If set to true, will include stack trace for every dispatched action, so you can see it in trace tab jumping directly to that part of code
-      traceLimit: 75, // maximum stack trace frames to be stored (in case trace option was provided as true)
-      connectInZone: true,
-    }),
-    provideHttpClient(),
-    provideTransloco({
-      config: {
-        availableLangs: ['en', 'es'],
-        defaultLang: 'en',
-        // Remove this option if your application doesn't support changing language in runtime.
-        reRenderOnLangChange: true,
-        prodMode: !isDevMode(),
+    importProvidersFrom(
+      NgxPermissionsModule.forRoot(),
+      ToastrModule.forRoot(),
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: TranslateHttpLoaderFactory,
+          deps: [HttpClient],
+        },
+      }),
+      FormlyConfigModule.forRoot(),
+      // 👇 ❌ This is only used for demo purpose, remove it in the realworld application
+      InMemoryWebApiModule.forRoot(InMemDataService, {
+        dataEncapsulation: false,
+        passThruUnknownUrl: true,
+      })
+    ),
+    { provide: BASE_URL, useValue: environment.baseUrl },
+    httpInterceptorProviders,
+    appInitializerProviders,
+    {
+      provide: MatPaginatorIntl,
+      useFactory: (paginatorI18nSrv: PaginatorI18nService) => paginatorI18nSrv.getPaginatorIntl(),
+      deps: [PaginatorI18nService],
+    },
+    {
+      provide: MAT_DATE_LOCALE,
+      useFactory: () => navigator.language, // <= This will be overrided by runtime setting
+    },
+    provideMomentDateAdapter({
+      parse: {
+        dateInput: 'YYYY-MM-DD',
       },
-      loader: TranslocoHttpLoader,
-    }), provideAnimationsAsync(),
+      display: {
+        dateInput: 'YYYY-MM-DD',
+        monthYearLabel: 'YYYY MMM',
+        dateA11yLabel: 'LL',
+        monthYearA11yLabel: 'YYYY MMM',
+      },
+    }),
+    provideMomentDatetimeAdapter({
+      parse: {
+        dateInput: 'YYYY-MM-DD',
+        yearInput: 'YYYY',
+        monthInput: 'MMMM',
+        datetimeInput: 'YYYY-MM-DD HH:mm',
+        timeInput: 'HH:mm',
+      },
+      display: {
+        dateInput: 'YYYY-MM-DD',
+        yearInput: 'YYYY',
+        monthInput: 'MMMM',
+        datetimeInput: 'YYYY-MM-DD HH:mm',
+        timeInput: 'HH:mm',
+        monthYearLabel: 'YYYY MMMM',
+        dateA11yLabel: 'LL',
+        monthYearA11yLabel: 'MMMM YYYY',
+        popupHeaderDateLabel: 'MMM DD, ddd',
+      },
+    }),
   ],
 };
