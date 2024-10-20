@@ -1,0 +1,17 @@
+<mat-toolbar
+  color="primary"
+  class="flex justify-between items-center px-4 md:px-6"
+>
+  <div class="flex items-center">
+    <button mat-icon-button (click)="sidenavToggle.emit()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="ml-4 font-semibold text-lg">My Application</span>
+  </div>
+  <button
+    mat-button
+    class="bg-accent text-white rounded-lg px-4 py-2 shadow-md hover:bg-secondary transition"
+  >
+    Action
+  </button>
+</mat-toolbar>

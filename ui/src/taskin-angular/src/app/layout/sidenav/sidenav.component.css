@@ -1,0 +1,3 @@
+.sidenav {
+  @apply w-64 bg-primary text-white h-full overflow-x-hidden;
+}
