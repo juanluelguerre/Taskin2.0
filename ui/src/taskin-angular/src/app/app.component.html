@@ -1,15 +1,1 @@
-<mat-sidenav-container class="sidenav-container w-full h-screen">
-  <mat-sidenav
-    #drawer
-    class="sidenav h-full md:relative"
-    mode="over"
-    [opened]="isLargeScreen"
-  >
-    <app-sidenav [isLargeScreen]="isLargeScreen"></app-sidenav>
-  </mat-sidenav>
-  <mat-sidenav-content class="h-full flex flex-col">
-    <app-toolbar (sidenavToggle)="drawer.toggle()"></app-toolbar>
-    <app-content class="flex-grow"></app-content>
-    <app-footer></app-footer>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+<app-layout></app-layout>

@@ -1,0 +1,6 @@
+/* sidebar.component.css */
+
+/* Adjust mat-sidenav width transitions if needed */
+.mat-sidenav {
+  transition: width 0.3s ease;
+}

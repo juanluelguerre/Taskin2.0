@@ -1,0 +1,32 @@
+<mat-toolbar color="primary" class="flex-shrink-0">
+  <!-- Sidebar Toggle Button -->
+  <button mat-icon-button (click)="onToggleSidebar()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <!-- Application Title -->
+  <span class="ml-2 font-semibold text-lg">App Name</span>
+  <span class="flex-grow"></span>
+  <!-- Language Dropdown -->
+  <mat-menu #languageMenu="matMenu">
+    <button
+      mat-menu-item
+      *ngFor="let lang of languages"
+      (click)="changeLanguage(lang)"
+    >
+      {{ lang }}
+    </button>
+  </mat-menu>
+  <button mat-button [matMenuTriggerFor]="languageMenu" class="mr-4">
+    {{ selectedLanguage }}
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+  <!-- User Profile Dropdown -->
+  <mat-menu #userMenuTrigger="matMenu">
+    <button mat-menu-item *ngFor="let item of userMenu" (click)="item.action()">
+      {{ item.name }}
+    </button>
+  </mat-menu>
+  <button mat-button [matMenuTriggerFor]="userMenuTrigger">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</mat-toolbar>

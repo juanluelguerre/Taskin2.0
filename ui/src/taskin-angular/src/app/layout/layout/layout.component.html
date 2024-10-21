@@ -1,0 +1,27 @@
+<div class="flex h-screen flex-col">
+  <!-- Header -->
+  <app-header
+    (toggleSidebar)="toggleSidebar()"
+    (minimizeSidebar)="minimizeSidebar()"
+    [isSidebarMinimized]="isSidebarMinimized"
+  ></app-header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <app-sidebar
+      [isOpen]="isSidebarOpen"
+      [isMinimized]="isSidebarMinimized"
+      (toggleMinimize)="minimizeSidebar()"
+    ></app-sidebar>
+
+    <!-- Main Content -->
+    <div class="flex flex-col flex-1">
+      <div class="flex-1 p-4 overflow-auto">
+        <!-- Your main content goes here -->
+        <router-outlet></router-outlet>
+      </div>
+      <!-- Footer -->
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>

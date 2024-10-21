@@ -13,15 +13,22 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/taskin",
+            "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/favicon.ico",
+              "src/assets",
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src"
+              },
+              {
+                "glob": "mdi.svg",
+                "input": "./node_modules/@mdi/angular-material",
+                "output": "./assets"
               }
             ],
             "styles": [
@@ -75,9 +82,16 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
+              "src/favicon.ico",
+              "src/assets",
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src"
+              },
+              {
+                "glob": "mdi.svg",
+                "input": "./node_modules/@mdi/angular-material",
+                "output": "./assets"
               }
             ],
             "styles": [

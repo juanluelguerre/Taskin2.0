@@ -1,0 +1,38 @@
+<mat-sidenav-container class="flex flex-1">
+  <mat-sidenav
+    mode="side"
+    [(opened)]="isOpen"
+    [fixedInViewport]="true"
+    [class.w-20]="isMinimized"
+    [class.w-64]="!isMinimized"
+    class="bg-gray-800 text-white transition-width duration-300"
+  >
+    <div class="flex flex-col h-full">
+      <!-- Sidebar Header -->
+      <div class="flex items-center justify-between p-4">
+        <span class="text-xl font-semibold" *ngIf="!isMinimized">Menu</span>
+        <button mat-icon-button (click)="onToggleMinimize()">
+          <mat-icon>{{
+            isMinimized ? "chevron_right" : "chevron_left"
+          }}</mat-icon>
+        </button>
+      </div>
+      <!-- Navigation Links -->
+      <mat-nav-list class="frex gap-4">
+        <a mat-list-item href="#" class="flex items-center">
+          <mat-icon>home</mat-icon>
+          <span class="ml-2" *ngIf="!isMinimized">Home</span>
+        </a>
+        <a mat-list-item href="#" class="flex items-center">
+          <mat-icon>settings</mat-icon>
+          <span class="ml-2" *ngIf="!isMinimized">Settings</span>
+        </a>
+        <!-- Add more menu items here -->
+      </mat-nav-list>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <!-- This can be empty or contain overlays if needed -->
+  </mat-sidenav-content>
+</mat-sidenav-container>
