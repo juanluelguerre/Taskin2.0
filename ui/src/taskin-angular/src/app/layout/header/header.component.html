@@ -1,32 +1,37 @@
-<mat-toolbar color="primary" class="flex-shrink-0">
-  <!-- Sidebar Toggle Button -->
-  <button mat-icon-button (click)="onToggleSidebar()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <!-- Application Title -->
-  <span class="ml-2 font-semibold text-lg">App Name</span>
-  <span class="flex-grow"></span>
-  <!-- Language Dropdown -->
-  <mat-menu #languageMenu="matMenu">
-    <button
-      mat-menu-item
-      *ngFor="let lang of languages"
-      (click)="changeLanguage(lang)"
-    >
-      {{ lang }}
+<mat-toolbar color="primary" class="flex justify-between">
+  <!-- Left side -->
+  <div class="flex items-center">
+    <!-- Hamburger Menu Button -->
+    <button mat-icon-button (click)="toggleSidebar()">
+      <mat-icon>menu</mat-icon>
     </button>
-  </mat-menu>
-  <button mat-button [matMenuTriggerFor]="languageMenu" class="mr-4">
-    {{ selectedLanguage }}
-    <mat-icon>arrow_drop_down</mat-icon>
-  </button>
-  <!-- User Profile Dropdown -->
-  <mat-menu #userMenuTrigger="matMenu">
-    <button mat-menu-item *ngFor="let item of userMenu" (click)="item.action()">
-      {{ item.name }}
+    <!-- Minimize Sidebar Button -->
+    <button mat-icon-button (click)="minimizeSidebar()">
+      <mat-icon>chevron_left</mat-icon>
     </button>
-  </mat-menu>
-  <button mat-button [matMenuTriggerFor]="userMenuTrigger">
-    <mat-icon>account_circle</mat-icon>
-  </button>
+  </div>
+
+  <!-- Right side -->
+  <div class="flex items-center">
+    <!-- Language Switcher -->
+    <button mat-button [matMenuTriggerFor]="languageMenu">
+      <mat-icon>language</mat-icon>
+      Language
+    </button>
+    <mat-menu #languageMenu="matMenu">
+      <button mat-menu-item (click)="changeLanguage('en')">English</button>
+      <button mat-menu-item (click)="changeLanguage('es')">Spanish</button>
+      <!-- Add more languages as needed -->
+    </mat-menu>
+
+    <!-- User Profile Menu -->
+    <button mat-button [matMenuTriggerFor]="profileMenu">
+      <mat-icon>account_circle</mat-icon>
+      {{ userName }}
+    </button>
+    <mat-menu #profileMenu="matMenu">
+      <button mat-menu-item>Profile</button>
+      <button mat-menu-item (click)="logout()">Logout</button>
+    </mat-menu>
+  </div>
 </mat-toolbar>

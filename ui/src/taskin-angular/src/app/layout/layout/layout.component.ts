@@ -18,14 +18,11 @@ import { FooterComponent } from '../footer/footer.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutComponent {
-  isSidebarOpen = true;
   isSidebarMinimized = false;
+  isSidebarHidden = false;
 
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
-    if (!this.isSidebarOpen) {
-      this.isSidebarMinimized = false;
-    }
+    this.isSidebarHidden = !this.isSidebarHidden;
   }
 
   minimizeSidebar() {

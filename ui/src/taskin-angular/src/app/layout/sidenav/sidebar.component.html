@@ -1,38 +1,40 @@
-<mat-sidenav-container class="flex flex-1">
-  <mat-sidenav
-    mode="side"
-    [(opened)]="isOpen"
-    [fixedInViewport]="true"
-    [class.w-20]="isMinimized"
-    [class.w-64]="!isMinimized"
-    class="bg-gray-800 text-white transition-width duration-300"
-  >
-    <div class="flex flex-col h-full">
-      <!-- Sidebar Header -->
-      <div class="flex items-center justify-between p-4">
-        <span class="text-xl font-semibold" *ngIf="!isMinimized">Menu</span>
-        <button mat-icon-button (click)="onToggleMinimize()">
-          <mat-icon>{{
-            isMinimized ? "chevron_right" : "chevron_left"
-          }}</mat-icon>
-        </button>
-      </div>
-      <!-- Navigation Links -->
-      <mat-nav-list class="frex gap-4">
-        <a mat-list-item href="#" class="flex items-center">
-          <mat-icon>home</mat-icon>
-          <span class="ml-2" *ngIf="!isMinimized">Home</span>
-        </a>
-        <a mat-list-item href="#" class="flex items-center">
-          <mat-icon>settings</mat-icon>
-          <span class="ml-2" *ngIf="!isMinimized">Settings</span>
-        </a>
-        <!-- Add more menu items here -->
-      </mat-nav-list>
-    </div>
-  </mat-sidenav>
+<mat-nav-list
+  [class.w-64]="!isMinimized"
+  [class.w-16]="isMinimized"
+  class="h-full"
+>
+  <ng-container *ngFor="let item of menuItems()">
+    <ng-container *ngIf="!item.children">
+      <a
+        mat-list-item
+        [routerLink]="item.link"
+        routerLinkActive="active"
+        class="flex items-center"
+      >
+        <mat-icon mat-list-icon>{{ item.icon }}</mat-icon>
+        <span *ngIf="!isMinimized" class="ml-2">{{ item.title }}</span>
+      </a>
+    </ng-container>
 
-  <mat-sidenav-content>
-    <!-- This can be empty or contain overlays if needed -->
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    <ng-container *ngIf="item.children">
+      <mat-expansion-panel [expanded]="false">
+        <mat-expansion-panel-header>
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span *ngIf="!isMinimized" class="ml-2">{{ item.title }}</span>
+        </mat-expansion-panel-header>
+        <mat-nav-list>
+          <a
+            mat-list-item
+            *ngFor="let child of item.children"
+            [routerLink]="child.link"
+            routerLinkActive="active"
+            class="flex items-center"
+          >
+            <mat-icon mat-list-icon>{{ child.icon }}</mat-icon>
+            <span *ngIf="!isMinimized" class="ml-2">{{ child.title }}</span>
+          </a>
+        </mat-nav-list>
+      </mat-expansion-panel>
+    </ng-container>
+  </ng-container>
+</mat-nav-list>

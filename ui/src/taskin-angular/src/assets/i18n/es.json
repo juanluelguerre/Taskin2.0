@@ -1,1 +1,8 @@
-{}
+{
+  "menu": {
+    "dashboard": "Dashboard",
+    "projects": "Proyectos",
+    "tasks": "Tareas",
+    "pomodoros": "Pomodoros"
+  }
+}

@@ -1,27 +1,25 @@
-<div class="flex h-screen flex-col">
-  <!-- Header -->
-  <app-header
-    (toggleSidebar)="toggleSidebar()"
-    (minimizeSidebar)="minimizeSidebar()"
-    [isSidebarMinimized]="isSidebarMinimized"
-  ></app-header>
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <app-sidebar
+    [isMinimized]="isSidebarMinimized"
+    [class.hidden]="isSidebarHidden"
+    class="h-screen"
+  ></app-sidebar>
 
-  <div class="flex flex-1 overflow-hidden">
-    <!-- Sidebar -->
-    <app-sidebar
-      [isOpen]="isSidebarOpen"
-      [isMinimized]="isSidebarMinimized"
-      (toggleMinimize)="minimizeSidebar()"
-    ></app-sidebar>
+  <!-- Contenedor principal -->
+  <div class="flex flex-col flex-1">
+    <!-- Header -->
+    <app-header
+      (toggleSidebarEvent)="toggleSidebar()"
+      (minimizeSidebarEvent)="minimizeSidebar()"
+    ></app-header>
 
-    <!-- Main Content -->
-    <div class="flex flex-col flex-1">
-      <div class="flex-1 p-4 overflow-auto">
-        <!-- Your main content goes here -->
-        <router-outlet></router-outlet>
-      </div>
-      <!-- Footer -->
-      <app-footer></app-footer>
-    </div>
+    <!-- Contenido principal -->
+    <main class="flex-1 p-4 overflow-auto bg-gray-100">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer -->
+    <app-footer></app-footer>
   </div>
 </div>

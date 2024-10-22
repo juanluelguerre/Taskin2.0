@@ -2,15 +2,20 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
-  Output,
+  signal,
   ViewEncapsulation,
 } from '@angular/core';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatNavList } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
+import { NavigationService } from '../../core/navigation/navigation.service';
+import { NavigationItem } from '../../core/navigation/navigation.type';
 import { FooterComponent } from '../footer/footer.component';
 
 interface sidebarMenu {
@@ -30,17 +35,24 @@ interface sidebarMenu {
     MatSidenavModule,
     MatIconModule,
     MatNavList,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
-  @Input() isOpen: boolean = true;
-  @Input() isMinimized: boolean = false;
-  @Output() toggleMinimize = new EventEmitter<void>();
+  @Input() isMinimized = false;
+  @Input() isHidden = false;
 
-  onToggleMinimize() {
-    this.toggleMinimize.emit();
+  menuItems = signal<NavigationItem[]>([]);
+
+  constructor(private navigationService: NavigationService) {
+    this.navigationService.buildNavigation().subscribe((menu) => {
+      this.menuItems.set(menu);
+
+      console.log(this.menuItems);
+    });
   }
 }
