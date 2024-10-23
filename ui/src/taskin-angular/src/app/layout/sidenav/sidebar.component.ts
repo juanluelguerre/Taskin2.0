@@ -14,8 +14,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatNavList } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
-import { NavigationService } from '../../core/navigation/navigation.service';
-import { NavigationItem } from '../../core/navigation/navigation.type';
+import { NavigationService } from '../../core/components/navigation/navigation.service';
+import { NavigationItem } from '../../core/components/navigation/navigation.type';
 import { FooterComponent } from '../footer/footer.component';
 
 interface sidebarMenu {
