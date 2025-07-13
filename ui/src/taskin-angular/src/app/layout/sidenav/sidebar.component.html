@@ -1,22 +1,18 @@
-<div class="h-full bg-white shadow-lg border-r border-gray-200 flex flex-col"
-     [class.w-64]="!isMinimized"
-     [class.w-16]="isMinimized">
-  
+<div
+  class="h-full bg-white shadow-lg border-r border-gray-200 flex flex-col"
+  [class.w-64]="!isMinimized"
+  [class.w-16]="isMinimized"
+>
   <!-- Sidebar Header -->
   <div class="p-4 border-b border-gray-200">
     <div class="flex items-center" *ngIf="!isMinimized">
-      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
-        <span class="text-white font-bold text-sm">T</span>
-      </div>
-      <div>
-        <h2 class="text-lg font-semibold text-gray-800">Task[in]</h2>
+      <div class="w-full">
+        <img src="images/logo.png" alt="Task[in]" class="h-8 w-auto mb-1 logo-image" />
         <p class="text-xs text-gray-500">Productivity Suite</p>
       </div>
     </div>
     <div class="flex justify-center" *ngIf="isMinimized">
-      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-        <span class="text-white font-bold text-sm">T</span>
-      </div>
+      <img src="images/logo-icon.png" alt="Task[in]" class="logo-icon" />
     </div>
   </div>
 
@@ -30,12 +26,16 @@
           class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors group"
           [class.justify-center]="isMinimized"
         >
-          <mat-icon class="flex-shrink-0 w-5 h-5 text-gray-500 group-hover:text-gray-700">{{ getIcon(item.icon) }}</mat-icon>
+          <mat-icon class="flex-shrink-0 w-5 h-5 text-gray-500 group-hover:text-gray-700">{{
+            getIcon(item.icon)
+          }}</mat-icon>
           <span *ngIf="!isMinimized" class="ml-3 font-medium">{{ item.title }}</span>
-          
+
           <!-- Tooltip for minimized state -->
-          <div *ngIf="isMinimized" 
-               class="absolute left-full ml-2 px-2 py-1 text-sm bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          <div
+            *ngIf="isMinimized"
+            class="absolute left-full ml-2 px-2 py-1 text-sm bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50"
+          >
             {{ item.title }}
           </div>
         </a>
@@ -43,16 +43,25 @@
 
       <ng-container *ngIf="item.children">
         <div class="space-y-1">
-          <button 
+          <button
             class="flex items-center w-full px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors group"
             [class.justify-center]="isMinimized"
-            (click)="toggleSubmenu(item.id!)">
-            <mat-icon class="flex-shrink-0 w-5 h-5 text-gray-500 group-hover:text-gray-700">{{ getIcon(item.icon) }}</mat-icon>
-            <span *ngIf="!isMinimized" class="ml-3 font-medium flex-1 text-left">{{ item.title }}</span>
-            <mat-icon *ngIf="!isMinimized" class="w-4 h-4 text-gray-400 transition-transform" 
-                      [class.rotate-180]="isSubmenuOpen(item.id!)">expand_more</mat-icon>
+            (click)="toggleSubmenu(item.id!)"
+          >
+            <mat-icon class="flex-shrink-0 w-5 h-5 text-gray-500 group-hover:text-gray-700">{{
+              getIcon(item.icon)
+            }}</mat-icon>
+            <span *ngIf="!isMinimized" class="ml-3 font-medium flex-1 text-left">{{
+              item.title
+            }}</span>
+            <mat-icon
+              *ngIf="!isMinimized"
+              class="w-4 h-4 text-gray-400 transition-transform"
+              [class.rotate-180]="isSubmenuOpen(item.id!)"
+              >expand_more</mat-icon
+            >
           </button>
-          
+
           <div *ngIf="!isMinimized && isSubmenuOpen(item.id!)" class="ml-6 space-y-1">
             <a
               *ngFor="let child of item.children"

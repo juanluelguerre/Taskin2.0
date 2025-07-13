@@ -3,7 +3,11 @@
     "allow": [
       "Bash(npm start)",
       "Bash(npm run build:*)",
-      "Bash(timeout 15s npm start)"
+      "Bash(timeout 15s npm start)",
+      "Bash(mkdir:*)",
+      "Bash(timeout:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }
