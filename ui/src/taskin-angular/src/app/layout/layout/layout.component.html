@@ -1,0 +1,25 @@
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <app-sidebar
+    [isMinimized]="isSidebarMinimized"
+    [class.hidden]="isSidebarHidden"
+    class="h-screen"
+  ></app-sidebar>
+
+  <!-- Contenedor principal -->
+  <div class="flex flex-col flex-1">
+    <!-- Header -->
+    <app-header
+      (toggleSidebarEvent)="toggleSidebar()"
+      (minimizeSidebarEvent)="minimizeSidebar()"
+    ></app-header>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 p-4 overflow-auto bg-gray-100">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </div>
+</div>

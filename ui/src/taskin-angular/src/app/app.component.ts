@@ -1,23 +1,15 @@
-import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
-import { PreloaderService, SettingsService } from '@core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { LayoutComponent } from './layout/layout/layout.component';
 
 @Component({
   selector: 'app-root',
-  template: `<router-outlet />`,
+  templateUrl: './app.component.html',
+  styleUrls: [],
+  imports: [CommonModule, RouterModule, LayoutComponent],
   standalone: true,
-  imports: [RouterOutlet],
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit, AfterViewInit {
-  private readonly preloader = inject(PreloaderService);
-  private readonly settings = inject(SettingsService);
-
-  ngOnInit() {
-    this.settings.setDirection();
-    this.settings.setTheme();
-  }
-
-  ngAfterViewInit() {
-    this.preloader.hide();
-  }
-}
+export class AppComponent {}

@@ -1,0 +1,14 @@
+{
+  "header": {
+    "title": "Task[in]",
+    "language": "Idioma",
+    "logout": "Cerrar sesión",
+    "profile": "Perfil"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "projects": "Proyectos",
+    "tasks": "Tareas",
+    "pomodoros": "Pomodoros"
+  }
+}

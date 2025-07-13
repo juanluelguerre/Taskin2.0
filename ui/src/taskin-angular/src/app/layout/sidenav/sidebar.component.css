@@ -1,0 +1,11 @@
+/* sidebar.component.css */
+
+/* Adjust mat-sidenav width transitions if needed */
+mat-nav-list {
+  transition: width 0.3s;
+  height: 100%;
+}
+
+.active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
