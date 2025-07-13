@@ -1,40 +1,71 @@
 <div *transloco="let t">
-  <mat-toolbar color="primary" class="flex justify-between">
-    <!-- Left side -->
-    <div class="flex items-center">
-      <!-- Hamburger Menu Button -->
-      <button mat-icon-button (click)="toggleSidebar()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <!-- Minimize Sidebar Button -->
-      <button mat-icon-button (click)="minimizeSidebar()">
-        <!-- <mat-icon>chevron_left</mat-icon> -->
-        <mat-icon svgIcon="arrow-expand-left" class="text-primary"></mat-icon>
-      </button>
-    </div>
+  <mat-toolbar class="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6">
+    <div class="flex items-center justify-between w-full">
+      <!-- Left side -->
+      <div class="flex items-center space-x-2">
+        <!-- Mobile Menu Button -->
+        <button mat-icon-button (click)="toggleSidebar()" class="md:hidden">
+          <mat-icon>menu</mat-icon>
+        </button>
+        
+        <!-- Desktop Minimize Button -->
+        <button mat-icon-button (click)="minimizeSidebar()" class="hidden md:flex">
+          <mat-icon>menu_open</mat-icon>
+        </button>
 
-    <!-- Right side -->
-    <div class="flex items-center">
-      <!-- Language Switcher -->
-      <button mat-button [matMenuTriggerFor]="languageMenu">
-        <mat-icon>language</mat-icon>
-        {{ t("header.language") }}
-      </button>
-      <mat-menu #languageMenu="matMenu">
-        <button mat-menu-item (click)="changeLanguage('en')">English</button>
-        <button mat-menu-item (click)="changeLanguage('es')">Spanish</button>
-        <!-- Add more languages as needed -->
-      </mat-menu>
+        <!-- App Title/Logo -->
+        <div class="flex items-center ml-2">
+          <h1 class="text-xl font-semibold text-gray-800 hidden sm:block">Task[in] 2.0</h1>
+        </div>
+      </div>
 
-      <!-- User Profile Menu -->
-      <button mat-button [matMenuTriggerFor]="profileMenu">
-        <mat-icon>account_circle</mat-icon>
-        {{ userName }}
-      </button>
-      <mat-menu #profileMenu="matMenu">
-        <button mat-menu-item>Profile</button>
-        <button mat-menu-item (click)="logout()">Logout</button>
-      </mat-menu>
+      <!-- Right side -->
+      <div class="flex items-center space-x-3">
+        <!-- Language Switcher -->
+        <button mat-icon-button [matMenuTriggerFor]="languageMenu" 
+                class="flex items-center text-gray-600 hover:text-gray-800">
+          <mat-icon>language</mat-icon>
+        </button>
+        <mat-menu #languageMenu="matMenu" class="mt-2">
+          <button mat-menu-item (click)="changeLanguage('en')" class="flex items-center">
+            <img src="assets/images/flags/US.svg" alt="English" class="w-5 h-5 mr-3 rounded">
+            English
+          </button>
+          <button mat-menu-item (click)="changeLanguage('es')" class="flex items-center">
+            <img src="assets/images/flags/ES.svg" alt="Español" class="w-5 h-5 mr-3 rounded">
+            Español
+          </button>
+        </mat-menu>
+
+        <!-- User Profile Menu -->
+        <button mat-button [matMenuTriggerFor]="profileMenu" 
+                class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+            {{ getUserInitials() }}
+          </div>
+          <span class="hidden sm:block font-medium">{{ userName }}</span>
+          <mat-icon class="text-gray-400">expand_more</mat-icon>
+        </button>
+        <mat-menu #profileMenu="matMenu" class="mt-2">
+          <div class="px-4 py-3 border-b border-gray-200">
+            <p class="text-sm text-gray-900 font-medium">{{ userName }}</p>
+            <p class="text-xs text-gray-500">Administrator</p>
+          </div>
+          <button mat-menu-item class="flex items-center">
+            <mat-icon class="mr-3 text-gray-400">person</mat-icon>
+            Profile Settings
+          </button>
+          <button mat-menu-item class="flex items-center">
+            <mat-icon class="mr-3 text-gray-400">settings</mat-icon>
+            Preferences
+          </button>
+          <div class="border-t border-gray-200 my-1"></div>
+          <button mat-menu-item (click)="logout()" class="flex items-center text-red-600">
+            <mat-icon class="mr-3 text-red-600">logout</mat-icon>
+            Sign Out
+          </button>
+        </mat-menu>
+      </div>
     </div>
   </mat-toolbar>
 </div>

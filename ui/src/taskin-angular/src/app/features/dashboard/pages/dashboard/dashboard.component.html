@@ -1,1 +1,166 @@
-<p>dashboard works!</p>
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p class="mt-1 text-sm text-gray-600">Welcome back, {{ userName }}! Here's your productivity overview.</p>
+      </div>
+      <div class="mt-4 sm:mt-0">
+        <button mat-raised-button color="primary" class="flex items-center">
+          <mat-icon class="mr-2">add</mat-icon>
+          Quick Add Task
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-600">Active Projects</p>
+          <p class="text-3xl font-bold text-gray-900">{{ stats().activeProjects }}</p>
+        </div>
+        <div class="p-3 bg-blue-100 rounded-full">
+          <mat-icon class="text-blue-600">folder</mat-icon>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-green-600 font-medium">+2.5%</span>
+        <span class="text-sm text-gray-600 ml-1">from last month</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-600">Pending Tasks</p>
+          <p class="text-3xl font-bold text-gray-900">{{ stats().pendingTasks }}</p>
+        </div>
+        <div class="p-3 bg-yellow-100 rounded-full">
+          <mat-icon class="text-yellow-600">task_alt</mat-icon>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-red-600 font-medium">+12</span>
+        <span class="text-sm text-gray-600 ml-1">new this week</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-600">Completed Today</p>
+          <p class="text-3xl font-bold text-gray-900">{{ stats().completedToday }}</p>
+        </div>
+        <div class="p-3 bg-green-100 rounded-full">
+          <mat-icon class="text-green-600">check_circle</mat-icon>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-green-600 font-medium">Great!</span>
+        <span class="text-sm text-gray-600 ml-1">Keep it up</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-600">Pomodoros</p>
+          <p class="text-3xl font-bold text-gray-900">{{ stats().pomodorosToday }}</p>
+        </div>
+        <div class="p-3 bg-red-100 rounded-full">
+          <mat-icon class="text-red-600">timer</mat-icon>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-sm text-blue-600 font-medium">{{ stats().pomodorosToday * 25 }} min</span>
+        <span class="text-sm text-gray-600 ml-1">focused time</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity and Quick Actions -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+      </div>
+      <div class="p-6">
+        <div class="space-y-4">
+          <div *ngFor="let activity of recentActivities()" class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <mat-icon class="text-blue-600 text-sm">{{ activity.icon }}</mat-icon>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-gray-900">{{ activity.title }}</p>
+              <p class="text-xs text-gray-500">{{ activity.time }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <button mat-button color="primary" class="w-full">View All Activity</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-2 gap-4">
+          <button mat-stroked-button routerLink="/projects" class="flex flex-col items-center p-4 h-20 justify-center">
+            <mat-icon class="mb-1">folder_open</mat-icon>
+            <span class="text-sm">New Project</span>
+          </button>
+          <button mat-stroked-button routerLink="/tasks" class="flex flex-col items-center p-4 h-20 justify-center">
+            <mat-icon class="mb-1">add_task</mat-icon>
+            <span class="text-sm">Add Task</span>
+          </button>
+          <button mat-stroked-button routerLink="/pomodoros" class="flex flex-col items-center p-4 h-20 justify-center">
+            <mat-icon class="mb-1">play_circle</mat-icon>
+            <span class="text-sm">Start Timer</span>
+          </button>
+          <button mat-stroked-button class="flex flex-col items-center p-4 h-20 justify-center">
+            <mat-icon class="mb-1">analytics</mat-icon>
+            <span class="text-sm">View Reports</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Overview -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <h3 class="text-lg font-semibold text-gray-900 mb-6">Weekly Progress</h3>
+    <div class="space-y-4">
+      <div>
+        <div class="flex justify-between text-sm text-gray-600 mb-1">
+          <span>Task Completion</span>
+          <span>{{ stats().weeklyProgress }}%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+               [style.width.%]="stats().weeklyProgress"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm text-gray-600 mb-1">
+          <span>Focus Time (Hours)</span>
+          <span>{{ stats().focusHours }}/40</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div class="bg-green-600 h-2 rounded-full transition-all duration-300" 
+               [style.width.%]="(stats().focusHours / 40) * 100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

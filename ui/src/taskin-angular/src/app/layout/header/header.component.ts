@@ -29,7 +29,7 @@ import { TranslocoModule } from '@ngneat/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
-  userName = 'Juanlu';
+  userName = 'JuanLu';
 
   @Output() toggleSidebarEvent = new EventEmitter<void>();
   @Output() minimizeSidebarEvent = new EventEmitter<void>();
@@ -42,13 +42,22 @@ export class HeaderComponent {
     this.minimizeSidebarEvent.emit();
   }
 
+  getUserInitials(): string {
+    return this.userName
+      .split(' ')
+      .map(name => name[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
   changeLanguage(lang: string) {
-    // Logic to change language
+    // TODO: Implement language change logic with TranslocoService
     console.log(`Language changed to ${lang}`);
   }
 
   logout() {
-    // Logic to logout
+    // TODO: Implement logout logic
     console.log('User logged out');
   }
 }

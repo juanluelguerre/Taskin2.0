@@ -11,7 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   templateUrl: './footer.component.html',
   styleUrls: [],
   standalone: true,
-  imports: [MatToolbarModule],
+  imports: [],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

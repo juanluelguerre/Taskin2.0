@@ -1,6 +1,9 @@
 {
   "menu": {
     "dashboard": "Dashboard",
+    "projects": "Projects",
+    "tasks": "Tasks",
+    "pomodoros": "Pomodoros",
     "design": "Design",
     "design.colors": "Color System",
     "design.icons": "Material Icons",
@@ -120,6 +123,9 @@
   "profile": "Profile",
   "edit_profile": "Edit profile",
   "logout": "logout",
+  "header": {
+    "language": "Language"
+  },
   "login": "Login",
   "login_title": "Welcome Back",
   "have_no_account": "Don't have an account",
