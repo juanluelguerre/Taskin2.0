@@ -11,12 +11,19 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [CommonModule, MatToolbarModule, MatIconModule, MatMenuModule],
+  imports: [
+    CommonModule,
+    TranslocoModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatMenuModule,
+  ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

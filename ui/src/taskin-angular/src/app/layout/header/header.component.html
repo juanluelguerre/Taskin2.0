@@ -1,37 +1,40 @@
-<mat-toolbar color="primary" class="flex justify-between">
-  <!-- Left side -->
-  <div class="flex items-center">
-    <!-- Hamburger Menu Button -->
-    <button mat-icon-button (click)="toggleSidebar()">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <!-- Minimize Sidebar Button -->
-    <button mat-icon-button (click)="minimizeSidebar()">
-      <mat-icon>chevron_left</mat-icon>
-    </button>
-  </div>
+<div *transloco="let t">
+  <mat-toolbar color="primary" class="flex justify-between">
+    <!-- Left side -->
+    <div class="flex items-center">
+      <!-- Hamburger Menu Button -->
+      <button mat-icon-button (click)="toggleSidebar()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <!-- Minimize Sidebar Button -->
+      <button mat-icon-button (click)="minimizeSidebar()">
+        <!-- <mat-icon>chevron_left</mat-icon> -->
+        <mat-icon svgIcon="arrow-expand-left" class="text-primary"></mat-icon>
+      </button>
+    </div>
 
-  <!-- Right side -->
-  <div class="flex items-center">
-    <!-- Language Switcher -->
-    <button mat-button [matMenuTriggerFor]="languageMenu">
-      <mat-icon>language</mat-icon>
-      Language
-    </button>
-    <mat-menu #languageMenu="matMenu">
-      <button mat-menu-item (click)="changeLanguage('en')">English</button>
-      <button mat-menu-item (click)="changeLanguage('es')">Spanish</button>
-      <!-- Add more languages as needed -->
-    </mat-menu>
+    <!-- Right side -->
+    <div class="flex items-center">
+      <!-- Language Switcher -->
+      <button mat-button [matMenuTriggerFor]="languageMenu">
+        <mat-icon>language</mat-icon>
+        {{ t("header.language") }}
+      </button>
+      <mat-menu #languageMenu="matMenu">
+        <button mat-menu-item (click)="changeLanguage('en')">English</button>
+        <button mat-menu-item (click)="changeLanguage('es')">Spanish</button>
+        <!-- Add more languages as needed -->
+      </mat-menu>
 
-    <!-- User Profile Menu -->
-    <button mat-button [matMenuTriggerFor]="profileMenu">
-      <mat-icon>account_circle</mat-icon>
-      {{ userName }}
-    </button>
-    <mat-menu #profileMenu="matMenu">
-      <button mat-menu-item>Profile</button>
-      <button mat-menu-item (click)="logout()">Logout</button>
-    </mat-menu>
-  </div>
-</mat-toolbar>
+      <!-- User Profile Menu -->
+      <button mat-button [matMenuTriggerFor]="profileMenu">
+        <mat-icon>account_circle</mat-icon>
+        {{ userName }}
+      </button>
+      <mat-menu #profileMenu="matMenu">
+        <button mat-menu-item>Profile</button>
+        <button mat-menu-item (click)="logout()">Logout</button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+</div>

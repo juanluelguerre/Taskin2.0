@@ -31,6 +31,9 @@ ng add @angular/material
 
 ## How to
 
+- Where find flags: https://github.com/Yummygum/flagpack-core
+- Where find icons: https://fonts.google.com/icons?icon.set=Material+Symbols
+
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

@@ -24,6 +24,7 @@
     "@ngneat/transloco": "^6.0.4",
     "@ngrx/store": "^18.1.0",
     "@ngrx/store-devtools": "^18.1.0",
+    "material-design-icons": "^3.0.1",
     "rimraf": "^6.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
