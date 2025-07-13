@@ -7,7 +7,10 @@
       "Bash(mkdir:*)",
       "Bash(timeout:*)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

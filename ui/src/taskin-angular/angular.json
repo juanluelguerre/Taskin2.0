@@ -22,10 +22,6 @@
               "src/favicon.ico",
               "src/assets",
               {
-                "glob": "**/*",
-                "input": "src"
-              },
-              {
                 "glob": "mdi.svg",
                 "input": "./node_modules/@mdi/angular-material",
                 "output": "./assets"
