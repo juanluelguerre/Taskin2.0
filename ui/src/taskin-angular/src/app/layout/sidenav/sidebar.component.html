@@ -5,11 +5,8 @@
 >
   <!-- Sidebar Header -->
   <div class="p-4 border-b border-gray-200">
-    <div class="flex items-center" *ngIf="!isMinimized">
-      <div class="w-full">
-        <img src="images/logo.png" alt="Task[in]" class="h-8 w-auto mb-1 logo-image" />
-        <p class="text-xs text-gray-500">Productivity Suite</p>
-      </div>
+    <div class="flex justify-center items-center" *ngIf="!isMinimized">
+      <img src="images/logo.png" alt="Task[in]" class="h-10 w-auto logo-image" />
     </div>
     <div class="flex justify-center" *ngIf="isMinimized">
       <img src="images/logo-icon.png" alt="Task[in]" class="logo-icon" />
