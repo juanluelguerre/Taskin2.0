@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(dotnet build)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(dotnet run:*)",
+      "Bash(curl:*)",
+      "Bash(./ElGuerre.Taskin.Api)",
+      "Bash(ASPNETCORE_ENVIRONMENT=Development dotnet run --project ElGuerre.Taskin.Api --no-build)",
+      "Bash(wget:*)",
+      "Bash(ss:*)"
+    ],
+    "deny": []
+  }
+}

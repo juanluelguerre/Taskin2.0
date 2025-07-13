@@ -4,8 +4,8 @@ namespace ElGuerre.Taskin.Domain.Entities;
 
 public sealed class Project : TrackedEntity
 {
-    public required string Name { get; init; }
-    public string? ImageUrl { get; init; }
-    public string? BackgroundColor { get; init; }
+    public required string Name { get; set; }
+    public string? ImageUrl { get; set; }
+    public string? BackgroundColor { get; set; }
     public ICollection<Task> Tasks { get; init; } = new List<Task>();
 }

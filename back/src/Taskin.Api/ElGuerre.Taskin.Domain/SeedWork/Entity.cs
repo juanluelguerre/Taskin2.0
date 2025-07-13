@@ -4,6 +4,7 @@ public abstract class Entity
 {
     protected Entity()
     {
+        Id = Guid.NewGuid();
     }
 
     protected Entity(Guid id)
@@ -11,7 +12,7 @@ public abstract class Entity
         this.Id = id;
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; protected set; }
 
     public bool IsTransient()
     {

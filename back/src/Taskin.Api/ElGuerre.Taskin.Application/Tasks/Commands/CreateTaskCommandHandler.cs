@@ -15,7 +15,7 @@ public class CreateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
         var project = await context.Projects.FindAsync([request.ProjectId], cancellationToken);
         if (project is null)
         {
-            throw new EntityNotFoundException<Pomodoro>(request.ProjectId);
+            throw new EntityNotFoundException<Project>(request.ProjectId);
         }
 
         DomainTask task = new()
