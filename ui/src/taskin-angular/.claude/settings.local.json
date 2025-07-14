@@ -10,7 +10,14 @@
       "Bash(find:*)",
       "Bash(pkill:*)",
       "Bash(true)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(ng update:*)",
+      "Bash(npm update:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(ng build:*)",
+      "Bash(rm:*)",
+      "Bash(ng serve:*)"
     ],
     "deny": []
   }

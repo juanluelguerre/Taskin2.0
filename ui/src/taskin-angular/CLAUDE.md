@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Taskin 2.0 is an Angular 18 application built with Angular Material, focusing on task management with features like projects, tasks, and pomodoro tracking. The project uses standalone components and follows modern Angular patterns.
+Taskin 2.0 is an Angular 19 application built with Angular Material, focusing on task management with features like projects, tasks, and pomodoro tracking. The project uses standalone components and follows modern Angular patterns with signal-based inputs and outputs.
 
 ## Development Commands
 
@@ -35,8 +35,8 @@ ng g c modules/organizations/pages/component-name --standalone --skip-tests --in
 
 ### Key Technologies
 
-- Angular 18 with standalone components
-- Angular Material 18 for UI components
+- Angular 19 with standalone components (standalone by default)
+- Angular Material 19 for UI components
 - NgRx Store for state management
 - Transloco for i18n (supports en-US, es-ES, zh-CN, zh-TW)
 - TailwindCSS for utility-first styling
@@ -128,7 +128,7 @@ The application is fully implemented and functional with the following component
 
 ### Development Status
 
-- ✅ **Initial Setup**: Angular 18 with standalone components
+- ✅ **Initial Setup**: Angular 19 with standalone components
 - ✅ **Layout Components**: Responsive layout system complete
 - ✅ **Feature Modules**: All major features implemented
 - ✅ **Routing**: Navigation and routing configured
@@ -136,6 +136,7 @@ The application is fully implemented and functional with the following component
 - ✅ **Internationalization**: Multi-language support active
 - ✅ **Logo Integration**: Proper logo display and favicon setup
 - ✅ **Mobile Optimization**: Responsive design implemented
+- ✅ **Angular 19 Migration**: Successfully upgraded from Angular 18 to Angular 19
 
 ### Next Steps for Production
 
