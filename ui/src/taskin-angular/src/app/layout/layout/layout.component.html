@@ -1,25 +1,38 @@
-<div class="flex h-screen">
+<div class="flex h-screen bg-gray-50">
   <!-- Sidebar -->
   <app-sidebar
-    [isMinimized]="isSidebarMinimized"
-    [class.hidden]="isSidebarHidden"
-    class="h-screen"
+    [isMinimized]="isSidebarMinimized()"
+    [isHidden]="isSidebarHidden()"
+    class="h-screen z-30 transition-all duration-300 ease-in-out"
+    [class.transform]="isSidebarHidden()"
+    [class.-translate-x-full]="isSidebarHidden()"
+    [class.md:translate-x-0]="true"
   ></app-sidebar>
 
-  <!-- Contenedor principal -->
-  <div class="flex flex-col flex-1">
+  <!-- Main Container -->
+  <div class="flex flex-col flex-1 min-w-0">
     <!-- Header -->
     <app-header
       (toggleSidebarEvent)="toggleSidebar()"
       (minimizeSidebarEvent)="minimizeSidebar()"
+      class="sticky top-0 z-20 shadow-sm"
     ></app-header>
 
-    <!-- Contenido principal -->
-    <main class="flex-1 p-4 overflow-auto bg-gray-100">
-      <router-outlet></router-outlet>
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 overflow-auto bg-gray-50">
+      <div class="max-w-7xl mx-auto">
+        <router-outlet></router-outlet>
+      </div>
     </main>
 
     <!-- Footer -->
-    <app-footer></app-footer>
+    <app-footer class="mt-auto"></app-footer>
   </div>
+
+  <!-- Mobile Overlay -->
+  <div
+    *ngIf="!isSidebarHidden()"
+    class="fixed inset-0 z-20 bg-black bg-opacity-50 md:hidden mobile-overlay"
+    (click)="toggleSidebar()"
+  ></div>
 </div>

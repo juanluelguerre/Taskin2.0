@@ -1,6 +1,9 @@
 {
   "menu": {
     "dashboard": "Tablero",
+    "projects": "Proyectos",
+    "tasks": "Tareas",
+    "pomodoros": "Pomodoros",
     "design": "Diseño",
     "design.colors": "Sistema de Colores",
     "design.icons": "Iconos Material",
@@ -120,6 +123,9 @@
   "profile": "Perfil",
   "edit_profile": "Editar perfil",
   "logout": "Cerrar sesión",
+  "header": {
+    "language": "Idioma"
+  },
   "login": "Iniciar sesión",
   "login_title": "Bienvenido de nuevo",
   "have_no_account": "¿No tienes una cuenta?",
