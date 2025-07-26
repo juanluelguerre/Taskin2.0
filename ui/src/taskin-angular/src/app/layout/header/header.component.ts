@@ -1,5 +1,3 @@
-// header.component.ts
-
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -11,19 +9,13 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [
-    CommonModule,
-    TranslocoModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatMenuModule,
-  ],
+  imports: [CommonModule, TranslocoModule, MatToolbarModule, MatIconModule, MatMenuModule],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

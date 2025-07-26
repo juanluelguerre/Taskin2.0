@@ -1,10 +1,4 @@
-import {
-  ApplicationConfig,
-  provideZoneChangeDetection,
-  isDevMode,
-  ENVIRONMENT_INITIALIZER,
-  inject,
-} from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, isDevMode } from '@angular/core';
 import {
   PreloadAllModules,
   provideRouter,
@@ -16,13 +10,12 @@ import {
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { provideTransloco } from '@ngneat/transloco';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { LoadingService } from './core/components/loading-bar/loading.service';
 import { loadingInterceptor } from './core/components/loading-bar/loading.interceptor';
 import { provideIcons } from './core/icons/icons.provider';
+import { provideTransloco } from '@jsverse/transloco';
 
 // registerLocaleData(localeEs);
 // registerLocaleData(localeEn);
@@ -56,11 +49,6 @@ export const appConfig: ApplicationConfig = {
       traceLimit: 75,
       connectInZone: true,
     }),
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      useValue: () => inject(LoadingService),
-      multi: true,
-    },
     provideIcons(),
   ],
 };
