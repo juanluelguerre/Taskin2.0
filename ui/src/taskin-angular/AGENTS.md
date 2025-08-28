@@ -236,3 +236,179 @@ constructor() {
 - **Environment Files** - Development and production configs
 - **Build Configurations** - Multiple build targets (dev, prod)
 - **Internationalization** - Translation files and font assets
+
+### RxJS + Signals Interop Patterns
+
+This section codifies how we use RxJS together with Angular 19 Signals. It is based on official Angular (signals, diagnostics, migrations) and RxJS documentation (creation, flattening, multicasting, promise interop) retrieved via context7.
+
+#### When to Prefer Each Primitive
+
+| Use                                                      | Prefer Signals                           | Prefer RxJS Observable / Subject         |
+| -------------------------------------------------------- | ---------------------------------------- | ---------------------------------------- |
+| Local component/UI state                                 | ✅                                       | ❌                                       |
+| Derived synchronous value                                | ✅ computed()                            | ❌                                       |
+| Async stream (HTTP, websocket, timer, user events)       | bridge to signal if consumed in template | ✅ native Observable                     |
+| Cross-component broadcast / service push                 | sometimes (readonly)                     | ✅ Subject/BehaviorSubject/ReplaySubject |
+| Complex async transformation (cancellation, concurrency) | feed result into signal                  | ✅ RxJS operators                        |
+
+Guideline: Keep transformation & concurrency in RxJS, then expose a stable signal to templates (`toSignal`) to avoid manual subscribe/unsubscribe. Keep local mutation purely signal-based.
+
+#### Converting Observables to Signals
+
+Never call `toSignal()` inside a `computed` or another reactive context (Angular error NG0602). Create the signal once, then reference it:
+
+```ts
+// ✅ CORRECT
+readonly userSig = toSignal(this.userService.user$ /* Observable<User> */, { initialValue: undefined });
+readonly permissions = computed(() => derivePerms(this.userSig()));
+
+// ❌ INCORRECT (inside computed())
+// const permissions = computed(() => derivePerms(toSignal(this.userService.user$)()));
+```
+
+Prefer supplying `initialValue` so the signal is synchronous for first render.
+
+#### Converting Signals to Observables
+
+When a consumer still expects an Observable (e.g. a 3rd‑party library), convert with `toObservable(mySignal)` (Angular rxjs-interop). Limit this to boundary layers; do not wrap purely to reuse operators.
+
+#### Flattening & Concurrency Patterns
+
+Use the appropriate RxJS higher‑order mapping operator (official docs list: `mergeMap`, `switchMap`, `concatMap`, `exhaustMap`). Rule of thumb:
+
+| Operator   | Use For                                        | Notes                                             |
+| ---------- | ---------------------------------------------- | ------------------------------------------------- |
+| switchMap  | HTTP queries, typeahead, cancel stale requests | Cancels previous inner observable on new emission |
+| concatMap  | Ordered writes / sequential saves              | Buffers; preserves order                          |
+| mergeMap   | Parallel independent calls                     | Configure concurrency if needed                   |
+| exhaustMap | Ignore while busy (login button, form submit)  | Drops subsequent triggers until completion        |
+
+Expose the final transformed stream as a signal:
+
+```ts
+private readonly searchTrigger = new Subject<string>();
+readonly resultsSig = toSignal(
+  this.searchTrigger.pipe(
+    debounceTime(250),
+    distinctUntilChanged(),
+    switchMap(q => this.api.search(q)), // cancellation-safe
+    shareReplay({ bufferSize: 1, refCount: true })
+  ),
+  { initialValue: [] as Result[] }
+);
+
+effect(() => {
+  console.log('Results updated', this.resultsSig().length);
+});
+```
+
+#### Multicasting & Caching
+
+Prefer modern `share` / `shareReplay` (or `share({ connector: () => new ReplaySubject(1) })`) over deprecated `publish*` + `refCount`. Use when:
+
+- The Observable performs expensive work (HTTP, CPU) you want to share
+- Multiple subscribers (effects + `toSignal`) would otherwise duplicate side effects
+
+```ts
+readonly config$ = this.http.get<Config>('/api/config').pipe(
+  shareReplay({ bufferSize: 1, refCount: true })
+);
+readonly configSig = toSignal(this.config$, { initialValue: undefined });
+```
+
+Avoid `BehaviorSubject` solely for template consumption; prefer `signal()`. Use `BehaviorSubject` only if:
+
+- Legacy code already exposes it broadly
+- External imperative producers push values from outside Angular zone
+- You need synchronous current value for non-Angular consumers
+
+#### Subject Selection
+
+| Need                                           | Pick                     |
+| ---------------------------------------------- | ------------------------ | --- |
+| Broadcast events w/o stored last value         | Subject<void             | T>  |
+| Store & emit current value to late subscribers | BehaviorSubject<T>       |
+| Cache & replay a fixed number of past values   | ReplaySubject<T>(buffer) |
+| Emit only final value on completion            | AsyncSubject<T>          |
+
+Prefer `Subject<void>` for pure event signals (see RxJS doc example) and pair with effects:
+
+```ts
+readonly refresh$ = new Subject<void>();
+readonly itemsSig = toSignal(
+  this.refresh$.pipe(
+    startWith(void 0),
+    switchMap(() => this.api.loadItems()),
+    shareReplay({ bufferSize: 1, refCount: true })
+  ),
+  { initialValue: [] as Item[] }
+);
+```
+
+#### Bridging to Imperative Code (Promises)
+
+Use `firstValueFrom()` / `lastValueFrom()` only at strict boundaries (e.g. in an `async` route resolver). Provide a `{ defaultValue }` for possibly empty streams to avoid rejection.
+
+```ts
+const initialData = await firstValueFrom(this.data$, { defaultValue: [] });
+```
+
+Do NOT convert to a Promise just for template binding—use a signal instead.
+
+#### Memory & Cleanup
+
+`toSignal(ob$, { initialValue })` handles subscription & cleanup automatically. If you manually subscribe (rare), always unsubscribe (e.g. `takeUntil(destroy$)` pattern). Prefer deriving everything via signals + effects.
+
+Avoid nesting `toSignal` inside `effect` / `computed`; create once at field level.
+
+#### Anti-Patterns
+
+- ❌ Calling `toSignal` multiple times on the same cold HTTP Observable (duplicates requests). Create once, reuse.
+- ❌ Mixing `BehaviorSubject` + signal for the same piece of state; pick one canonical source (usually the signal, unless external imperative writes dominate).
+- ❌ Using `mergeMap` for request-response where cancellation matters (prefer `switchMap`).
+- ❌ Using `shareReplay` without understanding cache invalidation (may serve stale data). Provide explicit refresh triggers.
+
+#### Example: Service Providing Signal-Friendly API
+
+```ts
+@Injectable({ providedIn: 'root' })
+export class ProjectsService {
+  private readonly reload$ = new Subject<void>();
+
+  private readonly projects$ = this.reload$.pipe(
+    startWith(void 0),
+    switchMap(() => this.http.get<Project[]>('/api/projects')),
+    shareReplay({ bufferSize: 1, refCount: true })
+  );
+
+  // Public signal for components
+  readonly projects = toSignal(this.projects$, { initialValue: [] as Project[] });
+
+  refresh() {
+    this.reload$.next();
+  }
+}
+```
+
+Component usage:
+
+```ts
+readonly projects = inject(ProjectsService).projects; // already a signal
+
+trackById = (_: number, p: Project) => p.id;
+```
+
+Template:
+
+```html
+@for (p of projects(); track p.id) { <app-project-row [project]="p" /> }
+```
+
+#### Decision Flow
+
+1. Is it async / event-based? Start with Observable operators.
+2. Do templates need it? Convert once with `toSignal`.
+3. Do other services need to transform further? Keep original Observable exported (suffix `$`) AND a signal for UI.
+4. Need manual trigger? Model it as `Subject<void>` (event) + pipeline -> signal.
+
+This ensures minimal subscriptions, clear ownership, and consistent reactive style across the codebase.

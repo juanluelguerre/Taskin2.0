@@ -2,45 +2,152 @@
 
 # Taskin 2.0
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.
+Standalone Angular application using Angular Material, CDK, TailwindCSS and Transloco.
 
-# How to add new components
+## Stack
 
-## Development server
+| Technology             | Version (package.json) | Purpose                             |
+| ---------------------- | ---------------------- | ----------------------------------- |
+| Angular Core           | ^19.2.x                | SPA framework (standalone, signals) |
+| Angular Material / CDK | ^19.2.x                | UI components & a11y utilities      |
+| TailwindCSS            | ^3.4.x                 | Utility‑first styling               |
+| Transloco              | ^7.6.x                 | i18n (translations & lazy loading)  |
+| NgRx Signals Store     | ^19.2.x                | Reactive state (signals)            |
 
-Sample for an 'component-name' page component, always in a **standalone** mode:
+> Short reference below summarizing docs gathered via context7 (Angular, Material, Tailwind, Transloco).
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Quick Start
+
+1. Install deps: `pnpm i` or `npm i`.
+2. Dev server: `npm start` (opens `http://localhost:4200/`).
+3. Production build: `npm run build` (outputs to `dist/`).
+4. Unit tests: `npm test`.
+
+## Generate standalone components
+
+Example (no spec, inline style, OnPush, no encapsulation):
 
 ```
-
-## Code scaffolding
+ng g c features/sample-feature/components/sample-widget \
+	--standalone --skip-tests --inline-style \
+	--change-detection OnPush --view-encapsulation None
 ```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Other artifacts: `ng g directive|pipe|service|interface|enum` (add `--standalone` where relevant).
 
-## Build
+## Angular Material
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Initial install (already applied):
 
 ```
 ng add @angular/material
 ```
 
-## Running unit tests
+Minimal theming (SCSS):
 
-## How to
+```scss
+@use '@angular/material' as mat;
 
-- Where find flags: https://github.com/Yummygum/flagpack-core
-- Where find icons: https://fonts.google.com/icons?icon.set=Material+Symbols
+html {
+  color-scheme: light dark; // auto light/dark support
+  @include mat.theme(
+    (
+      color: mat.$violet-palette,
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+```
 
-## Further help
+You can include per‑component mixins (e.g. `@include mat.button-theme($theme);`) if customizing M2/M3 themes. Keep Tailwind + Material tokens consistent (`tailwind.config.js`, `styles.scss`).
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## TailwindCSS
 
-- Development server :Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-- Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum --standalone --skip-tests --inline-style --change-detection OnPush --view-encapsulation None`. Sample: `ng g c modules/organizations/pages/component-name --standalone --skip-tests --inline-style --change-detection OnPush --view-encapsulation None`
-- Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-- Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-- Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-- To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Configured through PostCSS (see `devDependencies`). In `src/styles.scss` ensure Tailwind import:
+
+```css
+@import 'tailwindcss';
+```
+
+Usage in Angular templates:
+
+```html
+<h1 class="text-3xl font-bold underline">Hello Tailwind</h1>
+```
+
+Good practices:
+
+- Prefer utilities + Material system CSS vars (`--mat-sys-*`) for visual consistency.
+- Add custom utilities with layers (`@layer utilities { ... }`).
+
+## Transloco (i18n)
+
+Current translation file locations:
+
+- `public/i18n/*.json` (e.g. `en-US.json`, `es-ES.json`)
+- `src/assets/i18n/*.json` (e.g. `en.json`, `es.json`)
+
+Pipe usage:
+
+```html
+{{ 'app.title' | transloco }} {{ 'greeting' | transloco:{ name: 'John' } }}
+```
+
+Structural directive (v2+ syntax):
+
+```html
+<ng-container *transloco="let t">
+  <p>{{ t('title') }}</p>
+  <p>{{ t('hello', { name: 'world' }) }}</p>
+</ng-container>
+```
+
+Service usage:
+
+```ts
+constructor(private t: TranslocoService) {}
+const msg = this.t.translate('errors.required');
+```
+
+## State (NgRx Signals)
+
+Using `@ngrx/signals` for lightweight signal‑based state (see upstream docs for selector/effect patterns).
+
+## Icons & Flags
+
+- Flags: https://github.com/Yummygum/flagpack-core
+- Material Symbols: https://fonts.google.com/icons?icon.set=Material+Symbols
+
+## Scripts
+
+| Script          | Action                     |
+| --------------- | -------------------------- |
+| `npm start`     | Dev server (HMR)           |
+| `npm run build` | Production build           |
+| `npm test`      | Unit tests (Karma/Jasmine) |
+
+## Conventions
+
+- Components always standalone.
+- Default change detection: `OnPush`.
+- View encapsulation: `None` (global theming + Tailwind utilities).
+- Feature‑based structure under `src/app/features/*`.
+
+## Suggested Next Steps
+
+- Add architecture doc (features/core/shared diagram).
+- Consolidate translation file location (choose `src/assets/i18n` or `public/i18n`).
+- Add tests for critical services (auth, permissions).
+
+## Quick References (context7)
+
+- Angular CLI (new project): `ng new <name>`
+- Material add: `ng add @angular/material`
+- Multiple themes: use `@include mat.theme(...)` in different scopes (`html`, `.dark-mode`).
+- Tailwind import: `@import "tailwindcss";`
+- Transloco helper: `t('key', { param: 'value' })`
+
+## Help
+
+`ng help` or official guide: https://angular.dev/tools/cli

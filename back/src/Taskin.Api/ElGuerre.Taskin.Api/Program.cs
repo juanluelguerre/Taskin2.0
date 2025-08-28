@@ -1,4 +1,5 @@
 using ElGuerre.Taskin.Api.Extensions;
+using ElGuerre.Taskin.Infrastructure.EntityFramework;
 using ElGuerre.Taskin.Infrastructure.Middleware;
 using Serilog;
 
@@ -16,7 +17,28 @@ builder.Services.AddTaskin(builder.Configuration);
 builder.Services.AddProblemDetails(options => { });
 builder.Services.AddHealthChecks();
 
+// Add CORS for Angular frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .SetIsOriginAllowedToAllowWildcardSubdomains();
+    });
+});
+
 var app = builder.Build();
+
+// Seed database in development
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        await DatabaseSeeder.SeedAsync(scope.ServiceProvider);
+    }
+}
 
 app.UseTasking();
 if (app.Environment.IsDevelopment())
@@ -27,6 +49,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
+app.UseCors("AllowAngularDev");
 app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");

@@ -1,1 +1,227 @@
-<p>project-new works!</p>
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex items-center space-x-4">
+      <button mat-icon-button (click)="onCancel()" class="text-gray-600">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <nav class="text-sm text-gray-500 mb-1">
+          <a (click)="onCancel()" class="hover:text-gray-700 cursor-pointer">Projects</a>
+          <span class="mx-2">/</span>
+          <span class="text-gray-900">{{ isEditMode() ? 'Edit Project' : 'New Project' }}</span>
+        </nav>
+        <h1 class="text-2xl font-bold text-gray-900">
+          {{ isEditMode() ? 'Edit Project' : 'Create New Project' }}
+        </h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-center">
+        <mat-icon class="text-red-500 mr-2">error</mat-icon>
+        <p class="text-red-700">{{ error() }}</p>
+      </div>
+    </div>
+  }
+
+  <!-- Loading Spinner -->
+  @if (loading()) {
+    <div class="flex justify-center items-center py-12">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <!-- Form -->
+  @if (!loading()) {
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        <!-- Main Form -->
+        <div class="lg:col-span-2">
+          <mat-card class="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+            <mat-card-header>
+              <mat-card-title class="text-gray-900">Project Information</mat-card-title>
+              <mat-card-subtitle class="text-gray-600">Fill in the basic information for your project</mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="form-content-wrapper">
+                <!-- Project Name -->
+                <div class="form-field-container">
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Project Name</mat-label>
+                    <input matInput formControlName="name" placeholder="Enter project name">
+                    @if (hasError('name', 'required')) {
+                      <mat-error>{{ getErrorMessage('name') }}</mat-error>
+                    }
+                    @if (hasError('name', 'minlength')) {
+                      <mat-error>{{ getErrorMessage('name') }}</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <!-- Description -->
+                <div class="form-field-container">
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput 
+                              formControlName="description" 
+                              rows="4" 
+                              placeholder="Describe your project goals and requirements"></textarea>
+                  </mat-form-field>
+                </div>
+
+                <!-- Status -->
+                <div class="form-field-container">
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Status</mat-label>
+                    <mat-select formControlName="status">
+                      @for (option of statusOptions; track option.value) {
+                        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <!-- Due Date -->
+                <div class="form-field-container">
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Due Date</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="dueDate">
+                    <mat-hint>Optional: Set a target completion date</mat-hint>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Visual Settings -->
+          <mat-card class="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+            <mat-card-header>
+              <mat-card-title class="text-gray-900">Visual Settings</mat-card-title>
+              <mat-card-subtitle class="text-gray-600">Customize the project appearance</mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="form-content-wrapper">
+                <!-- Background Color -->
+                <div class="form-field-container">
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Background Color</mat-label>
+                    <mat-select formControlName="backgroundColor">
+                      @for (color of colorOptions; track color.value) {
+                        <mat-option [value]="color.value">
+                          <div class="flex items-center space-x-3">
+                            <div class="color-preview w-4 h-4 rounded-full border border-gray-300 flex-shrink-0" [style.background-color]="color.value"></div>
+                            <span>{{ color.label }}</span>
+                          </div>
+                        </mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <!-- Image URL -->
+                <div class="form-field-container">
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Image URL</mat-label>
+                    <input matInput formControlName="imageUrl" placeholder="https://example.com/image.jpg">
+                    <mat-hint>Optional: Add a header image for the project</mat-hint>
+                  </mat-form-field>
+                </div>
+
+                <!-- Preview -->
+                <div class="form-field-container">
+                  <label class="text-sm font-medium text-gray-700 mb-3 block">Preview</label>
+                  <div class="h-32 rounded-lg border border-gray-200 relative overflow-hidden bg-gray-50">
+                    @if (projectForm.get('imageUrl')?.value) {
+                      <img [src]="projectForm.get('imageUrl')?.value" 
+                           alt="Project preview" 
+                           class="w-full h-full object-cover"
+                           (error)="onImageError($event)">
+                    }
+                    <div class="absolute inset-0" 
+                         [style.background-color]="projectForm.get('backgroundColor')?.value || '#3B82F6'" 
+                         [style.opacity]="projectForm.get('imageUrl')?.value ? '0.8' : '1'"></div>
+                    <div class="absolute inset-0 flex items-center justify-center p-4">
+                      <div class="text-center">
+                        <div class="text-white font-semibold text-lg mb-1">
+                          {{ projectForm.get('name')?.value || 'Project Name' }}
+                        </div>
+                        @if (projectForm.get('description')?.value) {
+                          <div class="text-white/80 text-sm line-clamp-2">
+                            {{ projectForm.get('description')?.value }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Form Actions -->
+          <mat-card class="border border-gray-200 shadow-sm">
+            <mat-card-content>
+              <div class="button-container">
+                <div class="form-field-container">
+                  <button type="submit" 
+                          mat-raised-button 
+                          color="primary" 
+                          class="w-full h-12" 
+                          [disabled]="projectForm.invalid || loading()">
+                    @if (loading()) {
+                      <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+                    }
+                    <mat-icon class="mr-2">{{ isEditMode() ? 'save' : 'add' }}</mat-icon>
+                    {{ isEditMode() ? 'Update Project' : 'Create Project' }}
+                  </button>
+                </div>
+                
+                <div class="form-field-container">
+                  <button type="button" 
+                          mat-stroked-button 
+                          color="primary" 
+                          class="w-full h-12" 
+                          (click)="onCancel()"
+                          [disabled]="loading()">
+                    <mat-icon class="mr-2">cancel</mat-icon>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Help -->
+          <mat-card class="border border-gray-200 shadow-sm">
+            <mat-card-header>
+              <mat-card-title class="flex items-center text-gray-900">
+                <mat-icon class="mr-2 text-blue-500">help_outline</mat-icon>
+                Tips
+              </mat-card-title>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="text-sm text-gray-600 space-y-2 py-4">
+                <p>• Use a descriptive name that clearly identifies your project</p>
+                <p>• Set a realistic due date to help with planning</p>
+                <p>• Choose colors that match your team's visual identity</p>
+                <p>• Add tasks after creating the project to track progress</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </form>
+  }
+</div>

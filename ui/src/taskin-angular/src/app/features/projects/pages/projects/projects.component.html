@@ -7,13 +7,23 @@
         <p class="mt-1 text-sm text-gray-600">Manage your projects and track progress across your team.</p>
       </div>
       <div class="mt-4 sm:mt-0">
-        <button mat-raised-button color="primary" class="flex items-center">
+        <button mat-raised-button color="primary" class="flex items-center" (click)="onNewProject()">
           <mat-icon class="mr-2">add</mat-icon>
           New Project
         </button>
       </div>
     </div>
   </div>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-center">
+        <mat-icon class="text-red-500 mr-2">error</mat-icon>
+        <p class="text-red-700">{{ error() }}</p>
+      </div>
+    </div>
+  }
 
   <!-- Project Stats -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -24,7 +34,7 @@
         </div>
         <div>
           <p class="text-sm text-gray-600">Total Projects</p>
-          <p class="text-2xl font-bold text-gray-900">12</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().total }}</p>
         </div>
       </div>
     </div>
@@ -36,7 +46,7 @@
         </div>
         <div>
           <p class="text-sm text-gray-600">Active</p>
-          <p class="text-2xl font-bold text-gray-900">8</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().active }}</p>
         </div>
       </div>
     </div>
@@ -48,7 +58,7 @@
         </div>
         <div>
           <p class="text-sm text-gray-600">On Hold</p>
-          <p class="text-2xl font-bold text-gray-900">2</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().onHold }}</p>
         </div>
       </div>
     </div>
@@ -60,7 +70,7 @@
         </div>
         <div>
           <p class="text-sm text-gray-600">Completed</p>
-          <p class="text-2xl font-bold text-gray-900">2</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().completed }}</p>
         </div>
       </div>
     </div>
@@ -71,110 +81,121 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
       <div class="flex items-center space-x-4">
         <mat-form-field appearance="outline" class="w-80">
-          <input matInput placeholder="Search projects">
+          <input matInput placeholder="Search projects" [value]="searchTerm()" (input)="onSearch($event)">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
       <div class="flex items-center space-x-2">
-        <mat-button-toggle-group [value]="selectedFilter()" (change)="selectedFilter.set($event.value)" class="border rounded">
+        <mat-button-toggle-group [value]="selectedFilter()" (change)="onFilterChange($event.value)" class="border rounded">
           <mat-button-toggle value="all">All</mat-button-toggle>
           <mat-button-toggle value="active">Active</mat-button-toggle>
           <mat-button-toggle value="completed">Completed</mat-button-toggle>
-          <mat-button-toggle value="on-hold">On Hold</mat-button-toggle>
+          <mat-button-toggle value="onhold">On Hold</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
     </div>
   </div>
 
+  <!-- Loading Spinner -->
+  @if (loading()) {
+    <div class="flex justify-center items-center py-12">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
   <!-- Projects Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let project of projects()" class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-      <div class="p-6">
-        <!-- Project Header -->
-        <div class="flex items-start justify-between mb-4">
-          <div class="flex-1">
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ project.name }}</h3>
-            <p class="text-sm text-gray-600 line-clamp-2">{{ project.description }}</p>
-          </div>
-          <button mat-icon-button [matMenuTriggerFor]="projectMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #projectMenu="matMenu">
-            <button mat-menu-item>
-              <mat-icon>edit</mat-icon>
-              Edit
-            </button>
-            <button mat-menu-item>
-              <mat-icon>archive</mat-icon>
-              Archive
-            </button>
-            <button mat-menu-item class="text-red-600">
-              <mat-icon class="text-red-600">delete</mat-icon>
-              Delete
-            </button>
-          </mat-menu>
-        </div>
+  @if (!loading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (project of projects(); track project.id) {
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <!-- Project Image -->
+          @if (project.imageUrl) {
+            <div class="h-32 rounded-t-lg bg-cover bg-center" [style.background-image]="'url(' + project.imageUrl + ')'">
+              <div class="h-full w-full rounded-t-lg" [style.background-color]="project.backgroundColor" style="opacity: 0.8;"></div>
+            </div>
+          }
+          
+          <div class="p-6">
+            <!-- Project Header -->
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ project.name }}</h3>
+                <p class="text-sm text-gray-600 line-clamp-2">{{ project.description }}</p>
+              </div>
+              <button mat-icon-button [matMenuTriggerFor]="projectMenu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #projectMenu="matMenu">
+                <button mat-menu-item (click)="onEditProject(project.id)">
+                  <mat-icon>edit</mat-icon>
+                  Edit
+                </button>
+                <button mat-menu-item (click)="onViewProject(project.id)">
+                  <mat-icon>visibility</mat-icon>
+                  View Details
+                </button>
+                <button mat-menu-item class="text-red-600" (click)="onDeleteProject(project.id)">
+                  <mat-icon class="text-red-600">delete</mat-icon>
+                  Delete
+                </button>
+              </mat-menu>
+            </div>
 
-        <!-- Status Badge -->
-        <div class="mb-4">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                [class.bg-green-100]="project.status === 'active'"
-                [class.text-green-800]="project.status === 'active'"
-                [class.bg-blue-100]="project.status === 'completed'"
-                [class.text-blue-800]="project.status === 'completed'"
-                [class.bg-yellow-100]="project.status === 'on-hold'"
-                [class.text-yellow-800]="project.status === 'on-hold'">
-            {{ project.status | titlecase }}
-          </span>
-        </div>
+            <!-- Status Badge -->
+            <div class="mb-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
+                    [class]="getStatusColor(project.status)">
+                {{ getStatusDisplayName(project.status) | titlecase }}
+              </span>
+            </div>
 
-        <!-- Progress -->
-        <div class="mb-4">
-          <div class="flex justify-between text-sm text-gray-600 mb-1">
-            <span>Progress</span>
-            <span>{{ project.progress }}%</span>
-          </div>
-          <div class="w-full bg-gray-200 rounded-full h-2">
-            <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-                 [style.width.%]="project.progress"></div>
-          </div>
-        </div>
+            <!-- Progress -->
+            <div class="mb-4">
+              <div class="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Progress</span>
+                <span>{{ project.progress }}%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                     [style.width.%]="project.progress"></div>
+              </div>
+            </div>
 
-        <!-- Project Stats -->
-        <div class="grid grid-cols-2 gap-4 mb-4 text-center">
-          <div>
-            <p class="text-lg font-semibold text-gray-900">{{ project.totalTasks }}</p>
-            <p class="text-xs text-gray-600">Total Tasks</p>
-          </div>
-          <div>
-            <p class="text-lg font-semibold text-gray-900">{{ project.completedTasks }}</p>
-            <p class="text-xs text-gray-600">Completed</p>
-          </div>
-        </div>
+            <!-- Project Stats -->
+            <div class="grid grid-cols-2 gap-4 mb-4 text-center">
+              <div>
+                <p class="text-lg font-semibold text-gray-900">{{ project.totalTasks }}</p>
+                <p class="text-xs text-gray-600">Total Tasks</p>
+              </div>
+              <div>
+                <p class="text-lg font-semibold text-gray-900">{{ project.completedTasks }}</p>
+                <p class="text-xs text-gray-600">Completed</p>
+              </div>
+            </div>
 
-        <!-- Team Members -->
-        <div class="mb-4">
-          <p class="text-sm text-gray-600 mb-2">Team</p>
-          <div class="flex -space-x-2">
-            <div *ngFor="let member of project.team" 
-                 class="w-8 h-8 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-medium"
-                 [title]="member.name">
-              {{ member.initials }}
+            <!-- Due Date -->
+            <div class="flex items-center justify-between text-sm text-gray-600">
+              <div class="flex items-center">
+                <mat-icon class="text-gray-400 mr-1 text-sm">schedule</mat-icon>
+                <span>Due {{ formatDate(project.dueDate) }}</span>
+              </div>
+              <button mat-button color="primary" class="text-sm" (click)="onViewProject(project.id)">
+                View Details
+              </button>
             </div>
           </div>
         </div>
-
-        <!-- Due Date -->
-        <div class="flex items-center justify-between text-sm text-gray-600">
-          <div class="flex items-center">
-            <mat-icon class="text-gray-400 mr-1 text-sm">schedule</mat-icon>
-            <span>Due {{ project.dueDate }}</span>
-          </div>
-          <button mat-button color="primary" class="text-sm">
-            View Details
+      } @empty {
+        <div class="col-span-full text-center py-12">
+          <mat-icon class="text-gray-300 text-6xl mb-4">folder_open</mat-icon>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No projects found</h3>
+          <p class="text-gray-500 mb-4">Get started by creating your first project.</p>
+          <button mat-raised-button color="primary" (click)="onNewProject()">
+            <mat-icon class="mr-2">add</mat-icon>
+            Create Project
           </button>
         </div>
-      </div>
+      }
     </div>
-  </div>
+  }
 </div>

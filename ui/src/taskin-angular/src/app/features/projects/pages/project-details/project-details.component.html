@@ -1,1 +1,239 @@
-<p>project-details works!</p>
+<div class="space-y-6">
+  <!-- Breadcrumb and Actions -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center space-x-4">
+        <button mat-icon-button (click)="onBackToProjects()" class="text-gray-600">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>
+          <nav class="text-sm text-gray-500 mb-1">
+            <a (click)="onBackToProjects()" class="hover:text-gray-700 cursor-pointer">Projects</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-900">{{ project()?.name || 'Project Details' }}</span>
+          </nav>
+          <h1 class="text-2xl font-bold text-gray-900">Project Details</h1>
+        </div>
+      </div>
+      
+      @if (project(); as proj) {
+        <div class="mt-4 sm:mt-0 flex space-x-2">
+          <button mat-stroked-button color="primary" (click)="onEdit()">
+            <mat-icon class="mr-2">edit</mat-icon>
+            Edit
+          </button>
+          <button mat-button [matMenuTriggerFor]="actionsMenu" class="text-gray-600">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #actionsMenu="matMenu">
+            <button mat-menu-item (click)="onEdit()">
+              <mat-icon>edit</mat-icon>
+              Edit Project
+            </button>
+            <button mat-menu-item class="text-red-600" (click)="onDelete()">
+              <mat-icon class="text-red-600">delete</mat-icon>
+              Delete Project
+            </button>
+          </mat-menu>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-center">
+        <mat-icon class="text-red-500 mr-2">error</mat-icon>
+        <p class="text-red-700">{{ error() }}</p>
+      </div>
+    </div>
+  }
+
+  <!-- Loading Spinner -->
+  @if (loading()) {
+    <div class="flex justify-center items-center py-12">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <!-- Project Content -->
+  @if (!loading() && project(); as proj) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main Content -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Project Header -->
+        <mat-card class="border border-gray-200">
+          <!-- Project Image -->
+          @if (proj.imageUrl) {
+            <div class="h-48 bg-cover bg-center rounded-t-lg" [style.background-image]="'url(' + proj.imageUrl + ')'">
+              <div class="h-full w-full rounded-t-lg flex items-end p-6" [style.background-color]="proj.backgroundColor" style="opacity: 0.8;">
+                <div class="text-white">
+                  <h2 class="text-2xl font-bold mb-2">{{ proj.name }}</h2>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" 
+                        [class]="getStatusColor(proj.status)">
+                    {{ getStatusDisplayName(proj.status) | titlecase }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+          
+          <mat-card-content class="p-6">
+            @if (!proj.imageUrl) {
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">{{ proj.name }}</h2>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" 
+                      [class]="getStatusColor(proj.status)">
+                  {{ getStatusDisplayName(proj.status) | titlecase }}
+                </span>
+              </div>
+            }
+            
+            <p class="text-gray-600 mb-6">{{ proj.description || 'No description available.' }}</p>
+            
+            <!-- Progress Bar -->
+            <div class="mb-6">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-gray-700">Overall Progress</span>
+                <span class="text-sm text-gray-500">{{ proj.progress }}%</span>
+              </div>
+              <mat-progress-bar mode="determinate" [value]="proj.progress" class="h-2 rounded"></mat-progress-bar>
+            </div>
+            
+            <!-- Project Stats -->
+            <div class="grid grid-cols-3 gap-6 text-center">
+              <div>
+                <p class="text-2xl font-bold text-gray-900">{{ proj.totalTasks }}</p>
+                <p class="text-sm text-gray-600">Total Tasks</p>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-green-600">{{ proj.completedTasks }}</p>
+                <p class="text-sm text-gray-600">Completed</p>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-blue-600">{{ proj.totalTasks - proj.completedTasks }}</p>
+                <p class="text-sm text-gray-600">Remaining</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Tasks List -->
+        <mat-card class="border border-gray-200">
+          <mat-card-header class="pb-0">
+            <mat-card-title class="flex items-center justify-between w-full">
+              <span>Tasks ({{ proj.tasks.length }})</span>
+              <button mat-stroked-button color="primary">
+                <mat-icon class="mr-2">add</mat-icon>
+                Add Task
+              </button>
+            </mat-card-title>
+          </mat-card-header>
+          
+          <mat-card-content class="p-6">
+            @if (proj.tasks.length > 0) {
+              <div class="space-y-3">
+                @for (task of proj.tasks; track task.id) {
+                  <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div class="flex-1">
+                      <h4 class="font-medium text-gray-900 mb-1">{{ task.title }}</h4>
+                      <div class="flex items-center space-x-2">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" 
+                              [class]="getTaskStatusColor(task.status)">
+                          {{ getTaskStatusDisplayName(task.status) | titlecase }}
+                        </span>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" 
+                              [class]="getPriorityColor(task.priority)">
+                          {{ task.priority | titlecase }}
+                        </span>
+                      </div>
+                    </div>
+                    <button mat-icon-button class="text-gray-400">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="text-center py-8">
+                <mat-icon class="text-gray-300 text-4xl mb-2">assignment</mat-icon>
+                <p class="text-gray-500">No tasks yet. Add your first task to get started.</p>
+                <button mat-stroked-button color="primary" class="mt-4">
+                  <mat-icon class="mr-2">add</mat-icon>
+                  Add First Task
+                </button>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Project Info -->
+        <mat-card class="border border-gray-200">
+          <mat-card-header>
+            <mat-card-title>Project Information</mat-card-title>
+          </mat-card-header>
+          
+          <mat-card-content class="space-y-4">
+            <div>
+              <label class="text-sm font-medium text-gray-700">Due Date</label>
+              <p class="text-gray-900">{{ formatDate(proj.dueDate) }}</p>
+            </div>
+            
+            <div>
+              <label class="text-sm font-medium text-gray-700">Created</label>
+              <p class="text-gray-900">{{ formatDate(proj.createdAt) }}</p>
+            </div>
+            
+            <div>
+              <label class="text-sm font-medium text-gray-700">Last Updated</label>
+              <p class="text-gray-900">{{ formatDate(proj.updatedAt) }}</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Team Members -->
+        <mat-card class="border border-gray-200">
+          <mat-card-header>
+            <mat-card-title class="flex items-center justify-between w-full">
+              <span>Team Members</span>
+              <button mat-icon-button color="primary">
+                <mat-icon>add</mat-icon>
+              </button>
+            </mat-card-title>
+          </mat-card-header>
+          
+          <mat-card-content>
+            @if (proj.teamMembers && proj.teamMembers.length > 0) {
+              <div class="space-y-3">
+                @for (member of proj.teamMembers; track member.id) {
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                      {{ member.initials }}
+                    </div>
+                    <div class="flex-1">
+                      <p class="font-medium text-gray-900">{{ member.name }}</p>
+                      <p class="text-sm text-gray-600">{{ member.email }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="text-center py-4">
+                <mat-icon class="text-gray-300 text-3xl mb-2">group</mat-icon>
+                <p class="text-gray-500 text-sm">No team members assigned</p>
+                <button mat-stroked-button color="primary" class="mt-2">
+                  <mat-icon class="mr-2">person_add</mat-icon>
+                  Add Members
+                </button>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  }
+</div>

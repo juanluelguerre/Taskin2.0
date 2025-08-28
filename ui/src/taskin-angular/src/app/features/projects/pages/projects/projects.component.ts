@@ -1,28 +1,15 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal } from '@angular/core';
-import { CommonModule, TitleCasePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, OnInit, inject, computed } from '@angular/core';
+import { CommonModule, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatMenuModule } from '@angular/material/menu';
-
-interface TeamMember {
-  name: string;
-  initials: string;
-}
-
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: 'active' | 'completed' | 'on-hold';
-  progress: number;
-  totalTasks: number;
-  completedTasks: number;
-  team: TeamMember[];
-  dueDate: string;
-}
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ProjectService, ProjectListDto, ProjectStatsDto, CollectionResponse } from '../../services/project.service';
 
 @Component({
   selector: 'app-projects',
@@ -35,100 +22,160 @@ interface Project {
     MatFormFieldModule,
     MatButtonToggleModule,
     MatMenuModule,
-    TitleCasePipe
+    MatProgressSpinnerModule,
+    TitleCasePipe,
+    DatePipe,
+    FormsModule
   ],
   templateUrl: './projects.component.html',
   styles: ``,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectsComponent {
+export class ProjectsComponent implements OnInit {
+  private readonly projectService = inject(ProjectService);
+  private readonly router = inject(Router);
+  
+  // State signals
+  projects = signal<ProjectListDto[]>([]);
+  stats = signal<ProjectStatsDto>({ total: 0, active: 0, completed: 0, onHold: 0 });
+  loading = signal(false);
+  error = signal<string | null>(null);
+  
+  // Filter signals
   selectedFilter = signal('all');
+  searchTerm = signal('');
+  currentPage = signal(1);
+  pageSize = signal(12);
+  totalCount = signal(0);
 
-  projects = signal<Project[]>([
-    {
-      id: '1',
-      name: 'E-commerce Platform',
-      description: 'Building a modern e-commerce solution with React and Node.js',
-      status: 'active',
-      progress: 75,
-      totalTasks: 32,
-      completedTasks: 24,
-      team: [
-        { name: 'John Doe', initials: 'JD' },
-        { name: 'Jane Smith', initials: 'JS' },
-        { name: 'Mike Johnson', initials: 'MJ' }
-      ],
-      dueDate: 'Dec 15, 2024'
-    },
-    {
-      id: '2',
-      name: 'Mobile App Redesign',
-      description: 'Complete UI/UX overhaul of our mobile application',
-      status: 'active',
-      progress: 45,
-      totalTasks: 28,
-      completedTasks: 13,
-      team: [
-        { name: 'Sarah Wilson', initials: 'SW' },
-        { name: 'Tom Brown', initials: 'TB' }
-      ],
-      dueDate: 'Jan 20, 2025'
-    },
-    {
-      id: '3',
-      name: 'API Documentation',
-      description: 'Comprehensive API documentation for developers',
-      status: 'completed',
-      progress: 100,
-      totalTasks: 15,
-      completedTasks: 15,
-      team: [
-        { name: 'Alex Chen', initials: 'AC' }
-      ],
-      dueDate: 'Nov 30, 2024'
-    },
-    {
-      id: '4',
-      name: 'Marketing Website',
-      description: 'New landing page with improved SEO and performance',
-      status: 'on-hold',
-      progress: 30,
-      totalTasks: 20,
-      completedTasks: 6,
-      team: [
-        { name: 'Emma Davis', initials: 'ED' },
-        { name: 'Chris Lee', initials: 'CL' }
-      ],
-      dueDate: 'Feb 10, 2025'
-    },
-    {
-      id: '5',
-      name: 'Data Analytics Dashboard',
-      description: 'Real-time analytics dashboard for business intelligence',
-      status: 'active',
-      progress: 60,
-      totalTasks: 25,
-      completedTasks: 15,
-      team: [
-        { name: 'David Kim', initials: 'DK' },
-        { name: 'Lisa Park', initials: 'LP' },
-        { name: 'Ryan Garcia', initials: 'RG' }
-      ],
-      dueDate: 'Dec 30, 2024'
-    },
-    {
-      id: '6',
-      name: 'Security Audit',
-      description: 'Comprehensive security review and vulnerability assessment',
-      status: 'active',
-      progress: 20,
-      totalTasks: 18,
-      completedTasks: 4,
-      team: [
-        { name: 'Security Team', initials: 'ST' }
-      ],
-      dueDate: 'Jan 15, 2025'
+  // Computed values
+  filteredProjects = computed(() => {
+    const filter = this.selectedFilter();
+    const search = this.searchTerm().toLowerCase();
+    let filtered = this.projects();
+
+    // Apply status filter
+    if (filter !== 'all') {
+      filtered = filtered.filter(p => p.status === filter);
     }
-  ]);
+
+    // Apply search filter (already handled by API, but keeping for local filtering if needed)
+    if (search) {
+      filtered = filtered.filter(p => 
+        p.name.toLowerCase().includes(search) || 
+        (p.description && p.description.toLowerCase().includes(search))
+      );
+    }
+
+    return filtered;
+  });
+
+  ngOnInit() {
+    this.loadProjects();
+    this.loadStats();
+  }
+
+  loadProjects() {
+    this.loading.set(true);
+    this.error.set(null);
+    
+    const filters = {
+      page: this.currentPage(),
+      size: this.pageSize(),
+      status: this.selectedFilter() === 'all' ? undefined : this.selectedFilter(),
+      search: this.searchTerm() || undefined
+    };
+
+    this.projectService.getProjects(filters).subscribe({
+      next: (response: CollectionResponse<ProjectListDto>) => {
+        this.projects.set(response.data);
+        this.totalCount.set(response.total);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set('Error loading projects. Please try again.');
+        this.loading.set(false);
+        console.error('Error loading projects:', err);
+      }
+    });
+  }
+
+  loadStats() {
+    this.projectService.getProjectStats().subscribe({
+      next: (stats) => {
+        this.stats.set(stats);
+      },
+      error: (err) => {
+        console.error('Error loading project stats:', err);
+      }
+    });
+  }
+
+  onFilterChange(filter: string) {
+    this.selectedFilter.set(filter);
+    this.currentPage.set(1); // Reset to first page
+    this.loadProjects();
+  }
+
+  onSearch(searchTerm: string | Event) {
+    const search = typeof searchTerm === 'string' ? searchTerm : (searchTerm.target as HTMLInputElement).value;
+    this.searchTerm.set(search);
+    this.currentPage.set(1); // Reset to first page
+    this.loadProjects();
+  }
+
+  onNewProject() {
+    this.router.navigate(['/projects/new']);
+  }
+
+  onViewProject(projectId: string) {
+    this.router.navigate(['/projects', projectId]);
+  }
+
+  onEditProject(projectId: string) {
+    this.router.navigate(['/projects', projectId, 'edit']);
+  }
+
+  onDeleteProject(projectId: string) {
+    if (confirm('Are you sure you want to delete this project?')) {
+      this.loading.set(true);
+      this.projectService.deleteProject(projectId).subscribe({
+        next: () => {
+          this.loadProjects(); // Reload projects after deletion
+          this.loadStats(); // Reload stats
+        },
+        error: (err) => {
+          this.error.set('Error deleting project. Please try again.');
+          this.loading.set(false);
+          console.error('Error deleting project:', err);
+        }
+      });
+    }
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  }
+
+  getStatusColor(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'completed': return 'bg-blue-100 text-blue-800';
+      case 'onhold': return 'bg-yellow-100 text-yellow-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  getStatusDisplayName(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'onhold': return 'On Hold';
+      default: return status;
+    }
+  }
 }
