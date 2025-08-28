@@ -3,7 +3,6 @@ using MediatR;
 
 namespace ElGuerre.Taskin.Application.Projects.Queries;
 
-public class GetProjectByIdQuery : IRequest<ProjectDetailsDto>
+public class GetProjectStatsQuery : IRequest<ProjectStatsDto>
 {
-    public Guid Id { get; set; }
 }

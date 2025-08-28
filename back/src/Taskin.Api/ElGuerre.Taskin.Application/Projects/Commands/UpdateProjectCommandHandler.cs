@@ -19,6 +19,10 @@ public class UpdateProjectCommandHandler(ITaskinDbContext context, IUnitOfWork u
         }
 
         project.Name = request.Name;
+        project.Description = request.Description;
+        if (request.Status.HasValue)
+            project.Status = request.Status.Value;
+        project.DueDate = request.DueDate;
         project.ImageUrl = request.ImageUrl;
         project.BackgroundColor = request.BackgroundColor;
 
