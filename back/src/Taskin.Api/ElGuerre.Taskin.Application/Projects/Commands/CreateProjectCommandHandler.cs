@@ -14,6 +14,9 @@ public class CreateProjectCommandHandler(ITaskinDbContext context, IUnitOfWork u
         var project = new Project
         {
             Name = request.Name,
+            Description = request.Description,
+            Status = request.Status,
+            DueDate = request.DueDate,
             ImageUrl = request.ImageUrl,
             BackgroundColor = request.BackgroundColor
         };

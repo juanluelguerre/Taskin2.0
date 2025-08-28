@@ -1,5 +1,6 @@
 ﻿using ElGuerre.Taskin.Application.Data;
 using ElGuerre.Taskin.Domain.Entities;
+using ElGuerre.Taskin.Domain.SeedWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Task = ElGuerre.Taskin.Domain.Entities.Task;
@@ -31,5 +32,35 @@ public class TaskinDbContext(DbContextOptions<TaskinDbContext> options)
             },
             LogLevel.Information);
 #endif
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        UpdateTimestamps();
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    public override int SaveChanges()
+    {
+        UpdateTimestamps();
+        return base.SaveChanges();
+    }
+
+    private void UpdateTimestamps()
+    {
+        var entries = ChangeTracker.Entries<TrackedEntity>();
+
+        foreach (var entry in entries)
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.SetCreationInfo();
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.SetModificationInfo();
+                    break;
+            }
+        }
     }
 }

@@ -4,13 +4,15 @@ public abstract class TrackedEntity : Entity
 {
     protected TrackedEntity()
     {
+        CreatedOn = DateTimeOffset.UtcNow;
     }
 
     protected TrackedEntity(Guid id) : base(id)
     {
+        CreatedOn = DateTimeOffset.UtcNow;
     }
 
-    public DateTimeOffset CreatedOn { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedOn { get; private set; }
     public DateTimeOffset? LastModifiedOn { get; private set; }
 
 

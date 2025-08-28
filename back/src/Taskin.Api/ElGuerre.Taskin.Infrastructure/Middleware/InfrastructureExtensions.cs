@@ -1,4 +1,9 @@
 ﻿using ElGuerre.Taskin.Application.Behaviors;
+using ElGuerre.Taskin.Application.Data;
+using ElGuerre.Taskin.Application.Projects.Commands;
+using ElGuerre.Taskin.Domain.SeedWork;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using System.Reflection;
 using ElGuerre.Taskin.Infrastructure.EntityFramework;
 using MediatR;
@@ -15,6 +20,7 @@ public static class InfrastructureExtensions
     {
         services.AddDbContext(configuration);
         services.AddCustomMediatR();
+        services.AddDomainServices();
 
         return services;
     }
@@ -22,10 +28,12 @@ public static class InfrastructureExtensions
     private static IServiceCollection AddDbContext(this IServiceCollection services,
         IConfiguration configuration)
     {
-        //services.AddDbContext<TaskinDbContext>(options =>
-        //    options.UseInMemoryDatabase("TaskinDb"));
         services.AddDbContext<TaskinDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            options.UseInMemoryDatabase("TaskinDb"));
+        //services.AddDbContext<TaskinDbContext>(options =>
+        //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<ITaskinDbContext>(provider => provider.GetRequiredService<TaskinDbContext>());
 
         return services;
     }
@@ -33,10 +41,19 @@ public static class InfrastructureExtensions
     private static IServiceCollection AddCustomMediatR(this IServiceCollection services)
     {
         services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+            cfg.RegisterServicesFromAssemblies(typeof(CreateProjectCommand).Assembly));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+        services.AddValidatorsFromAssembly(typeof(CreateProjectCommand).Assembly);
+
+        return services;
+    }
+
+    private static IServiceCollection AddDomainServices(this IServiceCollection services)
+    {
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
