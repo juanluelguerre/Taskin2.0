@@ -71,13 +71,11 @@
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
       <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
         <mat-form-field appearance="outline" class="w-full sm:w-80">
-          <mat-label>Search tasks</mat-label>
-          <input matInput placeholder="Search by title or description">
+          <input matInput placeholder="Search tasks">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
         
         <mat-form-field appearance="outline" class="w-full sm:w-48">
-          <mat-label>Project</mat-label>
           <mat-select [value]="selectedProject()" (selectionChange)="selectedProject.set($event.value)">
             <mat-option value="all">All Projects</mat-option>
             <mat-option value="ecommerce">E-commerce Platform</mat-option>

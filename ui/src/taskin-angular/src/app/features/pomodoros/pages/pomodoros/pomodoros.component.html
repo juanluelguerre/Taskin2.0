@@ -4,7 +4,9 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-bold text-gray-900">Pomodoro Timer</h1>
-        <p class="mt-1 text-sm text-gray-600">Stay focused with the Pomodoro Technique - 25 minutes of focused work, 5 minutes break.</p>
+        <p class="mt-1 text-sm text-gray-600">
+          Stay focused with the Pomodoro Technique - 25 minutes of focused work, 5 minutes break.
+        </p>
       </div>
       <div class="mt-4 sm:mt-0">
         <div class="flex items-center space-x-2 text-sm text-gray-600">
@@ -20,12 +22,18 @@
     <div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200 text-center">
       <!-- Session Type Indicator -->
       <div class="mb-6">
-        <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium"
-             [class.bg-blue-100]="currentSession() === 'work'"
-             [class.text-blue-800]="currentSession() === 'work'"
-             [class.bg-green-100]="currentSession() === 'break'"
-             [class.text-green-800]="currentSession() === 'break'">
-          <mat-icon class="mr-2" [class.text-blue-600]="currentSession() === 'work'" [class.text-green-600]="currentSession() === 'break'">
+        <div
+          class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium"
+          [class.bg-blue-100]="currentSession() === 'work'"
+          [class.text-blue-800]="currentSession() === 'work'"
+          [class.bg-green-100]="currentSession() === 'break'"
+          [class.text-green-800]="currentSession() === 'break'"
+        >
+          <mat-icon
+            class="mr-2"
+            [class.text-blue-600]="currentSession() === 'work'"
+            [class.text-green-600]="currentSession() === 'break'"
+          >
             {{ currentSession() === 'work' ? 'work' : 'coffee' }}
           </mat-icon>
           {{ currentSession() === 'work' ? 'Focus Time' : 'Break Time' }}
@@ -37,14 +45,7 @@
         <div class="relative w-48 h-48 mx-auto mb-6">
           <!-- Progress Circle -->
           <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              stroke="#e5e7eb"
-              stroke-width="8"
-              fill="none"
-            />
+            <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="8" fill="none" />
             <circle
               cx="50"
               cy="50"
@@ -58,7 +59,7 @@
               class="transition-all duration-1000 ease-in-out"
             />
           </svg>
-          
+
           <!-- Timer Text -->
           <div class="absolute inset-0 flex flex-col items-center justify-center">
             <div class="text-4xl font-bold text-gray-900 mb-1">
@@ -72,26 +73,21 @@
 
         <!-- Timer Controls -->
         <div class="flex justify-center space-x-4">
-          <button 
-            mat-fab 
+          <button
+            mat-mini-fab
             [color]="isRunning() ? 'warn' : 'primary'"
             (click)="toggleTimer()"
-            class="shadow-lg">
+            class="shadow-lg"
+          >
             <mat-icon>{{ isRunning() ? 'pause' : 'play_arrow' }}</mat-icon>
           </button>
-          
-          <button 
-            mat-stroked-button 
-            (click)="resetTimer()"
-            class="px-6">
+
+          <button mat-stroked-button (click)="resetTimer()" class="px-6">
             <mat-icon class="mr-2">refresh</mat-icon>
             Reset
           </button>
-          
-          <button 
-            mat-stroked-button 
-            (click)="skipSession()"
-            class="px-6">
+
+          <button mat-stroked-button (click)="skipSession()" class="px-6">
             <mat-icon class="mr-2">skip_next</mat-icon>
             Skip
           </button>
@@ -107,26 +103,30 @@
               <button mat-icon-button (click)="adjustWorkTime(-1)" [disabled]="isRunning()">
                 <mat-icon>remove</mat-icon>
               </button>
-              <span class="text-lg font-semibold text-gray-900 min-w-[3rem]">{{ workMinutes() }}</span>
+              <span class="text-lg font-semibold text-gray-900 min-w-[3rem]">{{
+                workMinutes()
+              }}</span>
               <button mat-icon-button (click)="adjustWorkTime(1)" [disabled]="isRunning()">
                 <mat-icon>add</mat-icon>
               </button>
             </div>
           </div>
-          
+
           <div>
             <p class="text-sm text-gray-600 mb-2">Break Time</p>
             <div class="flex items-center justify-center space-x-2">
               <button mat-icon-button (click)="adjustBreakTime(-1)" [disabled]="isRunning()">
                 <mat-icon>remove</mat-icon>
               </button>
-              <span class="text-lg font-semibold text-gray-900 min-w-[3rem]">{{ breakMinutes() }}</span>
+              <span class="text-lg font-semibold text-gray-900 min-w-[3rem]">{{
+                breakMinutes()
+              }}</span>
               <button mat-icon-button (click)="adjustBreakTime(1)" [disabled]="isRunning()">
                 <mat-icon>add</mat-icon>
               </button>
             </div>
           </div>
-          
+
           <div>
             <p class="text-sm text-gray-600 mb-2">Sessions Today</p>
             <div class="text-lg font-semibold text-gray-900">{{ completedPomodoros() }}</div>
@@ -143,7 +143,7 @@
     </div>
     <div class="p-6">
       <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-        <div 
+        <div
           *ngFor="let session of todaySessions(); let i = index"
           class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium"
           [class.bg-blue-100]="session.type === 'work'"
@@ -152,7 +152,14 @@
           [class.text-green-800]="session.type === 'break'"
           [class.bg-gray-100]="session.type === 'upcoming'"
           [class.text-gray-500]="session.type === 'upcoming'"
-          [title]="session.type === 'work' ? 'Work session completed' : session.type === 'break' ? 'Break completed' : 'Upcoming session'">
+          [title]="
+            session.type === 'work'
+              ? 'Work session completed'
+              : session.type === 'break'
+              ? 'Break completed'
+              : 'Upcoming session'
+          "
+        >
           {{ i + 1 }}
         </div>
       </div>
@@ -181,12 +188,12 @@
       <div class="text-3xl font-bold text-blue-600 mb-2">{{ totalFocusTime() }}</div>
       <div class="text-sm text-gray-600">Total Focus Time Today</div>
     </div>
-    
+
     <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 text-center">
       <div class="text-3xl font-bold text-green-600 mb-2">{{ averageSessionLength() }}</div>
       <div class="text-sm text-gray-600">Average Session Length</div>
     </div>
-    
+
     <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 text-center">
       <div class="text-3xl font-bold text-purple-600 mb-2">{{ productivityScore() }}%</div>
       <div class="text-sm text-gray-600">Productivity Score</div>

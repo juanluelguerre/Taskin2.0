@@ -28,13 +28,17 @@
           <mat-icon>language</mat-icon>
         </button>
         <mat-menu #languageMenu="matMenu" class="mt-2">
-          <button mat-menu-item (click)="changeLanguage('en')" class="flex items-center">
-            <img src="assets/images/flags/US.svg" alt="English" class="w-5 h-5 mr-3 rounded">
-            English
+          <button mat-menu-item (click)="changeLanguage('en')">
+            <span class="flex items-center">
+              <img src="assets/images/flags/US.svg" alt="English" class="w-5 h-5 mr-3 rounded inline-block">
+              <span>English</span>
+            </span>
           </button>
-          <button mat-menu-item (click)="changeLanguage('es')" class="flex items-center">
-            <img src="assets/images/flags/ES.svg" alt="Español" class="w-5 h-5 mr-3 rounded">
-            Español
+          <button mat-menu-item (click)="changeLanguage('es')">
+            <span class="flex items-center">
+              <img src="assets/images/flags/ES.svg" alt="Español" class="w-5 h-5 mr-3 rounded inline-block">
+              <span>Español</span>
+            </span>
           </button>
         </mat-menu>
 
