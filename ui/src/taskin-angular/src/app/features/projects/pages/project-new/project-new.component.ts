@@ -31,88 +31,23 @@ import { ProjectService, CreateProjectCommand, UpdateProjectCommand, ProjectDeta
   ],
   templateUrl: './project-new.component.html',
   styles: `
-    /* Fix Material form field label issues */
+    /* Prevent form field fragmentation */
+    .form-field-wrapper {
+      break-inside: avoid;
+      contain: layout;
+    }
+    
+    /* Ensure proper Material form field rendering */
     .mat-mdc-form-field {
       width: 100%;
       display: block;
-      margin-bottom: 0;
-    }
-    
-    .mat-mdc-form-field .mat-mdc-floating-label {
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-    }
-    
-    .mat-mdc-form-field.mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
-      padding-left: 0;
-      padding-right: 0;
-    }
-    
-    /* Proper form field spacing */
-    .form-field-container {
-      margin-bottom: 32px;
-      display: block;
-      width: 100%;
-    }
-    
-    .form-field-container:last-child {
-      margin-bottom: 0;
-    }
-    
-    /* Ensure labels have proper space */
-    .mat-mdc-text-field-wrapper {
-      height: 56px;
-    }
-    
-    /* Fix select field height */
-    .mat-mdc-select .mat-mdc-select-trigger {
-      height: 56px;
-      display: flex;
-      align-items: center;
-    }
-    
-    /* Fix textarea height */
-    .mat-mdc-form-field textarea.mat-mdc-input-element {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    /* Card content padding */
-    .mat-mdc-card-content {
-      padding: 24px;
-    }
-    
-    .mat-mdc-card-header {
-      padding: 24px 24px 16px 24px;
-    }
-    
-    /* Form content wrapper */
-    .form-content-wrapper {
-      padding: 8px 0;
     }
     
     /* Color preview styling */
     .color-preview {
-      min-width: 20px;
-      min-height: 20px;
       width: 20px;
       height: 20px;
       flex-shrink: 0;
-    }
-    
-    /* Button spacing */
-    .button-container {
-      padding-top: 8px;
-    }
-    
-    /* Datepicker icon alignment */
-    .mat-datepicker-toggle {
-      padding: 0;
-    }
-    
-    /* Fix floating labels */
-    .mat-mdc-form-field-subscript-wrapper {
-      margin-top: 8px;
     }
   `,
   encapsulation: ViewEncapsulation.None,
