@@ -358,6 +358,99 @@ export class ProjectCardComponent {
 
 ### State Management
 
+#### NgRx Signal Store Pattern
+
+For complex feature state, use NgRx Signal Store:
+
+```typescript
+import { Injectable } from '@angular/core'
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals'
+import { rxMethod } from '@ngrx/signals/rxjs-interop'
+import { tapResponse } from '@ngrx/operators'
+import { computed } from '@angular/core'
+import { switchMap, exhaustMap } from 'rxjs'
+
+type ProjectState = {
+  projects: Project[]
+  selectedProject: Project | null
+  loading: boolean
+  saving: boolean
+  error: string | null
+  filters: ProjectFilters
+}
+
+const initialState: ProjectState = {
+  projects: [],
+  selectedProject: null,
+  loading: false,
+  saving: false,
+  error: null,
+  filters: { status: null, search: '' }
+}
+
+@Injectable()
+export class ProjectStore extends signalStore(
+  { providedIn: 'root' },
+  withState(initialState),
+  withComputed((state) => ({
+    filteredProjects: computed(() => 
+      applyFilters(state.projects(), state.filters())
+    ),
+    activeProjectsCount: computed(() => 
+      state.projects().filter(p => p.status === 'active').length
+    ),
+  })),
+  withMethods((store, projectService = inject(ProjectService)) => ({
+    
+    loadProjects: rxMethod<void>(
+      pipe(
+        switchMap(() => {
+          patchState(store, { loading: true, error: null })
+          
+          return projectService.getProjects().pipe(
+            tapResponse({
+              next: (projects) => patchState(store, { projects, loading: false }),
+              error: (error) => patchState(store, { 
+                error: 'Failed to load projects', 
+                loading: false 
+              })
+            })
+          )
+        })
+      )
+    ),
+
+    createProject: rxMethod<CreateProjectRequest>(
+      pipe(
+        exhaustMap((request) => {
+          patchState(store, { saving: true, error: null })
+          
+          return projectService.createProject(request).pipe(
+            tapResponse({
+              next: (newProject) => patchState(store, {
+                projects: [newProject, ...store.projects()],
+                saving: false
+              }),
+              error: (error) => patchState(store, { 
+                error: 'Failed to create project', 
+                saving: false 
+              })
+            })
+          )
+        })
+      )
+    ),
+
+    setFilters: (filters: ProjectFilters) => 
+      patchState(store, { filters }),
+    
+    clearError: () => patchState(store, { error: null }),
+  }))
+) {}
+```
+
+#### Local Component State
+
 - **Use signals for local component state**
 - **Use `computed()` for derived state**
 - **Keep state transformations pure and predictable**
@@ -399,11 +492,120 @@ export class ProjectsComponent {
 }
 ```
 
+#### State Synchronization Pattern
+
+For cross-component communication:
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class AppStateService {
+  private _selectedProject = signal<Project | null>(null)
+  private _theme = signal<Theme>('light')
+  
+  readonly selectedProject = this._selectedProject.asReadonly()
+  readonly theme = this._theme.asReadonly()
+  
+  setSelectedProject(project: Project | null): void {
+    this._selectedProject.set(project)
+  }
+  
+  setTheme(theme: Theme): void {
+    this._theme.set(theme)
+    document.body.className = `theme-${theme}`
+  }
+}
+```
+
 ### Services
+
+#### Repository Pattern
+
+Abstract data access with repository pattern:
+
+```typescript
+export abstract class Repository<T, TCreate = T, TUpdate = T> {
+  abstract getAll(): Observable<T[]>
+  abstract getById(id: string): Observable<T>
+  abstract create(item: TCreate): Observable<T>
+  abstract update(id: string, item: TUpdate): Observable<T>
+  abstract delete(id: string): Observable<void>
+}
+
+@Injectable({ providedIn: 'root' })
+export class ProjectRepository extends Repository<Project, CreateProjectRequest, UpdateProjectRequest> {
+  private readonly http = inject(HttpClient)
+  private readonly baseUrl = '/api/projects'
+  
+  getAll(): Observable<Project[]> {
+    return this.http.get<Project[]>(this.baseUrl)
+  }
+  
+  getById(id: string): Observable<Project> {
+    return this.http.get<Project>(`${this.baseUrl}/${id}`)
+  }
+  
+  create(request: CreateProjectRequest): Observable<Project> {
+    return this.http.post<Project>(this.baseUrl, request)
+  }
+  
+  update(id: string, request: UpdateProjectRequest): Observable<Project> {
+    return this.http.put<Project>(`${this.baseUrl}/${id}`, request)
+  }
+  
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`)
+  }
+}
+```
+
+#### Facade Pattern
+
+Combine multiple services behind a single interface:
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class ProjectFacade {
+  private readonly projectRepository = inject(ProjectRepository)
+  private readonly projectStore = inject(ProjectStore)
+  private readonly notificationService = inject(NotificationService)
+  
+  // Expose store selectors
+  projects$ = this.projectStore.projects$
+  selectedProject$ = this.projectStore.selectedProject$
+  loading$ = this.projectStore.loading$
+  
+  async loadProjects(): Promise<void> {
+    try {
+      this.projectStore.setLoading(true)
+      const projects = await firstValueFrom(this.projectRepository.getAll())
+      this.projectStore.setProjects(projects)
+    } catch (error) {
+      this.notificationService.showError('Failed to load projects')
+    } finally {
+      this.projectStore.setLoading(false)
+    }
+  }
+  
+  async createProject(request: CreateProjectRequest): Promise<void> {
+    try {
+      const project = await firstValueFrom(this.projectRepository.create(request))
+      this.projectStore.addProject(project)
+      this.notificationService.showSuccess('Project created successfully')
+    } catch (error) {
+      this.notificationService.showError('Failed to create project')
+      throw error
+    }
+  }
+}
+```
+
+#### Service Best Practices
 
 - **Design services around single responsibility**
 - **Use `providedIn: 'root'` for singleton services**
 - **Use `inject()` function instead of constructor injection**
+- **Implement repository pattern for data access**
+- **Use facade pattern for complex operations**
 
 ```typescript
 // ✅ CORRECT - Modern service with inject()
