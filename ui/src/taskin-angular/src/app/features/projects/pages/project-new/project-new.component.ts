@@ -31,16 +31,9 @@ import { ProjectService, CreateProjectCommand, UpdateProjectCommand, ProjectDeta
   ],
   templateUrl: './project-new.component.html',
   styles: `
-    /* Prevent form field fragmentation */
+    /* Form field spacing */
     .form-field-wrapper {
-      break-inside: avoid;
-      contain: layout;
-    }
-    
-    /* Ensure proper Material form field rendering */
-    .mat-mdc-form-field {
-      width: 100%;
-      display: block;
+      margin-bottom: 1.5rem;
     }
     
     /* Color preview styling */

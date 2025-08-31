@@ -1,11 +1,11 @@
 <page-header class="bg-cyan-50" />
 
 <form class="m-x--4">
-  <mat-form-field class="m-x-4" appearance="outline">
+  <mat-form-field class="m-x-4">
     <input matInput [(ngModel)]="query.q" name="q" placeholder="Query String">
   </mat-form-field>
 
-  <mat-form-field class="m-x-4" appearance="outline">
+  <mat-form-field class="m-x-4">
     <mat-select [(ngModel)]="query.sort" name="sort" placeholder="Sort">
       <mat-option>-- None --</mat-option>
       <mat-option value="stars">stars</mat-option>
@@ -14,7 +14,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field class="m-x-4" appearance="outline">
+  <mat-form-field class="m-x-4">
     <mat-select [(ngModel)]="query.order" name="order" placeholder="Order">
       <mat-option>-- None --</mat-option>
       <mat-option value="desc">desc</mat-option>

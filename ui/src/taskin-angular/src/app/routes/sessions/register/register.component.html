@@ -9,28 +9,33 @@
 
     <mat-card-content>
       <form class="form-field-full" [formGroup]="registerForm">
-        <mat-form-field appearance="outline">
-          <mat-label>{{'username' | translate}}</mat-label>
+        <div>
+          <label>{{'username' | translate}}</label>
+          <mat-form-field>
           <input matInput formControlName="username" required>
           @if (registerForm.get('username')?.invalid) {
             <mat-error>
               <span>{{'validation.required' | translate}}</span>
             </mat-error>
           }
-        </mat-form-field>
+          </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{'password' | translate}}</mat-label>
+        <div>
+          <label>{{'password' | translate}}</label>
+          <mat-form-field>
           <input matInput type="password" formControlName="password" required>
           @if (registerForm.get('password')?.invalid) {
             <mat-error>
               <span>{{'validation.required' | translate}}</span>
             </mat-error>
           }
-        </mat-form-field>
+          </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{'confirm_password' | translate}}</mat-label>
+        <div>
+          <label>{{'confirm_password' | translate}}</label>
+          <mat-form-field>
           <input matInput type="password" formControlName="confirmPassword" required>
           @if (registerForm.get('confirmPassword')?.hasError('required')) {
             <mat-error>
@@ -43,7 +48,8 @@
               <span>{{'validation.inconsistent'}}</span>
             </mat-error>
           }
-        </mat-form-field>
+          </mat-form-field>
+        </div>
 
         <mat-checkbox>{{'read_and_agree' | translate}}</mat-checkbox>
 

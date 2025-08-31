@@ -180,17 +180,17 @@
           <mat-card-content class="space-y-4">
             <div>
               <label class="text-sm font-medium text-gray-700">Due Date</label>
-              <p class="text-gray-900">{{ formatDate(proj.dueDate) }}</p>
+              <p class="text-gray-900">{{ proj.dueDate | date:'MMMM d, y' }}</p>
             </div>
             
             <div>
               <label class="text-sm font-medium text-gray-700">Created</label>
-              <p class="text-gray-900">{{ formatDate(proj.createdAt) }}</p>
+              <p class="text-gray-900">{{ proj.createdAt | date:'MMMM d, y' }}</p>
             </div>
             
             <div>
               <label class="text-sm font-medium text-gray-700">Last Updated</label>
-              <p class="text-gray-900">{{ formatDate(proj.updatedAt) }}</p>
+              <p class="text-gray-900">{{ proj.updatedAt | date:'MMMM d, y' }}</p>
             </div>
           </mat-card-content>
         </mat-card>

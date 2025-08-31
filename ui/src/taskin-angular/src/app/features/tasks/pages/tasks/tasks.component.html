@@ -70,19 +70,22 @@
   <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
       <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <mat-form-field appearance="outline" class="w-full sm:w-80">
+        <mat-form-field class="w-full sm:w-80">
           <input matInput placeholder="Search tasks">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
         
-        <mat-form-field appearance="outline" class="w-full sm:w-48">
+        <div>
+          <label>Project filter</label>
+          <mat-form-field class="w-full sm:w-48">
           <mat-select [value]="selectedProject()" (selectionChange)="selectedProject.set($event.value)">
             <mat-option value="all">All Projects</mat-option>
             <mat-option value="ecommerce">E-commerce Platform</mat-option>
             <mat-option value="mobile">Mobile App Redesign</mat-option>
             <mat-option value="docs">API Documentation</mat-option>
           </mat-select>
-        </mat-form-field>
+          </mat-form-field>
+        </div>
       </div>
       
       <div class="flex items-center space-x-2">

@@ -154,14 +154,6 @@ export class ProjectsComponent implements OnInit {
     }
   }
 
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  }
 
   getStatusColor(status: string): string {
     switch (status.toLowerCase()) {

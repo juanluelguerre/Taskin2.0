@@ -80,7 +80,7 @@
   <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
       <div class="flex items-center space-x-4">
-        <mat-form-field appearance="outline" class="w-80">
+        <mat-form-field class="w-80">
           <input matInput placeholder="Search projects" [value]="searchTerm()" (input)="onSearch($event)">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
@@ -177,7 +177,7 @@
             <div class="flex items-center justify-between text-sm text-gray-600">
               <div class="flex items-center">
                 <mat-icon class="text-gray-400 mr-1 text-sm">schedule</mat-icon>
-                <span>Due {{ formatDate(project.dueDate) }}</span>
+                <span>Due {{ project.dueDate | date:'MMM d, y' }}</span>
               </div>
               <button mat-button color="primary" class="text-sm" (click)="onViewProject(project.id)">
                 View Details

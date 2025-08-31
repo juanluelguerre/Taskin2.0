@@ -44,18 +44,16 @@
         <mat-card class="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
           <mat-card-header>
             <mat-card-title class="text-gray-900">Project Information</mat-card-title>
-            <mat-card-subtitle class="text-gray-600"
-              >Fill in the basic information for your project</mat-card-subtitle
-            >
           </mat-card-header>
 
           <mat-card-content class="p-6">
             <div class="space-y-6">
               <!-- Project Name -->
               <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Project Name</mat-label>
-                  <input matInput formControlName="name" placeholder="Enter project name" />
+                <mat-label for="name">Project Name</mat-label>
+                <mat-form-field class="w-full">
+
+                  <input matInput formControlName="name"  placeholder="Enter project name" />
                   @if (hasError('name', 'required')) {
                   <mat-error>{{ getErrorMessage('name') }}</mat-error>
                   } @if (hasError('name', 'minlength')) {
@@ -66,8 +64,8 @@
 
               <!-- Description -->
               <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Description</mat-label>
+                <label>Description</label>
+                <mat-form-field class="w-full">
                   <textarea
                     matInput
                     formControlName="description"
@@ -79,8 +77,8 @@
 
               <!-- Status -->
               <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Status</mat-label>
+                <label>Status</label>
+                <mat-form-field class="w-full">
                   <mat-select formControlName="status">
                     @for (option of statusOptions; track option.value) {
                     <mat-option [value]="option.value">{{ option.label }}</mat-option>
@@ -91,8 +89,8 @@
 
               <!-- Due Date -->
               <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Due Date</mat-label>
+                <label>Due Date</label>
+                <mat-form-field class="w-full">
                   <input matInput [matDatepicker]="picker" formControlName="dueDate" />
                   <mat-hint>Optional: Set a target completion date</mat-hint>
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -119,8 +117,8 @@
             <div class="space-y-6">
               <!-- Background Color -->
               <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Background Color</mat-label>
+                <label>Background Color</label>
+                <mat-form-field class="w-full">
                   <mat-select formControlName="backgroundColor">
                     @for (color of colorOptions; track color.value) {
                     <mat-option [value]="color.value">
@@ -139,8 +137,8 @@
 
               <!-- Image URL -->
               <div class="form-field-wrapper">
-                <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>Image URL</mat-label>
+                <label>Image URL</label>
+                <mat-form-field class="w-full">
                   <input
                     matInput
                     formControlName="imageUrl"

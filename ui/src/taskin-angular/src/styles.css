@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Minimal Material Design fixes for Tailwind conflicts */
+.mat-mdc-form-field {
+  font-family: inherit;
+}
+
+/* Preserve Material's native outline behavior */
+.mat-mdc-form-field-appearance-outline .mdc-notched-outline {
+  border-color: rgba(0, 0, 0, 0.38);
+}
+
+/* Fix for select dropdown positioning */
+.cdk-overlay-pane {
+  z-index: 1000;
+}
