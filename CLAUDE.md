@@ -2,6 +2,66 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Context7 Integration
+
+**IMPORTANT**: Always use Context7 MCP for library documentation and best practices. Context7 provides up-to-date documentation and patterns for all technologies used in this project.
+
+### When to Use Context7
+
+1. **Before implementing new features** - Get latest patterns and best practices
+2. **When working with unfamiliar libraries** - Get comprehensive documentation
+3. **For debugging complex issues** - Get troubleshooting guides and solutions
+4. **When updating dependencies** - Check for breaking changes and migration guides
+
+### Context7 Usage by Technology
+
+#### Angular & Frontend
+```bash
+# Angular framework and ecosystem
+Context7: @angular/core signals and dependency injection
+Context7: @angular/material components and theming
+Context7: @ngrx/signals state management
+Context7: @angular/cdk accessibility and layout
+Context7: rxjs operators and patterns
+Context7: transloco internationalization
+```
+
+#### .NET Backend
+```bash
+# .NET ecosystem and frameworks
+Context7: Microsoft.EntityFrameworkCore relationships and queries
+Context7: MediatR CQRS implementation patterns
+Context7: FluentValidation validation patterns
+Context7: Serilog structured logging
+Context7: ASP.NET Core middleware and dependency injection
+```
+
+#### Databases & Caching
+```bash
+# Database technologies
+Context7: Entity Framework Core SQL Server patterns
+Context7: MongoDB.Driver document operations
+Context7: StackExchange.Redis caching strategies
+```
+
+#### Infrastructure & DevOps
+```bash
+# Infrastructure and deployment
+Context7: Docker containerization patterns
+Context7: Azure deployment strategies
+Context7: CI/CD pipeline best practices
+```
+
+### Reference Files
+
+This project includes three comprehensive Angular reference files that should be consulted alongside Context7:
+
+- **ANGULAR_PATTERNS_REFERENCE.md**: Comprehensive architectural patterns and best practices
+- **ANGULAR_CLAUDE_GUIDE.md**: Development workflows and project structure guidelines
+- **ANGULAR_COMPONENT_TEMPLATES.md**: Ready-to-use component templates and examples
+
+These files provide project-specific patterns that complement Context7's general library documentation.
+
 ## Project Overview
 
 Taskin 2.0 is a full-stack productivity application that implements the Pomodoro Technique for task management. The project consists of:
@@ -88,6 +148,102 @@ function handleApiResponse(data: any): Project[] {
 
 ## Angular 19 Best Practices
 
+### Architecture Patterns
+
+#### Smart vs Dumb Components Pattern
+
+Always separate components into smart (container) and dumb (presentational) components:
+
+**Smart Components (Containers):**
+```typescript
+// Container manages state and business logic
+@Component({
+  selector: 'app-project-container',
+  template: `
+    <app-project-list
+      [projects]="projects()"
+      [loading]="loading()"
+      (projectSelected)="onProjectSelected($event)"
+      (projectDeleted)="onProjectDeleted($event)">
+    </app-project-list>
+  `,
+  providers: [ProjectStore]
+})
+export class ProjectContainerComponent {
+  private store = inject(ProjectStore)
+  
+  projects = this.store.selectSignal(state => state.projects)
+  loading = this.store.selectSignal(state => state.loading)
+
+  onProjectSelected(project: Project): void {
+    this.store.selectProject(project)
+  }
+
+  onProjectDeleted(projectId: string): void {
+    this.store.deleteProject(projectId)
+  }
+}
+```
+
+**Dumb Components (Presentational):**
+```typescript
+// Pure presentation with inputs/outputs
+@Component({
+  selector: 'app-project-list',
+  template: `
+    @if (loading()) {
+      <app-loading-spinner></app-loading-spinner>
+    } @else {
+      @for (project of projects(); track project.id) {
+        <app-project-card
+          [project]="project"
+          (selected)="projectSelected.emit(project)"
+          (deleted)="projectDeleted.emit(project.id)">
+        </app-project-card>
+      }
+    }
+  `
+})
+export class ProjectListComponent {
+  projects = input<Project[]>([])
+  loading = input<boolean>(false)
+  
+  projectSelected = output<Project>()
+  projectDeleted = output<string>()
+}
+```
+
+#### Component Composition Pattern
+
+Use content projection for flexible, reusable components:
+
+```typescript
+@Component({
+  selector: 'app-base-list',
+  template: `
+    <div class="list-container">
+      <div class="list-header">
+        <ng-content select="[slot=header]"></ng-content>
+      </div>
+      <div class="list-content">
+        <ng-content select="[slot=content]"></ng-content>
+      </div>
+      <div class="list-footer">
+        <ng-content select="[slot=footer]"></ng-content>
+      </div>
+    </div>
+  `
+})
+export class BaseListComponent {}
+
+// Usage:
+// <app-base-list>
+//   <div slot="header"><h2>Projects</h2></div>
+//   <div slot="content"><app-project-table></app-project-table></div>
+//   <div slot="footer"><app-pagination></app-pagination></div>
+// </app-base-list>
+```
+
 ### Components
 
 - **Always use standalone components** (default in Angular 19)
@@ -96,6 +252,8 @@ function handleApiResponse(data: any): Project[] {
 - **Implement lazy loading** for feature routes
 - **Use `NgOptimizedImage`** for all static images
 - **DO NOT use `@HostBinding` and `@HostListener`** - Use `host` object instead
+- **Follow Smart/Dumb component pattern**
+- **Use component composition with content projection**
 
 ```typescript
 // ✅ CORRECT - Modern Angular 19 component
