@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 15s npm start)",
+      "Bash(mkdir:*)",
+      "Bash(timeout:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(cp:*)",
+      "Bash(ng update:*)",
+      "Bash(npm update:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(ng build:*)",
+      "Bash(rm:*)",
+      "Bash(ng serve:*)"
+    ],
+    "deny": []
+  }
+}

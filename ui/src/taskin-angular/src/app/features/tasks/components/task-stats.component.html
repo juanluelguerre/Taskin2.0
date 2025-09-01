@@ -1,0 +1,98 @@
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <!-- Total Tasks -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex items-center">
+      <div class="p-3 bg-blue-100 rounded-full mr-4">
+        <mat-icon class="text-blue-600">task_alt</mat-icon>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Total Tasks</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats().total }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Pending Tasks -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex items-center">
+      <div class="p-3 bg-yellow-100 rounded-full mr-4">
+        <mat-icon class="text-yellow-600">pending</mat-icon>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Pending</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats().pending }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- In Progress Tasks -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex items-center">
+      <div class="p-3 bg-orange-100 rounded-full mr-4">
+        <mat-icon class="text-orange-600">play_circle</mat-icon>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">In Progress</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats().inProgress }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Completed Tasks -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex items-center">
+      <div class="p-3 bg-green-100 rounded-full mr-4">
+        <mat-icon class="text-green-600">check_circle</mat-icon>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Completed</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats().completed }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Overdue Tasks -->
+  @if (stats().overdue > 0) {
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-red-200">
+      <div class="flex items-center">
+        <div class="p-3 bg-red-100 rounded-full mr-4">
+          <mat-icon class="text-red-600">warning</mat-icon>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Overdue</p>
+          <p class="text-2xl font-bold text-red-900">{{ stats().overdue }}</p>
+        </div>
+      </div>
+    </div>
+  }
+  
+  <!-- Completion Rate -->
+  @if (stats().total > 0) {
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="p-3 bg-purple-100 rounded-full mr-4">
+          <mat-icon class="text-purple-600">trending_up</mat-icon>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Completion Rate</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().completionRate }}%</p>
+        </div>
+      </div>
+    </div>
+  }
+  
+  <!-- Productivity Score -->
+  @if (stats().productivity > 0) {
+    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="p-3 bg-indigo-100 rounded-full mr-4">
+          <mat-icon class="text-indigo-600">speed</mat-icon>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Productivity</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().productivity }}%</p>
+        </div>
+      </div>
+    </div>
+  }
+</div>

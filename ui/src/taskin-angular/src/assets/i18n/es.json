@@ -1,0 +1,56 @@
+{
+  "header": {
+    "title": "Task[in]",
+    "language": "Idioma",
+    "logout": "Cerrar sesión",
+    "profile": "Perfil"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "projects": "Proyectos",
+    "tasks": "Tareas",
+    "pomodoros": "Pomodoros"
+  },
+  "messages": {
+    "error": "Ha ocurrido un error. Por favor, inténtelo de nuevo.",
+    "success": "Operación completada exitosamente.",
+    "warning": "Por favor, verifique su entrada."
+  },
+  "projects": {
+    "messages": {
+      "created": "Proyecto '{{name}}' creado exitosamente.",
+      "updated": "Proyecto '{{name}}' actualizado exitosamente.",
+      "deleted": "Proyecto '{{name}}' eliminado exitosamente."
+    },
+    "errors": {
+      "loadFailed": "Error al cargar proyectos.",
+      "createFailed": "Error al crear proyecto.",
+      "updateFailed": "Error al actualizar proyecto.",
+      "deleteFailed": "Error al eliminar proyecto."
+    }
+  },
+  "tasks": {
+    "messages": {
+      "created": "Tarea '{{name}}' creada exitosamente.",
+      "updated": "Tarea '{{name}}' actualizada exitosamente.",
+      "deleted": "Tarea '{{name}}' eliminada exitosamente.",
+      "duplicated": "Tarea '{{name}}' duplicada exitosamente.",
+      "pomodoroStarted": "Cronómetro Pomodoro iniciado."
+    },
+    "errors": {
+      "general": "Ha ocurrido un error con la operación de tarea.",
+      "loadFailed": "Error al cargar detalles de la tarea.",
+      "createFailed": "Error al crear tarea.",
+      "updateFailed": "Error al actualizar tarea.",
+      "deleteFailed": "Error al eliminar tarea."
+    }
+  },
+  "forms": {
+    "errors": {
+      "validation": "Por favor, corrija los errores en el formulario."
+    },
+    "messages": {
+      "reset": "El formulario ha sido restablecido."
+    }
+  }
+}

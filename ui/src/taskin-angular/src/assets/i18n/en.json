@@ -1,0 +1,56 @@
+{
+  "header": {
+    "title": "Task[in]",
+    "language": "Language",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "tasks": "Tasks",
+    "pomodoros": "Pomodoros"
+  },
+  "messages": {
+    "error": "An error occurred. Please try again.",
+    "success": "Operation completed successfully.",
+    "warning": "Please check your input."
+  },
+  "projects": {
+    "messages": {
+      "created": "Project '{{name}}' created successfully.",
+      "updated": "Project '{{name}}' updated successfully.",
+      "deleted": "Project '{{name}}' deleted successfully."
+    },
+    "errors": {
+      "loadFailed": "Failed to load projects.",
+      "createFailed": "Failed to create project.",
+      "updateFailed": "Failed to update project.",
+      "deleteFailed": "Failed to delete project."
+    }
+  },
+  "tasks": {
+    "messages": {
+      "created": "Task '{{name}}' created successfully.",
+      "updated": "Task '{{name}}' updated successfully.",
+      "deleted": "Task '{{name}}' deleted successfully.",
+      "duplicated": "Task '{{name}}' duplicated successfully.",
+      "pomodoroStarted": "Pomodoro timer started."
+    },
+    "errors": {
+      "general": "An error occurred with the task operation.",
+      "loadFailed": "Failed to load task details.",
+      "createFailed": "Failed to create task.",
+      "updateFailed": "Failed to update task.",
+      "deleteFailed": "Failed to delete task."
+    }
+  },
+  "forms": {
+    "errors": {
+      "validation": "Please correct the errors in the form."
+    },
+    "messages": {
+      "reset": "Form has been reset."
+    }
+  }
+}

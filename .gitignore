@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+back/src/Taskin.Api/.idea
+back/src/.DS_Store
+.DS_Store

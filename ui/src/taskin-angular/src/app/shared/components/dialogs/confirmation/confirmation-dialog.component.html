@@ -1,0 +1,27 @@
+<div class="ui-confirmation-dialog">
+  <button *ngIf="data.dismissible" mat-icon-button class="ui-confirmation-dialog__close" [matDialogClose]="undefined" aria-label="Close">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="ui-confirmation-dialog__content">
+    <div *ngIf="data.icon?.show" class="ui-confirmation-dialog__icon" [ngClass]="data.icon?.color">
+      <mat-icon [svgIcon]="data.icon?.name!" *ngIf="data.icon?.name && data.icon?.name?.includes(':')"></mat-icon>
+      <mat-icon *ngIf="data.icon?.name && !(data.icon?.name?.includes(':'))">{{ data.icon?.name }}</mat-icon>
+    </div>
+
+    <div class="ui-confirmation-dialog__text">
+      <div *ngIf="data.title" class="ui-confirmation-dialog__title" [innerHTML]="data.title"></div>
+      <div *ngIf="data.message" class="ui-confirmation-dialog__message" [innerHTML]="data.message"></div>
+    </div>
+  </div>
+
+  <div class="ui-confirmation-dialog__actions" *ngIf="data.actions?.confirm?.show || data.actions?.cancel?.show">
+    <button *ngIf="data.actions?.cancel?.show" mat-stroked-button [matDialogClose]="'cancelled'">
+      {{ data.actions?.cancel?.label || 'Cancel' }}
+    </button>
+    <button *ngIf="data.actions?.confirm?.show" mat-flat-button [color]="data.actions?.confirm?.color || 'warn'" [matDialogClose]="'confirmed'">
+      {{ data.actions?.confirm?.label || 'Confirm' }}
+    </button>
+  </div>
+</div>
+
