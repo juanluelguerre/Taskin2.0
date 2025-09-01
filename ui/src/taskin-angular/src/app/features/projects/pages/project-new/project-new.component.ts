@@ -1,17 +1,26 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProjectService, CreateProjectCommand, UpdateProjectCommand, ProjectDetailsDto } from '../../services/project.service';
+import { CreateProjectCommand, UpdateProjectCommand } from '../../services/project.service';
+import { ProjectStore } from '../../stores/project.store';
 
 @Component({
   selector: 'app-project-new',
@@ -27,36 +36,29 @@ import { ProjectService, CreateProjectCommand, UpdateProjectCommand, ProjectDeta
     MatDatepickerModule,
     MatNativeDateModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
+  providers: [ProjectStore],
   templateUrl: './project-new.component.html',
-  styles: `
-    /* Form field spacing */
-    .form-field-wrapper {
-      margin-bottom: 1.5rem;
-    }
-    
-    /* Color preview styling */
-    .color-preview {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-  `,
+  styleUrl: './project-new.component.scss',
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectNewComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly projectService = inject(ProjectService);
+  private readonly projectStore = inject(ProjectStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
   // State signals
-  loading = signal(false);
-  error = signal<string | null>(null);
   isEditMode = signal(false);
   projectId = signal<string | null>(null);
+
+  // Expose store selectors
+  readonly loading = this.projectStore.loading;
+  readonly saving = this.projectStore.saving;
+  readonly error = this.projectStore.error;
+  readonly project = this.projectStore.selectedProject;
 
   // Form
   projectForm: FormGroup;
@@ -65,7 +67,7 @@ export class ProjectNewComponent implements OnInit {
   statusOptions = [
     { value: 0, label: 'Active' },
     { value: 1, label: 'Completed' },
-    { value: 2, label: 'On Hold' }
+    { value: 2, label: 'On Hold' },
   ];
 
   // Color options
@@ -77,7 +79,7 @@ export class ProjectNewComponent implements OnInit {
     { value: '#EF4444', label: 'Red' },
     { value: '#14B8A6', label: 'Teal' },
     { value: '#6366F1', label: 'Indigo' },
-    { value: '#84CC16', label: 'Lime' }
+    { value: '#84CC16', label: 'Lime' },
   ];
 
   constructor() {
@@ -87,7 +89,7 @@ export class ProjectNewComponent implements OnInit {
       dueDate: [null],
       imageUrl: [''],
       backgroundColor: ['#3B82F6'],
-      status: [0]
+      status: [0],
     });
   }
 
@@ -97,56 +99,48 @@ export class ProjectNewComponent implements OnInit {
     if (projectId) {
       this.isEditMode.set(true);
       this.projectId.set(projectId);
-      this.loadProject(projectId);
+      this.projectStore.loadProject(projectId);
+
+      // Watch for project changes to populate form
+      effect(() => {
+        const project = this.project();
+        if (project) {
+          this.populateForm(project);
+        }
+      });
     }
   }
 
-  loadProject(id: string) {
-    this.loading.set(true);
-    this.error.set(null);
-
-    this.projectService.getProject(id).subscribe({
-      next: (project: ProjectDetailsDto) => {
-        this.populateForm(project);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.error.set('Error loading project. Please try again.');
-        this.loading.set(false);
-        console.error('Error loading project:', err);
-      }
-    });
-  }
-
-  populateForm(project: ProjectDetailsDto) {
+  populateForm(project: any) {
     const statusValue = this.getStatusValue(project.status);
-    
+
     this.projectForm.patchValue({
       name: project.name,
       description: project.description,
       dueDate: project.dueDate ? new Date(project.dueDate) : null,
       imageUrl: project.imageUrl,
       backgroundColor: project.backgroundColor || '#3B82F6',
-      status: statusValue
+      status: statusValue,
     });
   }
 
   getStatusValue(status: string): number {
     switch (status.toLowerCase()) {
-      case 'active': return 0;
-      case 'completed': return 1;
-      case 'onhold': return 2;
-      default: return 0;
+      case 'active':
+        return 0;
+      case 'completed':
+        return 1;
+      case 'onhold':
+        return 2;
+      default:
+        return 0;
     }
   }
 
   onSubmit() {
     if (this.projectForm.valid) {
-      this.loading.set(true);
-      this.error.set(null);
-
       const formValue = this.projectForm.value;
-      
+
       if (this.isEditMode()) {
         this.updateProject(formValue);
       } else {
@@ -164,19 +158,10 @@ export class ProjectNewComponent implements OnInit {
       dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : undefined,
       imageUrl: formValue.imageUrl || undefined,
       backgroundColor: formValue.backgroundColor || undefined,
-      status: formValue.status
+      status: formValue.status,
     };
 
-    this.projectService.createProject(command).subscribe({
-      next: (response) => {
-        this.router.navigate(['/projects']);
-      },
-      error: (err) => {
-        this.error.set('Error creating project. Please try again.');
-        this.loading.set(false);
-        console.error('Error creating project:', err);
-      }
-    });
+    this.projectStore.createProject(command);
   }
 
   updateProject(formValue: any) {
@@ -190,19 +175,10 @@ export class ProjectNewComponent implements OnInit {
       dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : undefined,
       imageUrl: formValue.imageUrl || undefined,
       backgroundColor: formValue.backgroundColor || undefined,
-      status: formValue.status
+      status: formValue.status,
     };
 
-    this.projectService.updateProject(projectId, command).subscribe({
-      next: (response) => {
-        this.router.navigate(['/projects', projectId]);
-      },
-      error: (err) => {
-        this.error.set('Error updating project. Please try again.');
-        this.loading.set(false);
-        console.error('Error updating project:', err);
-      }
-    });
+    this.projectStore.updateProject({ id: projectId, command });
   }
 
   onCancel() {
@@ -223,7 +199,7 @@ export class ProjectNewComponent implements OnInit {
   // Helper methods for template
   hasError(controlName: string, errorType: string): boolean {
     const control = this.projectForm.get(controlName);
-    return control?.hasError(errorType) && control?.touched || false;
+    return (control?.hasError(errorType) && control?.touched) || false;
   }
 
   getErrorMessage(controlName: string): string {
@@ -245,7 +221,7 @@ export class ProjectNewComponent implements OnInit {
       dueDate: 'Due date',
       imageUrl: 'Image URL',
       backgroundColor: 'Background color',
-      status: 'Status'
+      status: 'Status',
     };
     return labels[controlName] || controlName;
   }

@@ -71,8 +71,8 @@
                 <div class="text-white">
                   <h2 class="text-2xl font-bold mb-2">{{ proj.name }}</h2>
                   <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" 
-                        [class]="getStatusColor(proj.status)">
-                    {{ getStatusDisplayName(proj.status) | titlecase }}
+                        [class]="proj.status | statusColor:'project'">
+                    {{ proj.status | statusDisplay:'project' | titlecase }}
                   </span>
                 </div>
               </div>
@@ -84,8 +84,8 @@
               <div class="flex items-center justify-between mb-4">
                 <h2 class="text-2xl font-bold text-gray-900">{{ proj.name }}</h2>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" 
-                      [class]="getStatusColor(proj.status)">
-                  {{ getStatusDisplayName(proj.status) | titlecase }}
+                      [class]="proj.status | statusColor:'project'">
+                  {{ proj.status | statusDisplay:'project' | titlecase }}
                 </span>
               </div>
             }
@@ -140,11 +140,11 @@
                       <h4 class="font-medium text-gray-900 mb-1">{{ task.title }}</h4>
                       <div class="flex items-center space-x-2">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" 
-                              [class]="getTaskStatusColor(task.status)">
-                          {{ getTaskStatusDisplayName(task.status) | titlecase }}
+                              [class]="task.status | statusColor:'task'">
+                          {{ task.status | statusDisplay:'task' | titlecase }}
                         </span>
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" 
-                              [class]="getPriorityColor(task.priority)">
+                              [class]="task.priority | priorityColor">
                           {{ task.priority | titlecase }}
                         </span>
                       </div>

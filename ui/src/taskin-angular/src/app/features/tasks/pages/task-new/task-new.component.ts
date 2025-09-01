@@ -1,22 +1,37 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, OnInit, inject, computed, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { TaskStore, TaskStatus, TaskPriority, CreateTaskRequest, UpdateTaskRequest } from '../../shared';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@core/services/notification.service';
+import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
+import {
+  CreateTaskRequest,
+  TaskPriority,
+  TaskStatus,
+  TaskStore,
+  UpdateTaskRequest,
+} from '../../shared';
 
 @Component({
   selector: 'app-task-new',
@@ -34,73 +49,13 @@ import { TaskStore, TaskStatus, TaskPriority, CreateTaskRequest, UpdateTaskReque
     MatNativeDateModule,
     MatChipsModule,
     MatProgressBarModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
   ],
   templateUrl: './task-new.component.html',
-  styles: `
-    .task-form-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-    
-    .form-section {
-      margin-bottom: 32px;
-    }
-    
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-    
-    @media (min-width: 768px) {
-      .form-row.two-columns {
-        grid-template-columns: 1fr 1fr;
-      }
-      
-      .form-row.three-columns {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-    }
-    
-    .full-width {
-      width: 100%;
-    }
-    
-    .form-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-top: 32px;
-    }
-    
-    .actions-left {
-      display: flex;
-      gap: 12px;
-    }
-    
-    .actions-right {
-      display: flex;
-      gap: 12px;
-    }
-    
-    .chip-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    
-    .error-message {
-      color: #d32f2f;
-      font-size: 0.875rem;
-      margin-top: 4px;
-    }
-  `,
+  styleUrl: './task-new.component.scss',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TaskStore]
+  providers: [TaskStore],
 })
 export class TaskNewComponent implements OnInit {
   // Dependencies
@@ -108,18 +63,19 @@ export class TaskNewComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly taskStore = inject(TaskStore);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
+  private readonly confirmationService = inject(UiConfirmationService);
 
   // Form and state
   readonly form: FormGroup;
   private readonly isEditMode = signal<boolean>(false);
   private readonly taskId = signal<string | null>(null);
-  
+
   // Store selectors
   readonly saving = this.taskStore.saving;
   readonly loading = this.taskStore.loading;
   readonly error = this.taskStore.error;
-  
+
   // Form data
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   readonly tags = signal<string[]>([]);
@@ -129,38 +85,34 @@ export class TaskNewComponent implements OnInit {
     { value: TaskPriority.Low, label: 'Low', color: 'text-gray-600' },
     { value: TaskPriority.Medium, label: 'Medium', color: 'text-yellow-600' },
     { value: TaskPriority.High, label: 'High', color: 'text-orange-600' },
-    { value: TaskPriority.Critical, label: 'Critical', color: 'text-red-600' }
+    { value: TaskPriority.Critical, label: 'Critical', color: 'text-red-600' },
   ];
 
   readonly statusOptions = [
     { value: TaskStatus.Pending, label: 'Pending' },
     { value: TaskStatus.InProgress, label: 'In Progress' },
     { value: TaskStatus.Completed, label: 'Completed' },
-    { value: TaskStatus.Cancelled, label: 'Cancelled' }
+    { value: TaskStatus.Cancelled, label: 'Cancelled' },
   ];
 
   readonly projects = [
     { id: '1', name: 'Taskin 2.0' },
     { id: '2', name: 'E-commerce Platform' },
     { id: '3', name: 'Mobile App Redesign' },
-    { id: '4', name: 'API Documentation' }
+    { id: '4', name: 'API Documentation' },
   ];
 
   readonly assignees = [
     { id: '1', name: 'Juan Luis' },
     { id: '2', name: 'Jane Smith' },
     { id: '3', name: 'Mike Johnson' },
-    { id: '4', name: 'Sarah Wilson' }
+    { id: '4', name: 'Sarah Wilson' },
   ];
 
   // Computed properties
-  readonly pageTitle = computed(() => 
-    this.isEditMode() ? 'Edit Task' : 'Create New Task'
-  );
+  readonly pageTitle = computed(() => (this.isEditMode() ? 'Edit Task' : 'Create New Task'));
 
-  readonly submitButtonText = computed(() => 
-    this.isEditMode() ? 'Update Task' : 'Create Task'
-  );
+  readonly submitButtonText = computed(() => (this.isEditMode() ? 'Update Task' : 'Create Task'));
 
   constructor() {
     // Initialize reactive form
@@ -172,7 +124,7 @@ export class TaskNewComponent implements OnInit {
       projectId: ['', [Validators.required]],
       assigneeId: [''],
       dueDate: [null],
-      estimatedPomodoros: [null, [Validators.min(1), Validators.max(50)]]
+      estimatedPomodoros: [null, [Validators.min(1), Validators.max(50)]],
     });
   }
 
@@ -183,49 +135,41 @@ export class TaskNewComponent implements OnInit {
       if (id && id !== 'new') {
         this.isEditMode.set(true);
         this.taskId.set(id);
-        this.loadTaskForEditing(id);
+        this.taskStore.loadTask(id);
+
+        // Watch for task changes to populate form
+        effect(() => {
+          const task = this.taskStore.selectedTask();
+          if (task) {
+            this.populateFormFromTask(task);
+          }
+        });
       }
     });
 
-    // Handle errors
-    this.taskStore.error.subscribe(error => {
+    // Handle errors using effect
+    effect(() => {
+      const error = this.error();
       if (error) {
-        this.snackBar.open(error, 'Dismiss', {
-          duration: 5000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top'
-        });
+        this.notificationService.notifyError('tasks.errors.general', { error });
       }
     });
   }
 
-  private loadTaskForEditing(id: string): void {
-    // For now, we'll find the task from the store
-    // In a real application, this would call taskStore.loadTask(id)
-    this.taskStore.refreshTasks();
-    
-    setTimeout(() => {
-      const tasks = this.taskStore.taskViewModels();
-      const task = tasks.find(t => t.id === id);
-      if (task) {
-        // Populate form with task data
-        this.form.patchValue({
-          title: task.title,
-          description: task.description || '',
-          status: task.status,
-          priority: task.priority,
-          projectId: task.projectId,
-          assigneeId: task.assigneeId || '',
-          dueDate: task.dueDate ? new Date(task.dueDate) : null,
-          estimatedPomodoros: task.estimatedPomodoros || null
-        });
-        
-        // Set tags
-        this.tags.set([...task.tags]);
-      } else {
-        this.router.navigate(['/404']);
-      }
-    }, 500);
+  private populateFormFromTask(task: any): void {
+    this.form.patchValue({
+      title: task.title,
+      description: task.description || '',
+      status: task.status,
+      priority: task.priority,
+      projectId: task.projectId,
+      assigneeId: task.assigneeId || '',
+      dueDate: task.dueDate ? new Date(task.dueDate) : null,
+      estimatedPomodoros: task.estimatedPomodoros || null,
+    });
+
+    // Set tags
+    this.tags.set([...task.tags]);
   }
 
   // Tag management
@@ -249,10 +193,14 @@ export class TaskNewComponent implements OnInit {
         return `${this.getFieldDisplayName(fieldName)} is required`;
       }
       if (field.errors?.['minlength']) {
-        return `${this.getFieldDisplayName(fieldName)} must be at least ${field.errors['minlength'].requiredLength} characters`;
+        return `${this.getFieldDisplayName(fieldName)} must be at least ${
+          field.errors['minlength'].requiredLength
+        } characters`;
       }
       if (field.errors?.['maxlength']) {
-        return `${this.getFieldDisplayName(fieldName)} cannot exceed ${field.errors['maxlength'].requiredLength} characters`;
+        return `${this.getFieldDisplayName(fieldName)} cannot exceed ${
+          field.errors['maxlength'].requiredLength
+        } characters`;
       }
       if (field.errors?.['min']) {
         return `${this.getFieldDisplayName(fieldName)} must be at least ${field.errors['min'].min}`;
@@ -273,7 +221,7 @@ export class TaskNewComponent implements OnInit {
       projectId: 'Project',
       assigneeId: 'Assignee',
       dueDate: 'Due Date',
-      estimatedPomodoros: 'Estimated Pomodoros'
+      estimatedPomodoros: 'Estimated Pomodoros',
     };
     return displayNames[fieldName] || fieldName;
   }
@@ -287,7 +235,7 @@ export class TaskNewComponent implements OnInit {
   onSubmit(): void {
     if (this.form.valid) {
       const formValue = this.form.value;
-      
+
       if (this.isEditMode()) {
         const updateRequest: UpdateTaskRequest = {
           id: this.taskId()!,
@@ -300,18 +248,11 @@ export class TaskNewComponent implements OnInit {
           dueDate: formValue.dueDate || undefined,
           estimatedPomodoros: formValue.estimatedPomodoros || undefined,
           isCompleted: formValue.status === TaskStatus.Completed,
-          completedAt: formValue.status === TaskStatus.Completed ? new Date() : undefined
+          completedAt: formValue.status === TaskStatus.Completed ? new Date() : undefined,
         };
 
         this.taskStore.updateTask({ id: this.taskId()!, request: updateRequest });
-        
-        this.snackBar.open('Task updated successfully!', 'Dismiss', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top'
-        });
-        
-        // Navigate back to task details
+        this.notificationService.notifySuccess('tasks.messages.updated', { name: formValue.title });
         this.router.navigate(['/tasks', this.taskId()]);
       } else {
         const createRequest: CreateTaskRequest = {
@@ -323,28 +264,17 @@ export class TaskNewComponent implements OnInit {
           assigneeId: formValue.assigneeId || undefined,
           dueDate: formValue.dueDate || undefined,
           estimatedPomodoros: formValue.estimatedPomodoros || undefined,
-          tags: this.tags()
+          tags: this.tags(),
         };
 
         this.taskStore.createTask(createRequest);
-        
-        this.snackBar.open('Task created successfully!', 'Dismiss', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top'
-        });
-        
-        // Navigate back to tasks list
+        this.notificationService.notifySuccess('tasks.messages.created', { name: formValue.title });
         this.router.navigate(['/tasks']);
       }
     } else {
       // Mark all fields as touched to show validation errors
       this.form.markAllAsTouched();
-      this.snackBar.open('Please correct the errors in the form', 'Dismiss', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top'
-      });
+      this.notificationService.notifyWarning('forms.errors.validation');
     }
   }
 
@@ -357,15 +287,41 @@ export class TaskNewComponent implements OnInit {
   }
 
   onReset(): void {
-    if (confirm('Are you sure you want to reset all changes?')) {
-      this.form.reset();
-      this.tags.set([]);
-      
-      // Reset to default values
-      this.form.patchValue({
-        status: TaskStatus.Pending,
-        priority: TaskPriority.Medium
-      });
-    }
+    const confirmationRef = this.confirmationService.open({
+      title: 'Reset Form',
+      message: 'Are you sure you want to reset all changes? This action cannot be undone.',
+      icon: {
+        show: true,
+        name: 'refresh',
+        color: 'warn',
+      },
+      actions: {
+        confirm: {
+          show: true,
+          label: 'Reset',
+          color: 'warn',
+        },
+        cancel: {
+          show: true,
+          label: 'Cancel',
+        },
+      },
+      dismissible: true,
+    });
+
+    confirmationRef.afterClosed().subscribe(result => {
+      if (result === 'confirmed') {
+        this.form.reset();
+        this.tags.set([]);
+
+        // Reset to default values
+        this.form.patchValue({
+          status: TaskStatus.Pending,
+          priority: TaskPriority.Medium,
+        });
+
+        this.notificationService.notifyInfo('forms.messages.reset');
+      }
+    });
   }
 }

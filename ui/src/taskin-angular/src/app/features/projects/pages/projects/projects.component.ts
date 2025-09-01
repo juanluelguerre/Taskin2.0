@@ -1,15 +1,23 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, OnInit, inject, computed } from '@angular/core';
-import { CommonModule, TitleCasePipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  inject,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ProjectService, ProjectListDto, ProjectStatsDto, CollectionResponse } from '../../services/project.service';
+import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
+import { StatusColorPipe, StatusDisplayPipe } from '@shared/pipes';
+import { ProjectStatus, ProjectStore } from '../../stores/project.store';
 
 @Component({
   selector: 'app-projects',
@@ -25,104 +33,50 @@ import { ProjectService, ProjectListDto, ProjectStatsDto, CollectionResponse } f
     MatProgressSpinnerModule,
     TitleCasePipe,
     DatePipe,
-    FormsModule
+    FormsModule,
+    StatusColorPipe,
+    StatusDisplayPipe,
   ],
+  providers: [ProjectStore],
   templateUrl: './projects.component.html',
-  styles: ``,
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectsComponent implements OnInit {
-  private readonly projectService = inject(ProjectService);
+  private readonly projectStore = inject(ProjectStore);
   private readonly router = inject(Router);
-  
-  // State signals
-  projects = signal<ProjectListDto[]>([]);
-  stats = signal<ProjectStatsDto>({ total: 0, active: 0, completed: 0, onHold: 0 });
-  loading = signal(false);
-  error = signal<string | null>(null);
-  
-  // Filter signals
-  selectedFilter = signal('all');
-  searchTerm = signal('');
-  currentPage = signal(1);
-  pageSize = signal(12);
-  totalCount = signal(0);
+  private readonly confirmationService = inject(UiConfirmationService);
 
-  // Computed values
-  filteredProjects = computed(() => {
-    const filter = this.selectedFilter();
-    const search = this.searchTerm().toLowerCase();
-    let filtered = this.projects();
-
-    // Apply status filter
-    if (filter !== 'all') {
-      filtered = filtered.filter(p => p.status === filter);
-    }
-
-    // Apply search filter (already handled by API, but keeping for local filtering if needed)
-    if (search) {
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(search) || 
-        (p.description && p.description.toLowerCase().includes(search))
-      );
-    }
-
-    return filtered;
-  });
+  // Expose store selectors
+  readonly projects = this.projectStore.projectViewModels;
+  readonly stats = this.projectStore.projectStatistics;
+  readonly loading = this.projectStore.loading;
+  readonly saving = this.projectStore.saving;
+  readonly deleting = this.projectStore.deleting;
+  readonly error = this.projectStore.error;
+  readonly searchTerm = this.projectStore.searchTerm;
+  readonly statusFilter = this.projectStore.statusFilter;
+  readonly currentPage = this.projectStore.currentPage;
+  readonly totalPages = this.projectStore.totalPages;
+  readonly hasNextPage = this.projectStore.hasNextPage;
+  readonly hasPreviousPage = this.projectStore.hasPreviousPage;
+  readonly viewMode = this.projectStore.viewMode;
+  readonly selectedFilter = this.projectStore.statusFilter;
 
   ngOnInit() {
-    this.loadProjects();
-    this.loadStats();
-  }
-
-  loadProjects() {
-    this.loading.set(true);
-    this.error.set(null);
-    
-    const filters = {
-      page: this.currentPage(),
-      size: this.pageSize(),
-      status: this.selectedFilter() === 'all' ? undefined : this.selectedFilter(),
-      search: this.searchTerm() || undefined
-    };
-
-    this.projectService.getProjects(filters).subscribe({
-      next: (response: CollectionResponse<ProjectListDto>) => {
-        this.projects.set(response.data);
-        this.totalCount.set(response.total);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.error.set('Error loading projects. Please try again.');
-        this.loading.set(false);
-        console.error('Error loading projects:', err);
-      }
-    });
-  }
-
-  loadStats() {
-    this.projectService.getProjectStats().subscribe({
-      next: (stats) => {
-        this.stats.set(stats);
-      },
-      error: (err) => {
-        console.error('Error loading project stats:', err);
-      }
-    });
+    this.projectStore.loadProjects();
+    this.projectStore.loadProjectStats();
   }
 
   onFilterChange(filter: string) {
-    this.selectedFilter.set(filter);
-    this.currentPage.set(1); // Reset to first page
-    this.loadProjects();
+    const status = filter === 'all' ? null : (filter as ProjectStatus);
+    this.projectStore.setStatusFilter(status);
+    this.projectStore.loadProjects();
   }
 
-  onSearch(searchTerm: string | Event) {
-    const search = typeof searchTerm === 'string' ? searchTerm : (searchTerm.target as HTMLInputElement).value;
-    this.searchTerm.set(search);
-    this.currentPage.set(1); // Reset to first page
-    this.loadProjects();
+  onSearch(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.projectStore.searchProjects(target.value);
   }
 
   onNewProject() {
@@ -137,37 +91,53 @@ export class ProjectsComponent implements OnInit {
     this.router.navigate(['/projects', projectId, 'edit']);
   }
 
-  onDeleteProject(projectId: string) {
-    if (confirm('Are you sure you want to delete this project?')) {
-      this.loading.set(true);
-      this.projectService.deleteProject(projectId).subscribe({
-        next: () => {
-          this.loadProjects(); // Reload projects after deletion
-          this.loadStats(); // Reload stats
+  onDeleteProject(projectId: string, projectName: string) {
+    const confirmationRef = this.confirmationService.open({
+      title: 'Delete Project',
+      message: `Are you sure you want to delete the project "${projectName}"? This action cannot be undone.`,
+      icon: {
+        show: true,
+        name: 'delete',
+        color: 'warn',
+      },
+      actions: {
+        confirm: {
+          show: true,
+          label: 'Delete',
+          color: 'warn',
         },
-        error: (err) => {
-          this.error.set('Error deleting project. Please try again.');
-          this.loading.set(false);
-          console.error('Error deleting project:', err);
-        }
-      });
-    }
+        cancel: {
+          show: true,
+          label: 'Cancel',
+        },
+      },
+      dismissible: true,
+    });
+
+    confirmationRef.afterClosed().subscribe(result => {
+      if (result === 'confirmed') {
+        this.projectStore.deleteProject(projectId);
+      }
+    });
+  }
+
+  onPageChange(page: number) {
+    this.projectStore.setPage(page);
+    this.projectStore.loadProjects();
   }
 
 
-  getStatusColor(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'completed': return 'bg-blue-100 text-blue-800';
-      case 'onhold': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+  onToggleViewMode() {
+    const newMode = this.viewMode() === 'grid' ? 'list' : 'grid';
+    this.projectStore.setViewMode(newMode);
   }
 
-  getStatusDisplayName(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'onhold': return 'On Hold';
-      default: return status;
-    }
+  onClearFilters() {
+    this.projectStore.clearFilters();
+    this.projectStore.loadProjects();
+  }
+
+  onRefresh() {
+    this.projectStore.refreshProjects();
   }
 }

@@ -134,7 +134,7 @@
                   <mat-icon>visibility</mat-icon>
                   View Details
                 </button>
-                <button mat-menu-item class="text-red-600" (click)="onDeleteProject(project.id)">
+                <button mat-menu-item class="text-red-600" (click)="onDeleteProject(project.id, project.name)">
                   <mat-icon class="text-red-600">delete</mat-icon>
                   Delete
                 </button>
@@ -144,8 +144,8 @@
             <!-- Status Badge -->
             <div class="mb-4">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
-                    [class]="getStatusColor(project.status)">
-                {{ getStatusDisplayName(project.status) | titlecase }}
+                    [class]="project.status | statusColor:'project'">
+                {{ project.status | statusDisplay:'project' | titlecase }}
               </span>
             </div>
 

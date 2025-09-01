@@ -1,0 +1,63 @@
+.task-details-container {
+  @apply max-w-5xl mx-auto p-6;
+}
+
+.task-header {
+  @apply mb-8;
+}
+
+.task-content {
+  @apply grid grid-cols-1 gap-6;
+
+  @apply md:grid-cols-3;
+  grid-template-columns: 1fr;
+  
+  @screen md {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.info-section {
+  @apply grid gap-4;
+}
+
+.info-item {
+  @apply flex items-center gap-3 py-3 border-b border-gray-200;
+
+  &:last-child {
+    @apply border-b-0;
+  }
+}
+
+.info-label {
+  @apply min-w-32 font-medium text-gray-700;
+}
+
+.info-value {
+  @apply flex-1;
+}
+
+.progress-section {
+  @apply my-6;
+}
+
+.progress-bar-container {
+  @apply my-3;
+}
+
+.pomodoro-stats {
+  @apply grid gap-3 mt-4;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.stat-card {
+  @apply text-center p-4 bg-gray-50 rounded-lg;
+}
+
+.stat-number {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.stat-label {
+  @apply text-sm text-gray-600 mt-1;
+}

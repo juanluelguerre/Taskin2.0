@@ -1,94 +1,93 @@
 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+  <!-- First Row: Search and Status Filter -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
     
-    <!-- Search and Project Filter -->
-    <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-      
-      <!-- Search -->
-      <mat-form-field class="w-full sm:w-80">
+    <!-- Search -->
+    <div class="flex-1 max-w-md">
+      <mat-form-field class="w-full">
         <input matInput 
                placeholder="Search tasks..."
                [formControl]="searchControl"
                (input)="onSearchChange($event)">
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
-      
-      <!-- Project Filter -->
-      <div class="w-full sm:w-48">
-        <mat-form-field class="w-full">
-          <mat-label>Project</mat-label>
-          <mat-select [value]="filters().projectId || 'all'" 
-                     (selectionChange)="onProjectChange($event.value)">
-            <mat-option value="all">All Projects</mat-option>
-            @for (project of projects(); track project.id) {
-              <mat-option [value]="project.id">{{ project.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      
-      <!-- Priority Filter -->
-      <div class="w-full sm:w-40">
-        <mat-form-field class="w-full">
-          <mat-label>Priority</mat-label>
-          <mat-select [value]="filters().priority || 'all'"
-                     (selectionChange)="onPriorityChange($event.value)">
-            <mat-option value="all">All Priorities</mat-option>
-            @for (priority of priorityOptions; track priority.value) {
-              <mat-option [value]="priority.value">{{ priority.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      
-      <!-- Assignee Filter -->
-      <div class="w-full sm:w-48">
-        <mat-form-field class="w-full">
-          <mat-label>Assignee</mat-label>
-          <mat-select [value]="filters().assigneeId || 'all'"
-                     (selectionChange)="onAssigneeChange($event.value)">
-            <mat-option value="all">All Assignees</mat-option>
-            <mat-option value="me">Assigned to me</mat-option>
-            <mat-option value="unassigned">Unassigned</mat-option>
-            @for (assignee of assignees(); track assignee.id) {
-              <mat-option [value]="assignee.id">{{ assignee.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
     </div>
     
-    <!-- Status Toggle and Additional Filters -->
-    <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+    <!-- Status Filter -->
+    <div class="flex items-center justify-center lg:justify-end">
+      <mat-button-toggle-group [value]="filters().status || 'all'" 
+                              (change)="onStatusChange($event.value)" 
+                              class="border rounded shadow-sm">
+        <mat-button-toggle value="all" class="px-4 py-2">All</mat-button-toggle>
+        <mat-button-toggle value="pending" class="px-4 py-2">Pending</mat-button-toggle>
+        <mat-button-toggle value="in-progress" class="px-4 py-2">In Progress</mat-button-toggle>
+        <mat-button-toggle value="completed" class="px-4 py-2">Completed</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+  
+  <!-- Second Row: Dropdown Filters and Action Buttons -->
+  <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+    
+    <!-- Dropdown Filters -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-1">
       
-      <!-- Status Filter -->
-      <div class="flex items-center space-x-2">
-        <mat-button-toggle-group [value]="filters().status || 'all'" 
-                                (change)="onStatusChange($event.value)" 
-                                class="border rounded">
-          <mat-button-toggle value="all">All</mat-button-toggle>
-          <mat-button-toggle value="pending">Pending</mat-button-toggle>
-          <mat-button-toggle value="in-progress">In Progress</mat-button-toggle>
-          <mat-button-toggle value="completed">Completed</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
+      <!-- Project Filter -->
+      <mat-form-field class="w-full">
+        <mat-label>Project</mat-label>
+        <mat-select [value]="filters().projectId || 'all'" 
+                   (selectionChange)="onProjectChange($event.value)">
+          <mat-option value="all">All Projects</mat-option>
+          @for (project of projects(); track project.id) {
+            <mat-option [value]="project.id">{{ project.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
       
-      <!-- Quick Filters -->
-      <div class="flex items-center space-x-2">
-        <button mat-stroked-button 
-                [color]="filters().isOverdue ? 'warn' : 'basic'"
-                (click)="toggleOverdueFilter()">
-          <mat-icon class="mr-1">schedule</mat-icon>
-          Overdue
-        </button>
-        
-        <button mat-stroked-button 
-                [color]="hasActiveFilters() ? 'primary' : 'basic'"
-                (click)="clearAllFilters()">
-          <mat-icon class="mr-1">clear</mat-icon>
-          Clear Filters
-        </button>
-      </div>
+      <!-- Priority Filter -->
+      <mat-form-field class="w-full">
+        <mat-label>Priority</mat-label>
+        <mat-select [value]="filters().priority || 'all'"
+                   (selectionChange)="onPriorityChange($event.value)">
+          <mat-option value="all">All Priorities</mat-option>
+          @for (priority of priorityOptions; track priority.value) {
+            <mat-option [value]="priority.value">{{ priority.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      
+      <!-- Assignee Filter -->
+      <mat-form-field class="w-full">
+        <mat-label>Assignee</mat-label>
+        <mat-select [value]="filters().assigneeId || 'all'"
+                   (selectionChange)="onAssigneeChange($event.value)">
+          <mat-option value="all">All Assignees</mat-option>
+          <mat-option value="me">Assigned to me</mat-option>
+          <mat-option value="unassigned">Unassigned</mat-option>
+          @for (assignee of assignees(); track assignee.id) {
+            <mat-option [value]="assignee.id">{{ assignee.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 xl:ml-6">
+      <button mat-stroked-button 
+              [color]="filters().isOverdue ? 'warn' : 'basic'"
+              (click)="toggleOverdueFilter()"
+              class="px-4 py-2 whitespace-nowrap">
+        <mat-icon class="mr-2">schedule</mat-icon>
+        Overdue
+      </button>
+      
+      <button mat-stroked-button 
+              [color]="hasActiveFilters() ? 'primary' : 'basic'"
+              (click)="clearAllFilters()"
+              class="px-4 py-2 whitespace-nowrap">
+        <mat-icon class="mr-2">clear</mat-icon>
+        Clear Filters
+      </button>
     </div>
   </div>
   
