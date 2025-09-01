@@ -2811,3 +2811,4 @@ Context7: gRPC service implementation
 3. **During code reviews**: Reference Context7 for architectural guidance
 4. **When updating dependencies**: Check Context7 for migration guides and breaking changes
 5. **For performance optimization**: Use Context7 for latest optimization techniques
+- Add to memory. The html templante must be always located in is own file not embebed.

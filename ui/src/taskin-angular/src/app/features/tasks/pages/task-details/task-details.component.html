@@ -1,1 +1,297 @@
-<p>task-details works!</p>
+<!-- Loading State -->
+@if (loading()) {
+  <div class="task-details-container">
+    <div class="flex items-center justify-center py-12">
+      <mat-progress-bar mode="indeterminate" class="w-64"></mat-progress-bar>
+    </div>
+  </div>
+} @else if (task(); as currentTask) {
+  <!-- Task Details Content -->
+  <div class="task-details-container">
+    <!-- Header with Back Button and Actions -->
+    <div class="task-header">
+      <div class="flex items-center justify-between mb-6">
+        <button mat-icon-button 
+                (click)="onBackToList()"
+                matTooltip="Back to tasks list">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        
+        <div class="flex items-center gap-2">
+          <!-- Toggle Completion -->
+          <button mat-raised-button 
+                  [color]="currentTask.isCompleted ? 'warn' : 'primary'"
+                  (click)="onToggleCompletion()"
+                  [disabled]="saving()">
+            <mat-icon class="mr-2">
+              {{ currentTask.isCompleted ? 'undo' : 'check' }}
+            </mat-icon>
+            {{ currentTask.isCompleted ? 'Mark Incomplete' : 'Mark Complete' }}
+          </button>
+          
+          <!-- Actions Menu -->
+          <button mat-icon-button [matMenuTriggerFor]="actionsMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #actionsMenu="matMenu">
+            <button mat-menu-item (click)="onEditTask()">
+              <mat-icon>edit</mat-icon>
+              Edit Task
+            </button>
+            <button mat-menu-item (click)="onDuplicateTask()">
+              <mat-icon>content_copy</mat-icon>
+              Duplicate Task
+            </button>
+            <button mat-menu-item (click)="onStartPomodoro()">
+              <mat-icon>timer</mat-icon>
+              Start Pomodoro
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item 
+                    class="text-red-600" 
+                    (click)="onDeleteTask()">
+              <mat-icon class="text-red-600">delete</mat-icon>
+              Delete Task
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+
+      <!-- Task Title and Status -->
+      <div class="mb-4">
+        <h1 class="text-3xl font-bold text-gray-900 mb-3"
+            [class.line-through]="currentTask.isCompleted"
+            [class.text-gray-500]="currentTask.isCompleted">
+          {{ currentTask.title }}
+        </h1>
+        
+        <div class="flex items-center gap-3 flex-wrap">
+          <!-- Status Badge -->
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                [ngClass]="currentTask.statusColor">
+            {{ currentTask.status | titlecase }}
+          </span>
+          
+          <!-- Priority Badge -->
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                [ngClass]="currentTask.priorityColor">
+            {{ currentTask.priority | uppercase }}
+          </span>
+          
+          <!-- Due Date -->
+          @if (dueDateDisplayText()) {
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                  [class.bg-red-100]="isOverdue()"
+                  [class.text-red-800]="isOverdue()"
+                  [class.bg-yellow-100]="!isOverdue()"
+                  [class.text-yellow-800]="!isOverdue()">
+              <mat-icon class="mr-1 text-base">schedule</mat-icon>
+              {{ dueDateDisplayText() }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Tags -->
+      @if (currentTask.tags.length > 0) {
+        <div class="flex flex-wrap gap-2 mb-4">
+          @for (tag of currentTask.tags; track tag) {
+            <mat-chip>{{ tag }}</mat-chip>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="task-content">
+      <!-- Left Column: Task Information -->
+      <div>
+        <!-- Description -->
+        @if (currentTask.description) {
+          <mat-card class="mb-6">
+            <mat-card-header>
+              <mat-card-title>Description</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="text-gray-700 whitespace-pre-wrap">{{ currentTask.description }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+
+        <!-- Progress Section -->
+        @if (currentTask.estimatedPomodoros) {
+          <mat-card class="mb-6">
+            <mat-card-header>
+              <mat-card-title>Progress</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="progress-section">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-sm text-gray-600">
+                    Pomodoros: {{ currentTask.completedPomodoros || 0 }} / {{ currentTask.estimatedPomodoros }}
+                  </span>
+                  <span class="text-sm font-medium text-gray-900">
+                    {{ completionPercentage() }}%
+                  </span>
+                </div>
+                
+                <div class="progress-bar-container">
+                  <mat-progress-bar 
+                    [value]="completionPercentage()" 
+                    mode="determinate">
+                  </mat-progress-bar>
+                </div>
+
+                <!-- Pomodoro Stats -->
+                <div class="pomodoro-stats">
+                  <div class="stat-card">
+                    <div class="stat-number">{{ currentTask.completedPomodoros || 0 }}</div>
+                    <div class="stat-label">Completed</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-number">{{ (currentTask.estimatedPomodoros || 0) - (currentTask.completedPomodoros || 0) }}</div>
+                    <div class="stat-label">Remaining</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-number">{{ ((currentTask.completedPomodoros || 0) * 25) }}</div>
+                    <div class="stat-label">Minutes</div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+
+      <!-- Right Column: Task Details -->
+      <div>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Task Information</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-section">
+              <!-- Project -->
+              <div class="info-item">
+                <mat-icon class="text-gray-400">folder</mat-icon>
+                <div class="info-label">Project</div>
+                <div class="info-value font-medium">{{ currentTask.projectName }}</div>
+              </div>
+
+              <!-- Assignee -->
+              @if (currentTask.assigneeName) {
+                <div class="info-item">
+                  <mat-icon class="text-gray-400">person</mat-icon>
+                  <div class="info-label">Assigned to</div>
+                  <div class="info-value font-medium">{{ currentTask.assigneeName }}</div>
+                </div>
+              }
+
+              <!-- Due Date -->
+              @if (currentTask.dueDate) {
+                <div class="info-item">
+                  <mat-icon class="text-gray-400">event</mat-icon>
+                  <div class="info-label">Due Date</div>
+                  <div class="info-value font-medium">
+                    {{ currentTask.dueDate | date:'mediumDate' }}
+                  </div>
+                </div>
+              }
+
+              <!-- Status -->
+              <div class="info-item">
+                <mat-icon class="text-gray-400">info</mat-icon>
+                <div class="info-label">Status</div>
+                <div class="info-value">
+                  <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
+                        [ngClass]="currentTask.statusColor">
+                    {{ currentTask.status | titlecase }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Priority -->
+              <div class="info-item">
+                <mat-icon class="text-gray-400">flag</mat-icon>
+                <div class="info-label">Priority</div>
+                <div class="info-value">
+                  <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
+                        [ngClass]="currentTask.priorityColor">
+                    {{ currentTask.priority | uppercase }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Created Date -->
+              <div class="info-item">
+                <mat-icon class="text-gray-400">access_time</mat-icon>
+                <div class="info-label">Created</div>
+                <div class="info-value text-gray-600">
+                  {{ currentTask.createdAt | date:'short' }}
+                </div>
+              </div>
+
+              <!-- Last Updated -->
+              <div class="info-item">
+                <mat-icon class="text-gray-400">update</mat-icon>
+                <div class="info-label">Last Updated</div>
+                <div class="info-value text-gray-600">
+                  {{ currentTask.updatedAt | date:'short' }}
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Quick Actions -->
+        <mat-card class="mt-6">
+          <mat-card-header>
+            <mat-card-title>Quick Actions</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="flex flex-col gap-3">
+              <button mat-stroked-button 
+                      color="primary"
+                      (click)="onStartPomodoro()"
+                      class="justify-start">
+                <mat-icon class="mr-2">timer</mat-icon>
+                Start Pomodoro Timer
+              </button>
+              
+              <button mat-stroked-button 
+                      (click)="onEditTask()"
+                      class="justify-start">
+                <mat-icon class="mr-2">edit</mat-icon>
+                Edit Task Details
+              </button>
+              
+              <button mat-stroked-button 
+                      (click)="onDuplicateTask()"
+                      class="justify-start">
+                <mat-icon class="mr-2">content_copy</mat-icon>
+                Duplicate Task
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+} @else {
+  <!-- No Task Found -->
+  <div class="task-details-container">
+    <div class="text-center py-12">
+      <mat-icon class="text-gray-300 mb-4" style="font-size: 64px; width: 64px; height: 64px;">
+        assignment
+      </mat-icon>
+      <h2 class="text-xl font-semibold text-gray-900 mb-2">Task not found</h2>
+      <p class="text-gray-600 mb-6">The task you're looking for doesn't exist or may have been deleted.</p>
+      <button mat-raised-button 
+              color="primary"
+              (click)="onBackToList()">
+        <mat-icon class="mr-2">arrow_back</mat-icon>
+        Back to Tasks
+      </button>
+    </div>
+  </div>
+}

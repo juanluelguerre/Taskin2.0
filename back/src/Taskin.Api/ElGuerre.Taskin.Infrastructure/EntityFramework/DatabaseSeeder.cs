@@ -118,110 +118,222 @@ public static class DatabaseSeeder
         await context.Projects.AddRangeAsync(projects);
         await context.SaveChangesAsync();
 
-        // Add some tasks for the projects
+        // Add comprehensive tasks data for the projects
         await SeedTasksAsync(context, projects);
+        
+        // Add some pomodoros for completed tasks
+        await SeedPomodorosAsync(context);
     }
 
     private static async Task SeedTasksAsync(TaskinDbContext context, List<Project> projects)
     {
         List<Domain.Entities.Task> tasks = [];
 
-        // Tasks for E-commerce Platform
+        // Tasks for E-commerce Platform (project[0])
         Project ecommerceProject = projects[0];
         tasks.AddRange(
         [
             new Domain.Entities.Task
             {
-                Description = "Setup project structure and initialize React app",
+                Description = "Setup project structure and initialize React app with TypeScript, ESLint, and modern tooling configuration",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
-                Status = TaskStatus.Done
+                Status = TaskStatus.Done,
+                Deadline = DateTime.UtcNow.AddDays(-10)
             },
             new Domain.Entities.Task
             {
-                Description = "Design responsive product catalog pages",
+                Description = "Design responsive product catalog pages with filtering, search, and pagination functionality",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
-                Status = TaskStatus.Doing
+                Status = TaskStatus.Doing,
+                Deadline = DateTime.UtcNow.AddDays(5)
             },
             new Domain.Entities.Task
             {
-                Description = "Integrate Stripe payment gateway",
+                Description = "Integrate Stripe payment gateway with secure checkout flow and webhook handling",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
-                Status = TaskStatus.Todo
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(15)
             },
             new Domain.Entities.Task
             {
-                Description = "Implement user authentication with JWT",
+                Description = "Implement user authentication with JWT tokens and refresh mechanism",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
-                Status = TaskStatus.Todo
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(8)
+            },
+            new Domain.Entities.Task
+            {
+                Description = "Create shopping cart functionality with persistent storage and real-time updates",
+                ProjectId = ecommerceProject.Id,
+                Project = ecommerceProject,
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(12)
             }
         ]);
 
-        // Tasks for Mobile App Redesign
+        // Tasks for Mobile App Redesign (project[1])
         Project mobileProject = projects[1];
         tasks.AddRange(
         [
             new Domain.Entities.Task
             {
-                Description = "Conduct user research and interviews",
+                Description = "Conduct comprehensive user research and stakeholder interviews to understand pain points",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
-                Status = TaskStatus.Done
+                Status = TaskStatus.Done,
+                Deadline = DateTime.UtcNow.AddDays(-20)
             },
             new Domain.Entities.Task
             {
-                Description = "Create wireframes and user flows",
+                Description = "Create detailed wireframes and user journey flows for all major app sections",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
-                Status = TaskStatus.Done
+                Status = TaskStatus.Done,
+                Deadline = DateTime.UtcNow.AddDays(-15)
             },
             new Domain.Entities.Task
             {
-                Description = "Establish design system and components",
+                Description = "Establish comprehensive design system with components, colors, and typography guidelines",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
-                Status = TaskStatus.Doing
+                Status = TaskStatus.Doing,
+                Deadline = DateTime.UtcNow.AddDays(3)
             },
             new Domain.Entities.Task
             {
-                Description = "Build interactive prototype",
+                Description = "Build interactive prototype with animations and micro-interactions for user testing",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
-                Status = TaskStatus.Todo
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(10)
+            },
+            new Domain.Entities.Task
+            {
+                Description = "Conduct usability testing sessions and iterate based on user feedback",
+                ProjectId = mobileProject.Id,
+                Project = mobileProject,
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(18)
             }
         ]);
 
-        // Tasks for API Documentation
+        // Tasks for API Documentation (project[2])
         Project apiProject = projects[2];
         tasks.AddRange(
         [
             new Domain.Entities.Task
             {
-                Description = "Document REST API endpoints",
+                Description = "Document all REST API endpoints with request/response examples and error codes",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
-                Status = TaskStatus.Done
+                Status = TaskStatus.Done,
+                Deadline = DateTime.UtcNow.AddDays(-8)
             },
             new Domain.Entities.Task
             {
-                Description = "Create authentication flow guide",
+                Description = "Create comprehensive authentication flow guide with JWT implementation details",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
-                Status = TaskStatus.Done
+                Status = TaskStatus.Done,
+                Deadline = DateTime.UtcNow.AddDays(-6)
             },
             new Domain.Entities.Task
             {
-                Description = "Add practical code examples",
+                Description = "Add practical code examples in multiple programming languages (Python, JavaScript, cURL)",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
-                Status = TaskStatus.Done
+                Status = TaskStatus.Done,
+                Deadline = DateTime.UtcNow.AddDays(-3)
             }
         ]);
 
-        // Set timestamps for tasks
+        // Tasks for Marketing Website (project[3])
+        Project marketingProject = projects[3];
+        tasks.AddRange(
+        [
+            new Domain.Entities.Task
+            {
+                Description = "Design conversion-optimized landing page with clear value proposition and CTAs",
+                ProjectId = marketingProject.Id,
+                Project = marketingProject,
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(25)
+            },
+            new Domain.Entities.Task
+            {
+                Description = "Implement SEO best practices and schema markup for better search visibility",
+                ProjectId = marketingProject.Id,
+                Project = marketingProject,
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(30)
+            }
+        ]);
+
+        // Tasks for Data Analytics Dashboard (project[4])
+        Project analyticsProject = projects[4];
+        tasks.AddRange(
+        [
+            new Domain.Entities.Task
+            {
+                Description = "Design interactive charts and KPI widgets with real-time data visualization",
+                ProjectId = analyticsProject.Id,
+                Project = analyticsProject,
+                Status = TaskStatus.Doing,
+                Deadline = DateTime.UtcNow.AddDays(20)
+            },
+            new Domain.Entities.Task
+            {
+                Description = "Implement automated report generation with PDF export and email scheduling",
+                ProjectId = analyticsProject.Id,
+                Project = analyticsProject,
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(35)
+            },
+            new Domain.Entities.Task
+            {
+                Description = "Set up data pipelines and ETL processes for business intelligence metrics",
+                ProjectId = analyticsProject.Id,
+                Project = analyticsProject,
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(40)
+            }
+        ]);
+
+        // Tasks for Security Audit (project[5])
+        Project securityProject = projects[5];
+        tasks.AddRange(
+        [
+            new Domain.Entities.Task
+            {
+                Description = "Conduct penetration testing on web application and API endpoints",
+                ProjectId = securityProject.Id,
+                Project = securityProject,
+                Status = TaskStatus.Doing,
+                Deadline = DateTime.UtcNow.AddDays(7)
+            },
+            new Domain.Entities.Task
+            {
+                Description = "Review code for security vulnerabilities and implement OWASP recommendations",
+                ProjectId = securityProject.Id,
+                Project = securityProject,
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(14)
+            },
+            new Domain.Entities.Task
+            {
+                Description = "Set up automated security scanning and monitoring systems",
+                ProjectId = securityProject.Id,
+                Project = securityProject,
+                Status = TaskStatus.Todo,
+                Deadline = DateTime.UtcNow.AddDays(18)
+            }
+        ]);
+
+        // Set creation and modification timestamps
         foreach (Domain.Entities.Task task in tasks)
         {
             task.SetCreationInfo();
@@ -229,6 +341,65 @@ public static class DatabaseSeeder
         }
 
         await context.Tasks.AddRangeAsync(tasks);
+        await context.SaveChangesAsync();
+    }
+    
+    private static async Task SeedPomodorosAsync(TaskinDbContext context)
+    {
+        // Add pomodoros for completed and in-progress tasks
+        var doneTasks = await context.Tasks
+            .Where(t => t.Status == TaskStatus.Done)
+            .ToListAsync();
+            
+        var doingTasks = await context.Tasks
+            .Where(t => t.Status == TaskStatus.Doing)
+            .Take(3) // Only some of the doing tasks
+            .ToListAsync();
+
+        List<Pomodoro> pomodoros = [];
+
+        // Add pomodoros for completed tasks (2-6 per task)
+        foreach (var task in doneTasks)
+        {
+            var pomodoroCount = Random.Shared.Next(2, 7);
+            for (int i = 0; i < pomodoroCount; i++)
+            {
+                var startTime = task.CreatedOn.AddDays(Random.Shared.Next(0, 5)).AddHours(Random.Shared.Next(8, 18));
+                pomodoros.Add(new Pomodoro
+                {
+                    TaskId = task.Id,
+                    Task = task,
+                    StartTime = startTime.DateTime,
+                    DurationInMinutes = 25 // Standard pomodoro length
+                });
+            }
+        }
+
+        // Add some pomodoros for tasks in progress (1-3 per task)
+        foreach (var task in doingTasks)
+        {
+            var pomodoroCount = Random.Shared.Next(1, 4);
+            for (int i = 0; i < pomodoroCount; i++)
+            {
+                var startTime = task.CreatedOn.AddDays(Random.Shared.Next(1, 3)).AddHours(Random.Shared.Next(8, 18));
+                pomodoros.Add(new Pomodoro
+                {
+                    TaskId = task.Id,
+                    Task = task,
+                    StartTime = startTime.DateTime,
+                    DurationInMinutes = 25
+                });
+            }
+        }
+
+        // Set creation info for pomodoros
+        foreach (var pomodoro in pomodoros)
+        {
+            pomodoro.SetCreationInfo();
+            pomodoro.SetModificationInfo();
+        }
+
+        await context.Pomodoros.AddRangeAsync(pomodoros);
         await context.SaveChangesAsync();
     }
 }
