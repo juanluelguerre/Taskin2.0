@@ -1,5 +1,14 @@
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
   <div class="flex items-start space-x-4">
+    <!-- Drag Handle -->
+    <div class="flex-shrink-0 pt-1">
+      <mat-icon class="text-gray-400 cursor-grab hover:text-gray-600 transition-colors" 
+                cdkDragHandle 
+                matTooltip="Drag to move between columns">
+        drag_indicator
+      </mat-icon>
+    </div>
+    
     <!-- Checkbox -->
     <div class="flex-shrink-0 pt-1">
       <mat-checkbox 

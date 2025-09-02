@@ -311,14 +311,24 @@ export class TasksComponent implements OnInit {
 
   // Drag & Drop handlers
   onTaskDropped(event: CdkDragDrop<TaskViewModel[]>): void {
+    console.log('Task dropped:', event);
+    console.log('Previous container:', event.previousContainer.id);
+    console.log('Current container:', event.container.id);
+    console.log('Previous index:', event.previousIndex);
+    console.log('Current index:', event.currentIndex);
+    
     if (event.previousContainer === event.container) {
       // Reordering within the same column - no status change needed
+      console.log('Same container, no status change needed');
       return;
     }
 
     // Task moved between columns - update status
     const task = event.previousContainer.data[event.previousIndex];
+    console.log('Task to update:', task);
+    
     const newStatus = this.getStatusFromContainerId(event.container.id);
+    console.log('New status:', newStatus);
     
     if (newStatus && task.status !== newStatus) {
       // Create update request
@@ -327,6 +337,7 @@ export class TasksComponent implements OnInit {
         status: newStatus
       };
       
+      console.log('Updating task with request:', updateRequest);
       this.taskStore.updateTask({ id: task.id, request: updateRequest });
       this.notificationService.notifySuccess('Task moved successfully', { 
         taskName: task.title, 
