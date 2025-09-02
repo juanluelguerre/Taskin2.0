@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
+import { environment } from '@env/environment'
 import { 
   Task, 
   TaskStatus,
@@ -41,7 +42,7 @@ export interface ITaskService extends IRepository<Task, CreateTaskRequest, Updat
 })
 export class TaskService implements ITaskService {
   private readonly http = inject(HttpClient)
-  private readonly baseUrl = '/api/tasks'
+  private readonly baseUrl = `${environment.apiUrl}/api/tasks`
 
   getAll(params?: { page?: number; size?: number; projectId?: string }): Observable<TaskListResponse> {
     let httpParams = new HttpParams()

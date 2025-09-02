@@ -1,260 +1,267 @@
-<!-- Loading State -->
-@if (loading()) {
-  <div class="task-form-container">
-    <div class="flex items-center justify-center py-12">
-      <mat-progress-bar mode="indeterminate" class="w-64"></mat-progress-bar>
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex items-center space-x-4">
+      <button mat-icon-button (click)="onCancel()" class="text-gray-600">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <nav class="text-sm text-gray-500 mb-1">
+          <a (click)="onCancel()" class="hover:text-gray-700 cursor-pointer">Tasks</a>
+          <span class="mx-2">/</span>
+          <span class="text-gray-900">{{ isEditMode() ? 'Edit Task' : 'New Task' }}</span>
+        </nav>
+        <h1 class="text-2xl font-bold text-gray-900">
+          {{ pageTitle() }}
+        </h1>
+      </div>
     </div>
   </div>
-} @else {
-  <!-- Form Container -->
-  <div class="task-form-container">
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
-        {{ pageTitle() }}
-      </h1>
-      <p class="text-gray-600">
-        @if (isEditMode()) {
-          Update the task information below to modify the existing task.
-        } @else {
-          Fill in the information below to create a new task for your project.
-        }
-      </p>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-center">
+        <mat-icon class="text-red-500 mr-2">error</mat-icon>
+        <p class="text-red-700">{{ error() }}</p>
+      </div>
     </div>
+  }
 
-    <!-- Form -->
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-      <!-- Basic Information Section -->
-      <mat-card class="form-section">
-        <mat-card-header>
-          <mat-card-title>Basic Information</mat-card-title>
-          <mat-card-subtitle>Essential details about the task</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <!-- Title -->
-          <div class="form-row">
-            <mat-form-field class="full-width" appearance="outline">
-              <mat-label>Task Title *</mat-label>
-              <input matInput 
-                     formControlName="title" 
-                     placeholder="Enter a clear, descriptive title"
-                     maxlength="200">
-              <mat-hint>{{ form.get('title')?.value?.length || 0 }}/200</mat-hint>
-              @if (getFieldError('title')) {
-                <mat-error>{{ getFieldError('title') }}</mat-error>
-              }
-            </mat-form-field>
-          </div>
+  <!-- Loading Spinner -->
+  @if (loading()) {
+    <div class="flex justify-center items-center py-12">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
 
-          <!-- Description -->
-          <div class="form-row">
-            <mat-form-field class="full-width" appearance="outline">
-              <mat-label>Description</mat-label>
-              <textarea matInput 
-                        formControlName="description" 
-                        placeholder="Provide a detailed description of what needs to be done"
-                        rows="4"
-                        maxlength="1000"></textarea>
-              <mat-hint>{{ form.get('description')?.value?.length || 0 }}/1000</mat-hint>
-              @if (getFieldError('description')) {
-                <mat-error>{{ getFieldError('description') }}</mat-error>
-              }
-            </mat-form-field>
-          </div>
+  <!-- Form -->
+  @if (!loading()) {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
+        <!-- Main Form -->
+        <div class="lg:flex-1">
+          <!-- Basic Information -->
+          <mat-card class="border border-gray-200 shadow-sm hover:shadow-md transition-shadow mb-6">
+            <mat-card-header>
+              <mat-card-title class="text-gray-900">Task Information</mat-card-title>
+            </mat-card-header>
 
-          <!-- Project and Status Row -->
-          <div class="form-row two-columns">
-            <!-- Project -->
-            <mat-form-field appearance="outline">
-              <mat-label>Project *</mat-label>
-              <mat-select formControlName="projectId" placeholder="Select a project">
-                @for (project of projects; track project.id) {
-                  <mat-option [value]="project.id">{{ project.name }}</mat-option>
-                }
-              </mat-select>
-              @if (getFieldError('projectId')) {
-                <mat-error>{{ getFieldError('projectId') }}</mat-error>
-              }
-            </mat-form-field>
+            <mat-card-content class="p-6">
+              <div class="space-y-6">
+                <!-- Task Title -->
+                <div class="form-field-wrapper">
+                  <mat-label for="title">Task Title</mat-label>
+                  <mat-form-field class="w-full">
+                    <input matInput formControlName="title" placeholder="Enter task title" />
+                    @if (isFieldInvalid('title')) {
+                      <mat-error>{{ getFieldError('title') }}</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
 
-            <!-- Status -->
-            <mat-form-field appearance="outline">
-              <mat-label>Status *</mat-label>
-              <mat-select formControlName="status" placeholder="Select status">
-                @for (status of statusOptions; track status.value) {
-                  <mat-option [value]="status.value">{{ status.label }}</mat-option>
-                }
-              </mat-select>
-              @if (getFieldError('status')) {
-                <mat-error>{{ getFieldError('status') }}</mat-error>
-              }
-            </mat-form-field>
-          </div>
+                <!-- Description -->
+                <div class="form-field-wrapper">
+                  <label>Description</label>
+                  <mat-form-field class="w-full">
+                    <textarea
+                      matInput
+                      formControlName="description"
+                      rows="4"
+                      placeholder="Describe what needs to be done"
+                    ></textarea>
+                  </mat-form-field>
+                </div>
 
-          <!-- Priority and Assignee Row -->
-          <div class="form-row two-columns">
-            <!-- Priority -->
-            <mat-form-field appearance="outline">
-              <mat-label>Priority *</mat-label>
-              <mat-select formControlName="priority" placeholder="Select priority">
-                @for (priority of priorityOptions; track priority.value) {
-                  <mat-option [value]="priority.value">
-                    <span [class]="priority.color">{{ priority.label }}</span>
-                  </mat-option>
-                }
-              </mat-select>
-              @if (getFieldError('priority')) {
-                <mat-error>{{ getFieldError('priority') }}</mat-error>
-              }
-            </mat-form-field>
+                <!-- Project -->
+                <div class="form-field-wrapper">
+                  <label>Project</label>
+                  <mat-form-field class="w-full">
+                    <mat-select formControlName="projectId">
+                      @for (project of projects; track project.id) {
+                        <mat-option [value]="project.id">{{ project.name }}</mat-option>
+                      }
+                    </mat-select>
+                    @if (isFieldInvalid('projectId')) {
+                      <mat-error>{{ getFieldError('projectId') }}</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
 
-            <!-- Assignee -->
-            <mat-form-field appearance="outline">
-              <mat-label>Assignee</mat-label>
-              <mat-select formControlName="assigneeId" placeholder="Select assignee">
-                <mat-option value="">Unassigned</mat-option>
-                @for (assignee of assignees; track assignee.id) {
-                  <mat-option [value]="assignee.id">{{ assignee.name }}</mat-option>
-                }
-              </mat-select>
-              @if (getFieldError('assigneeId')) {
-                <mat-error>{{ getFieldError('assigneeId') }}</mat-error>
-              }
-            </mat-form-field>
-          </div>
-        </mat-card-content>
-      </mat-card>
+                <!-- Status and Priority Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="form-field-wrapper">
+                    <label>Status</label>
+                    <mat-form-field class="w-full">
+                      <mat-select formControlName="status">
+                        @for (option of statusOptions; track option.value) {
+                          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
 
-      <!-- Schedule and Planning Section -->
-      <mat-card class="form-section">
-        <mat-card-header>
-          <mat-card-title>Schedule & Planning</mat-card-title>
-          <mat-card-subtitle>Timeline and effort estimation</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="form-row two-columns">
-            <!-- Due Date -->
-            <mat-form-field appearance="outline">
-              <mat-label>Due Date</mat-label>
-              <input matInput 
-                     [matDatepicker]="dueDatePicker" 
-                     formControlName="dueDate"
-                     placeholder="Select due date">
-              <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
-              <mat-datepicker #dueDatePicker></mat-datepicker>
-              @if (getFieldError('dueDate')) {
-                <mat-error>{{ getFieldError('dueDate') }}</mat-error>
-              }
-            </mat-form-field>
+                  <div class="form-field-wrapper">
+                    <label>Priority</label>
+                    <mat-form-field class="w-full">
+                      <mat-select formControlName="priority">
+                        @for (priority of priorityOptions; track priority.value) {
+                          <mat-option [value]="priority.value">
+                            <span [class]="priority.color">{{ priority.label }}</span>
+                          </mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
 
-            <!-- Estimated Pomodoros -->
-            <mat-form-field appearance="outline">
-              <mat-label>Estimated Pomodoros</mat-label>
-              <input matInput 
-                     type="number" 
-                     formControlName="estimatedPomodoros" 
-                     placeholder="How many 25-minute sessions?"
-                     min="1" 
-                     max="50">
-              <mat-hint>Each pomodoro = 25 minutes of focused work</mat-hint>
-              @if (getFieldError('estimatedPomodoros')) {
-                <mat-error>{{ getFieldError('estimatedPomodoros') }}</mat-error>
-              }
-            </mat-form-field>
-          </div>
-        </mat-card-content>
-      </mat-card>
+                <!-- Assignee and Due Date Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="form-field-wrapper">
+                    <label>Assignee</label>
+                    <mat-form-field class="w-full">
+                      <mat-select formControlName="assigneeId">
+                        <mat-option value="">Unassigned</mat-option>
+                        @for (assignee of assignees; track assignee.id) {
+                          <mat-option [value]="assignee.id">{{ assignee.name }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
 
-      <!-- Tags Section -->
-      <mat-card class="form-section">
-        <mat-card-header>
-          <mat-card-title>Tags</mat-card-title>
-          <mat-card-subtitle>Add tags to categorize and organize your task</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <!-- Tags Input -->
-          <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Add Tags</mat-label>
-            <mat-chip-grid #chipGrid aria-label="Task tags">
-              @for (tag of tags(); track tag) {
-                <mat-chip-row (removed)="removeTag(tag)">
-                  {{ tag }}
-                  <button matChipRemove [attr.aria-label]="'Remove ' + tag">
-                    <mat-icon>cancel</mat-icon>
-                  </button>
-                </mat-chip-row>
-              }
-            </mat-chip-grid>
-            <input placeholder="Enter tag and press Enter..."
-                   [matChipInputFor]="chipGrid"
-                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                   (matChipInputTokenEnd)="addTag($event)" />
-            <mat-hint>Press Enter or comma to add a tag</mat-hint>
-          </mat-form-field>
+                  <div class="form-field-wrapper">
+                    <label>Due Date</label>
+                    <mat-form-field class="w-full">
+                      <input matInput [matDatepicker]="picker" formControlName="dueDate" />
+                      <mat-hint>Optional: Set a target completion date</mat-hint>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </div>
 
-          <!-- Current Tags Display -->
-          @if (tags().length > 0) {
-            <div class="mt-4">
-              <p class="text-sm font-medium text-gray-700 mb-2">Current tags:</p>
-              <div class="chip-list">
-                @for (tag of tags(); track tag) {
-                  <mat-chip>{{ tag }}</mat-chip>
-                }
+                <!-- Estimated Pomodoros -->
+                <div class="form-field-wrapper">
+                  <label>Estimated Pomodoros</label>
+                  <mat-form-field class="w-full">
+                    <input
+                      matInput
+                      type="number"
+                      formControlName="estimatedPomodoros"
+                      placeholder="How many 25-minute sessions?"
+                      min="1"
+                      max="50"
+                    />
+                    <mat-hint>Each pomodoro = 25 minutes of focused work</mat-hint>
+                    @if (isFieldInvalid('estimatedPomodoros')) {
+                      <mat-error>{{ getFieldError('estimatedPomodoros') }}</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
               </div>
-            </div>
-          }
-        </mat-card-content>
-      </mat-card>
+            </mat-card-content>
+          </mat-card>
 
-      <!-- Form Actions -->
-      <div class="form-actions">
-        <div class="actions-left">
-          <button type="button" 
-                  mat-stroked-button 
-                  (click)="onReset()"
-                  [disabled]="saving()">
-            <mat-icon class="mr-2">refresh</mat-icon>
-            Reset
-          </button>
+          <!-- Tags -->
+          <mat-card class="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+            <mat-card-header>
+              <mat-card-title class="text-gray-900">Tags</mat-card-title>
+              <mat-card-subtitle class="text-gray-600">Add tags to categorize your task</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content class="p-6">
+              <!-- Tags Input -->
+              <mat-form-field class="w-full">
+                <mat-label>Add Tags</mat-label>
+                <mat-chip-grid #chipGrid aria-label="Task tags">
+                  @for (tag of tags(); track tag) {
+                    <mat-chip-row (removed)="removeTag(tag)">
+                      {{ tag }}
+                      <button matChipRemove [attr.aria-label]="'Remove ' + tag">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                  }
+                </mat-chip-grid>
+                <input
+                  placeholder="Enter tag and press Enter..."
+                  [matChipInputFor]="chipGrid"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                  (matChipInputTokenEnd)="addTag($event)"
+                />
+                <mat-hint>Press Enter or comma to add a tag</mat-hint>
+              </mat-form-field>
+            </mat-card-content>
+          </mat-card>
         </div>
 
-        <div class="actions-right">
-          <button type="button" 
-                  mat-stroked-button 
-                  (click)="onCancel()"
-                  [disabled]="saving()">
-            Cancel
-          </button>
-          
-          <button type="submit" 
-                  mat-raised-button 
+        <!-- Sidebar -->
+        <div class="lg:w-80 space-y-6">
+          <!-- Form Actions -->
+          <mat-card class="border border-gray-200 shadow-sm">
+            <mat-card-content class="p-6">
+              <div class="space-y-4">
+                <button
+                  type="submit"
+                  mat-raised-button
                   color="primary"
-                  [disabled]="form.invalid || saving()">
-            @if (saving()) {
-              <mat-progress-spinner diameter="20" class="mr-2"></mat-progress-spinner>
-            } @else {
-              <mat-icon class="mr-2">
-                {{ isEditMode() ? 'save' : 'add' }}
-              </mat-icon>
-            }
-            {{ submitButtonText() }}
-          </button>
+                  class="w-full h-12"
+                  [disabled]="form.invalid || saving()"
+                >
+                  @if (saving()) {
+                    <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+                  }
+                  <mat-icon class="mr-2">{{ isEditMode() ? 'save' : 'add' }}</mat-icon>
+                  {{ submitButtonText() }}
+                </button>
+
+                <button
+                  type="button"
+                  mat-stroked-button
+                  color="primary"
+                  class="w-full h-12"
+                  (click)="onCancel()"
+                  [disabled]="saving()"
+                >
+                  <mat-icon class="mr-2">cancel</mat-icon>
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  mat-stroked-button
+                  class="w-full h-12"
+                  (click)="onReset()"
+                  [disabled]="saving()"
+                >
+                  <mat-icon class="mr-2">refresh</mat-icon>
+                  Reset Form
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Help -->
+          <mat-card class="border border-gray-200 shadow-sm">
+            <mat-card-header>
+              <mat-card-title class="flex items-center text-gray-900">
+                <mat-icon class="mr-2 text-blue-500">help_outline</mat-icon>
+                Tips
+              </mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content class="p-6">
+              <div class="text-sm text-gray-600 space-y-2">
+                <p>• Write a clear, specific task title</p>
+                <p>• Add relevant tags to organize your work</p>
+                <p>• Set realistic time estimates with pomodoros</p>
+                <p>• Assign due dates to track deadlines</p>
+                <p>• Use priority levels to focus on important tasks</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
       </div>
     </form>
-
-    <!-- Form Debug (only in development) -->
-    <!-- @if (isDevelopment) {
-      <mat-card class="mt-8">
-        <mat-card-header>
-          <mat-card-title>Form Debug</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <pre class="text-xs">{{ form.value | json }}</pre>
-          <p class="mt-2 text-sm">Form Valid: {{ form.valid }}</p>
-          <p class="text-sm">Form Touched: {{ form.touched }}</p>
-        </mat-card-content>
-      </mat-card>
-    } -->
-  </div>
-}
+  }
+</div>

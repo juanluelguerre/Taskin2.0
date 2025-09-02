@@ -21,6 +21,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
 import { TaskStatus, TaskStore } from '../../shared';
+import { TaskStatusDisplayPipe } from '@shared/pipes/task-status-display.pipe';
+import { TaskPriorityDisplayPipe } from '@shared/pipes/task-priority-display.pipe';
 
 @Component({
   selector: 'app-task-details',
@@ -35,6 +37,8 @@ import { TaskStatus, TaskStore } from '../../shared';
     MatMenuModule,
     MatDividerModule,
     MatCardModule,
+    TaskStatusDisplayPipe,
+    TaskPriorityDisplayPipe,
   ],
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.scss',
@@ -43,23 +47,18 @@ import { TaskStatus, TaskStore } from '../../shared';
   providers: [TaskStore],
 })
 export class TaskDetailsComponent implements OnInit {
-  // Dependencies
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly taskStore = inject(TaskStore);
   private readonly notificationService = inject(NotificationService);
   private readonly confirmationService = inject(UiConfirmationService);
-
-  // Local state
   private readonly taskId = signal<string | null>(null);
 
-  // Store selectors
   readonly task = this.taskStore.selectedTask;
   readonly loading = this.taskStore.loading;
   readonly saving = this.taskStore.saving;
   readonly error = this.taskStore.error;
 
-  // Computed properties
   readonly isOverdue = computed(() => {
     const currentTask = this.task();
     if (!currentTask?.dueDate) return false;
@@ -97,11 +96,21 @@ export class TaskDetailsComponent implements OnInit {
     return `${Math.abs(days)} days overdue`;
   });
 
-  // Enum reference for template
+  readonly statusColor = computed(() => {
+    const currentTask = this.task();
+    if (!currentTask) return 'text-gray-600 bg-gray-100';
+    return this.getStatusColor(currentTask.status);
+  });
+
+  readonly priorityColor = computed(() => {
+    const currentTask = this.task();
+    if (!currentTask) return 'text-gray-600 bg-gray-100';
+    return this.getPriorityColor(currentTask.priority);
+  });
+
   readonly TaskStatus = TaskStatus;
 
   ngOnInit(): void {
-    // Get task ID from route
     this.route.params.subscribe(params => {
       const id = params['id'];
       if (id) {
@@ -110,7 +119,6 @@ export class TaskDetailsComponent implements OnInit {
       }
     });
 
-    // Handle errors using effect
     effect(() => {
       const error = this.error();
       if (error) {
@@ -119,7 +127,6 @@ export class TaskDetailsComponent implements OnInit {
     });
   }
 
-  // Action methods
   onToggleCompletion(): void {
     const currentTask = this.task();
     if (currentTask) {
@@ -184,13 +191,42 @@ export class TaskDetailsComponent implements OnInit {
   onStartPomodoro(): void {
     const currentTask = this.task();
     if (currentTask) {
-      // This would integrate with a pomodoro timer component
       this.notificationService.notifyInfo('tasks.messages.pomodoroStarted');
-      // TODO: Navigate to pomodoro timer or start timer here
     }
   }
 
   onBackToList(): void {
     this.router.navigate(['/tasks']);
   }
+
+  private getStatusColor(status: any): string {
+    switch (status) {
+      case TaskStatus.Pending:
+        return 'text-gray-600 bg-gray-100';
+      case TaskStatus.InProgress:
+        return 'text-blue-600 bg-blue-100';
+      case TaskStatus.Completed:
+        return 'text-green-600 bg-green-100';
+      case TaskStatus.Cancelled:
+        return 'text-red-600 bg-red-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
+  }
+
+  private getPriorityColor(priority: any): string {
+    switch (priority) {
+      case 'Low':
+        return 'text-gray-600 bg-gray-100';
+      case 'Medium':
+        return 'text-yellow-600 bg-yellow-100';
+      case 'High':
+        return 'text-orange-600 bg-orange-100';
+      case 'Critical':
+        return 'text-red-600 bg-red-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
+  }
+
 }

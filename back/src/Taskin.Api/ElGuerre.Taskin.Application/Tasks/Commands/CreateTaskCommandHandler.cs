@@ -20,10 +20,17 @@ public class CreateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
 
         DomainTask task = new()
         {
+            Title = request.Title,
             Description = request.Description,
             ProjectId = request.ProjectId,
             Status = request.Status,
+            Priority = request.Priority,
+            AssigneeId = request.AssigneeId,
+            AssigneeName = request.AssigneeName,
+            DueDate = request.DueDate,
             Deadline = request.Deadline,
+            EstimatedPomodoros = request.EstimatedPomodoros,
+            Tags = request.Tags ?? [],
             Project = project
         };
 

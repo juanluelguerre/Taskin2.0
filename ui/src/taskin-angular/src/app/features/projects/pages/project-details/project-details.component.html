@@ -124,7 +124,7 @@
           <mat-card-header class="pb-0">
             <mat-card-title class="flex items-center justify-between w-full">
               <span>Tasks ({{ proj.tasks.length }})</span>
-              <button mat-stroked-button color="primary">
+              <button mat-stroked-button color="primary" (click)="onAddTask()">
                 <mat-icon class="mr-2">add</mat-icon>
                 Add Task
               </button>
@@ -159,7 +159,7 @@
               <div class="text-center py-8">
                 <mat-icon class="text-gray-300 text-4xl mb-2">assignment</mat-icon>
                 <p class="text-gray-500">No tasks yet. Add your first task to get started.</p>
-                <button mat-stroked-button color="primary" class="mt-4">
+                <button mat-stroked-button color="primary" class="mt-4" (click)="onAddTask()">
                   <mat-icon class="mr-2">add</mat-icon>
                   Add First Task
                 </button>

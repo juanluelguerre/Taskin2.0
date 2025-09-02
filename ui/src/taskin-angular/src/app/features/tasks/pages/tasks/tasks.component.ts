@@ -45,7 +45,6 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
   `,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TaskStore],
 })
 export class TasksComponent implements OnInit {
   // Dependencies
@@ -94,15 +93,16 @@ export class TasksComponent implements OnInit {
   readonly showingToIndex = computed(() => Math.min(this.currentPage() * 25, this.tasks().length));
 
   readonly cancelledTasksCount = computed(
-    () => this.tasks().filter(t => t.status === 'cancelled').length
+    () => this.tasks().filter(t => t.status === TaskStatus.Cancelled).length
   );
 
   // Enum references for template use
   readonly TaskStatus = TaskStatus;
 
   ngOnInit(): void {
-    // Load initial data
-    this.taskStore.refreshTasks();
+    // Load initial data from backend
+    this.taskStore.loadTasks();
+    this.taskStore.loadTaskStats();
 
     // React to errors using effect
     effect(() => {
@@ -165,6 +165,7 @@ export class TasksComponent implements OnInit {
   // Event handlers for filters
   onFiltersChanged(filters: TaskFilters): void {
     this.taskStore.setFilters(filters);
+    this.taskStore.loadTasks();
   }
 
   onSearchChanged(searchTerm: string): void {
@@ -173,6 +174,7 @@ export class TasksComponent implements OnInit {
 
   onFiltersCleared(): void {
     this.taskStore.clearFilters();
+    this.taskStore.loadTasks();
   }
 
   // Navigation and view actions
@@ -187,23 +189,26 @@ export class TasksComponent implements OnInit {
   // Pagination
   onPageChanged(page: number): void {
     this.taskStore.setPage(page);
+    this.taskStore.loadTasks();
   }
 
   onNextPage(): void {
     if (this.hasNextPage()) {
       this.taskStore.setPage(this.currentPage() + 1);
+      this.taskStore.loadTasks();
     }
   }
 
   onPreviousPage(): void {
     if (this.hasPreviousPage()) {
       this.taskStore.setPage(this.currentPage() - 1);
+      this.taskStore.loadTasks();
     }
   }
 
   // Utility methods
   onRefresh(): void {
-    this.taskStore.refreshTasks();
+    this.taskStore.loadTasks();
   }
 
   onDismissError(): void {

@@ -5,7 +5,7 @@
       <mat-progress-bar mode="indeterminate" class="w-64"></mat-progress-bar>
     </div>
   </div>
-} @else if (task(); as currentTask) {
+} @else if (task()) {
   <!-- Task Details Content -->
   <div class="task-details-container">
     <!-- Header with Back Button and Actions -->
@@ -20,13 +20,13 @@
         <div class="flex items-center gap-2">
           <!-- Toggle Completion -->
           <button mat-raised-button 
-                  [color]="currentTask.isCompleted ? 'warn' : 'primary'"
+                  [color]="task()?.isCompleted ? 'warn' : 'primary'"
                   (click)="onToggleCompletion()"
                   [disabled]="saving()">
             <mat-icon class="mr-2">
-              {{ currentTask.isCompleted ? 'undo' : 'check' }}
+              {{ task()?.isCompleted ? 'undo' : 'check' }}
             </mat-icon>
-            {{ currentTask.isCompleted ? 'Mark Incomplete' : 'Mark Complete' }}
+            {{ task()?.isCompleted ? 'Mark Incomplete' : 'Mark Complete' }}
           </button>
           
           <!-- Actions Menu -->
@@ -60,22 +60,22 @@
       <!-- Task Title and Status -->
       <div class="mb-4">
         <h1 class="text-3xl font-bold text-gray-900 mb-3"
-            [class.line-through]="currentTask.isCompleted"
-            [class.text-gray-500]="currentTask.isCompleted">
-          {{ currentTask.title }}
+            [class.line-through]="task()?.isCompleted"
+            [class.text-gray-500]="task()?.isCompleted">
+          {{ task()?.title }}
         </h1>
         
         <div class="flex items-center gap-3 flex-wrap">
           <!-- Status Badge -->
           <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                [ngClass]="currentTask.statusColor">
-            {{ currentTask.status | titlecase }}
+                [ngClass]="statusColor()">
+            {{ task()?.status! | taskStatusDisplay }}
           </span>
           
           <!-- Priority Badge -->
           <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                [ngClass]="currentTask.priorityColor">
-            {{ currentTask.priority | uppercase }}
+                [ngClass]="priorityColor()">
+            {{ task()?.priority! | taskPriorityDisplay }}
           </span>
           
           <!-- Due Date -->
@@ -93,9 +93,9 @@
       </div>
 
       <!-- Tags -->
-      @if (currentTask.tags.length > 0) {
+      @if (task()?.tags?.length) {
         <div class="flex flex-wrap gap-2 mb-4">
-          @for (tag of currentTask.tags; track tag) {
+          @for (tag of task()?.tags; track tag) {
             <mat-chip>{{ tag }}</mat-chip>
           }
         </div>
@@ -107,19 +107,19 @@
       <!-- Left Column: Task Information -->
       <div>
         <!-- Description -->
-        @if (currentTask.description) {
+        @if (task()?.description) {
           <mat-card class="mb-6">
             <mat-card-header>
               <mat-card-title>Description</mat-card-title>
             </mat-card-header>
             <mat-card-content>
-              <p class="text-gray-700 whitespace-pre-wrap">{{ currentTask.description }}</p>
+              <p class="text-gray-700 whitespace-pre-wrap">{{ task()?.description }}</p>
             </mat-card-content>
           </mat-card>
         }
 
         <!-- Progress Section -->
-        @if (currentTask.estimatedPomodoros) {
+        @if (task()?.estimatedPomodoros) {
           <mat-card class="mb-6">
             <mat-card-header>
               <mat-card-title>Progress</mat-card-title>
@@ -128,7 +128,7 @@
               <div class="progress-section">
                 <div class="flex justify-between items-center mb-2">
                   <span class="text-sm text-gray-600">
-                    Pomodoros: {{ currentTask.completedPomodoros || 0 }} / {{ currentTask.estimatedPomodoros }}
+                    Pomodoros: {{ task()?.completedPomodoros || 0 }} / {{ task()?.estimatedPomodoros }}
                   </span>
                   <span class="text-sm font-medium text-gray-900">
                     {{ completionPercentage() }}%
@@ -145,15 +145,15 @@
                 <!-- Pomodoro Stats -->
                 <div class="pomodoro-stats">
                   <div class="stat-card">
-                    <div class="stat-number">{{ currentTask.completedPomodoros || 0 }}</div>
+                    <div class="stat-number">{{ task()?.completedPomodoros || 0 }}</div>
                     <div class="stat-label">Completed</div>
                   </div>
                   <div class="stat-card">
-                    <div class="stat-number">{{ (currentTask.estimatedPomodoros || 0) - (currentTask.completedPomodoros || 0) }}</div>
+                    <div class="stat-number">{{ (task()?.estimatedPomodoros || 0) - (task()?.completedPomodoros || 0) }}</div>
                     <div class="stat-label">Remaining</div>
                   </div>
                   <div class="stat-card">
-                    <div class="stat-number">{{ ((currentTask.completedPomodoros || 0) * 25) }}</div>
+                    <div class="stat-number">{{ ((task()?.completedPomodoros || 0) * 25) }}</div>
                     <div class="stat-label">Minutes</div>
                   </div>
                 </div>
@@ -175,25 +175,25 @@
               <div class="info-item">
                 <mat-icon class="text-gray-400">folder</mat-icon>
                 <div class="info-label">Project</div>
-                <div class="info-value font-medium">{{ currentTask.projectName }}</div>
+                <div class="info-value font-medium">{{ task()?.projectName }}</div>
               </div>
 
               <!-- Assignee -->
-              @if (currentTask.assigneeName) {
+              @if (task()?.assigneeName) {
                 <div class="info-item">
                   <mat-icon class="text-gray-400">person</mat-icon>
                   <div class="info-label">Assigned to</div>
-                  <div class="info-value font-medium">{{ currentTask.assigneeName }}</div>
+                  <div class="info-value font-medium">{{ task()?.assigneeName }}</div>
                 </div>
               }
 
               <!-- Due Date -->
-              @if (currentTask.dueDate) {
+              @if (task()?.dueDate) {
                 <div class="info-item">
                   <mat-icon class="text-gray-400">event</mat-icon>
                   <div class="info-label">Due Date</div>
                   <div class="info-value font-medium">
-                    {{ currentTask.dueDate | date:'mediumDate' }}
+                    {{ task()?.dueDate | date:'mediumDate' }}
                   </div>
                 </div>
               }
@@ -204,8 +204,8 @@
                 <div class="info-label">Status</div>
                 <div class="info-value">
                   <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
-                        [ngClass]="currentTask.statusColor">
-                    {{ currentTask.status | titlecase }}
+                        [ngClass]="statusColor()">
+                    {{ task()?.status! | taskStatusDisplay }}
                   </span>
                 </div>
               </div>
@@ -216,8 +216,8 @@
                 <div class="info-label">Priority</div>
                 <div class="info-value">
                   <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
-                        [ngClass]="currentTask.priorityColor">
-                    {{ currentTask.priority | uppercase }}
+                        [ngClass]="priorityColor()">
+                    {{ task()?.priority! | taskPriorityDisplay }}
                   </span>
                 </div>
               </div>
@@ -227,7 +227,7 @@
                 <mat-icon class="text-gray-400">access_time</mat-icon>
                 <div class="info-label">Created</div>
                 <div class="info-value text-gray-600">
-                  {{ currentTask.createdAt | date:'short' }}
+                  {{ task()?.createdAt | date:'short' }}
                 </div>
               </div>
 
@@ -236,7 +236,7 @@
                 <mat-icon class="text-gray-400">update</mat-icon>
                 <div class="info-label">Last Updated</div>
                 <div class="info-value text-gray-600">
-                  {{ currentTask.updatedAt | date:'short' }}
+                  {{ task()?.updatedAt | date:'short' }}
                 </div>
               </div>
             </div>

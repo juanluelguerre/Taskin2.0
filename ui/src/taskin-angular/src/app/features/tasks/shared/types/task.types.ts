@@ -7,20 +7,21 @@ export interface BaseEntity {
   updatedBy?: string
 }
 
-// Enums
+// Enums - matching backend .NET enums
 export enum TaskStatus {
-  Pending = 'pending',
-  InProgress = 'in-progress',
-  Completed = 'completed',
-  Cancelled = 'cancelled',
+  Pending = 0,
+  InProgress = 1,
+  Completed = 2,
+  Cancelled = 3,
 }
 
 export enum TaskPriority {
-  Low = 'low',
-  Medium = 'medium',
-  High = 'high',
-  Critical = 'critical',
+  Low = 0,
+  Medium = 1,
+  High = 2,
+  Critical = 3,
 }
+
 
 // Main entity
 export interface Task extends BaseEntity {

@@ -7,7 +7,7 @@
         <p class="mt-1 text-sm text-gray-600">Welcome back, {{ userName }}! Here's your productivity overview.</p>
       </div>
       <div class="mt-4 sm:mt-0">
-        <button mat-raised-button color="primary" class="flex items-center">
+        <button mat-raised-button color="primary" class="flex items-center" (click)="navigateToNewTask()">
           <mat-icon class="mr-2">add</mat-icon>
           Quick Add Task
         </button>
@@ -116,11 +116,11 @@
       </div>
       <div class="p-6">
         <div class="grid grid-cols-2 gap-4">
-          <button mat-stroked-button routerLink="/projects" class="flex flex-col items-center p-4 h-20 justify-center">
+          <button mat-stroked-button (click)="navigateToNewProject()" class="flex flex-col items-center p-4 h-20 justify-center">
             <mat-icon class="mb-1">folder_open</mat-icon>
             <span class="text-sm">New Project</span>
           </button>
-          <button mat-stroked-button routerLink="/tasks" class="flex flex-col items-center p-4 h-20 justify-center">
+          <button mat-stroked-button (click)="navigateToNewTask()" class="flex flex-col items-center p-4 h-20 justify-center">
             <mat-icon class="mb-1">add_task</mat-icon>
             <span class="text-sm">Add Task</span>
           </button>

@@ -11,7 +11,7 @@
       <div class="mt-4 sm:mt-0">
         <div class="flex items-center space-x-2 text-sm text-gray-600">
           <mat-icon class="text-green-600">check_circle</mat-icon>
-          <span>{{ completedPomodoros() }} completed today</span>
+          <span>{{ completedWorkPomodoros() }} completed today</span>
         </div>
       </div>
     </div>
@@ -24,19 +24,19 @@
       <div class="mb-6">
         <div
           class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium"
-          [class.bg-blue-100]="currentSession() === 'work'"
-          [class.text-blue-800]="currentSession() === 'work'"
-          [class.bg-green-100]="currentSession() === 'break'"
-          [class.text-green-800]="currentSession() === 'break'"
+          [class.bg-blue-100]="currentSessionType() === PomodoroType.Work"
+          [class.text-blue-800]="currentSessionType() === PomodoroType.Work"
+          [class.bg-green-100]="currentSessionType() === PomodoroType.ShortBreak"
+          [class.text-green-800]="currentSessionType() === PomodoroType.ShortBreak"
         >
           <mat-icon
             class="mr-2"
-            [class.text-blue-600]="currentSession() === 'work'"
-            [class.text-green-600]="currentSession() === 'break'"
+            [class.text-blue-600]="currentSessionType() === PomodoroType.Work"
+            [class.text-green-600]="currentSessionType() !== PomodoroType.Work"
           >
-            {{ currentSession() === 'work' ? 'work' : 'coffee' }}
+            {{ currentSessionType() === PomodoroType.Work ? 'work' : 'coffee' }}
           </mat-icon>
-          {{ currentSession() === 'work' ? 'Focus Time' : 'Break Time' }}
+          {{ currentSessionType() | sessionTypeDisplay }}
         </div>
       </div>
 
@@ -50,12 +50,12 @@
               cx="50"
               cy="50"
               r="45"
-              [attr.stroke]="currentSession() === 'work' ? '#3b82f6' : '#10b981'"
+              [attr.stroke]="currentSessionType() === PomodoroType.Work ? '#3b82f6' : '#10b981'"
               stroke-width="8"
               fill="none"
               stroke-linecap="round"
               [attr.stroke-dasharray]="circumference"
-              [attr.stroke-dashoffset]="strokeDashoffset"
+              [attr.stroke-dashoffset]="strokeDashoffset()"
               class="transition-all duration-1000 ease-in-out"
             />
           </svg>
@@ -63,10 +63,10 @@
           <!-- Timer Text -->
           <div class="absolute inset-0 flex flex-col items-center justify-center">
             <div class="text-4xl font-bold text-gray-900 mb-1">
-              {{ formatTime(timeLeft()) }}
+              {{ timer().timeRemaining | formatTime }}
             </div>
             <div class="text-sm text-gray-500">
-              {{ currentSession() === 'work' ? 'Focus' : 'Break' }}
+              {{ currentSessionType() === PomodoroType.Work ? 'Focus' : 'Break' }}
             </div>
           </div>
         </div>
@@ -75,11 +75,11 @@
         <div class="flex justify-center space-x-4">
           <button
             mat-mini-fab
-            [color]="isRunning() ? 'warn' : 'primary'"
+            [color]="timer().isRunning ? 'warn' : 'primary'"
             (click)="toggleTimer()"
             class="shadow-lg"
           >
-            <mat-icon>{{ isRunning() ? 'pause' : 'play_arrow' }}</mat-icon>
+            <mat-icon>{{ timer().isRunning ? 'pause' : 'play_arrow' }}</mat-icon>
           </button>
 
           <button mat-stroked-button (click)="resetTimer()" class="px-6">
@@ -100,13 +100,11 @@
           <div>
             <p class="text-sm text-gray-600 mb-2">Work Session</p>
             <div class="flex items-center justify-center space-x-2">
-              <button mat-icon-button (click)="adjustWorkTime(-1)" [disabled]="isRunning()">
+              <button mat-icon-button (click)="adjustWorkTime(-1)" [disabled]="timer().isRunning">
                 <mat-icon>remove</mat-icon>
               </button>
-              <span class="text-lg font-semibold text-gray-900 min-w-[3rem]">{{
-                workMinutes()
-              }}</span>
-              <button mat-icon-button (click)="adjustWorkTime(1)" [disabled]="isRunning()">
+              <span class="text-lg font-semibold text-gray-900 min-w-[3rem]">{{ settings()?.workDuration || 25 }}</span>
+              <button mat-icon-button (click)="adjustWorkTime(1)" [disabled]="timer().isRunning">
                 <mat-icon>add</mat-icon>
               </button>
             </div>
@@ -115,13 +113,11 @@
           <div>
             <p class="text-sm text-gray-600 mb-2">Break Time</p>
             <div class="flex items-center justify-center space-x-2">
-              <button mat-icon-button (click)="adjustBreakTime(-1)" [disabled]="isRunning()">
+              <button mat-icon-button (click)="adjustBreakTime(-1)" [disabled]="timer().isRunning">
                 <mat-icon>remove</mat-icon>
               </button>
-              <span class="text-lg font-semibold text-gray-900 min-w-[3rem]">{{
-                breakMinutes()
-              }}</span>
-              <button mat-icon-button (click)="adjustBreakTime(1)" [disabled]="isRunning()">
+              <span class="text-lg font-semibold text-gray-900 min-w-[3rem]">{{ settings()?.shortBreakDuration || 5 }}</span>
+              <button mat-icon-button (click)="adjustBreakTime(1)" [disabled]="timer().isRunning">
                 <mat-icon>add</mat-icon>
               </button>
             </div>
@@ -129,7 +125,7 @@
 
           <div>
             <p class="text-sm text-gray-600 mb-2">Sessions Today</p>
-            <div class="text-lg font-semibold text-gray-900">{{ completedPomodoros() }}</div>
+            <div class="text-lg font-semibold text-gray-900">{{ todayPomodoros().length }}</div>
           </div>
         </div>
       </div>
