@@ -141,16 +141,26 @@
       }
       
       @case ('kanban') {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+             cdkDropListGroup>
           <!-- Pending Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 kanban-column">
             <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">Pending</h4>
-              <p class="text-sm text-gray-500">{{ stats().pending }} tasks</p>
+              <h4 class="font-medium text-gray-900 flex items-center">
+                <mat-icon class="mr-2 text-yellow-500">pending</mat-icon>
+                Pending
+              </h4>
+              <p class="text-sm text-gray-500">{{ tasksByStatus().pending.length }} tasks</p>
             </div>
-            <div class="p-4 space-y-4">
-              @for (task of tasks(); track task.id) {
-                @if (task.status === TaskStatus.Pending) {
+            <div class="p-4 min-h-[400px]"
+                 cdkDropList
+                 [cdkDropListData]="tasksByStatus().pending"
+                 [cdkDropListConnectedTo]="dropListIds"
+                 id="pending-list"
+                 [class.empty-kanban-column]="tasksByStatus().pending.length === 0"
+                 (cdkDropListDropped)="onTaskDropped($event)">
+              @for (task of tasksByStatus().pending; track task.id) {
+                <div class="mb-4" cdkDrag>
                   <app-task-card 
                     [task]="task"
                     (taskToggled)="onTaskToggled($event)"
@@ -159,20 +169,41 @@
                     (taskViewed)="onTaskViewed($event)"
                     (taskDeleted)="onTaskDeleted($event)">
                   </app-task-card>
-                }
+                  
+                  <!-- Drag preview -->
+                  <div *cdkDragPreview class="bg-white rounded-lg shadow-lg border border-gray-300 p-4 max-w-sm">
+                    <div class="font-medium text-gray-900">{{ task.title }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ task.projectName }}</div>
+                  </div>
+                </div>
+              }
+              @empty {
+                <div class="text-center text-gray-500 py-8">
+                  <mat-icon class="text-gray-300 mb-2" style="font-size: 48px; width: 48px; height: 48px;">inbox</mat-icon>
+                  <p>No pending tasks</p>
+                </div>
               }
             </div>
           </div>
           
           <!-- In Progress Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 kanban-column">
             <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">In Progress</h4>
-              <p class="text-sm text-gray-500">{{ stats().inProgress }} tasks</p>
+              <h4 class="font-medium text-gray-900 flex items-center">
+                <mat-icon class="mr-2 text-blue-500">work</mat-icon>
+                In Progress
+              </h4>
+              <p class="text-sm text-gray-500">{{ tasksByStatus().inProgress.length }} tasks</p>
             </div>
-            <div class="p-4 space-y-4">
-              @for (task of tasks(); track task.id) {
-                @if (task.status === TaskStatus.InProgress) {
+            <div class="p-4 min-h-[400px]"
+                 cdkDropList
+                 [cdkDropListData]="tasksByStatus().inProgress"
+                 [cdkDropListConnectedTo]="dropListIds"
+                 id="in-progress-list"
+                 [class.empty-kanban-column]="tasksByStatus().inProgress.length === 0"
+                 (cdkDropListDropped)="onTaskDropped($event)">
+              @for (task of tasksByStatus().inProgress; track task.id) {
+                <div class="mb-4" cdkDrag>
                   <app-task-card 
                     [task]="task"
                     (taskToggled)="onTaskToggled($event)"
@@ -181,20 +212,41 @@
                     (taskViewed)="onTaskViewed($event)"
                     (taskDeleted)="onTaskDeleted($event)">
                   </app-task-card>
-                }
+                  
+                  <!-- Drag preview -->
+                  <div *cdkDragPreview class="bg-white rounded-lg shadow-lg border border-gray-300 p-4 max-w-sm">
+                    <div class="font-medium text-gray-900">{{ task.title }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ task.projectName }}</div>
+                  </div>
+                </div>
+              }
+              @empty {
+                <div class="text-center text-gray-500 py-8">
+                  <mat-icon class="text-gray-300 mb-2" style="font-size: 48px; width: 48px; height: 48px;">work_outline</mat-icon>
+                  <p>No tasks in progress</p>
+                </div>
               }
             </div>
           </div>
           
           <!-- Completed Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 kanban-column">
             <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">Completed</h4>
-              <p class="text-sm text-gray-500">{{ stats().completed }} tasks</p>
+              <h4 class="font-medium text-gray-900 flex items-center">
+                <mat-icon class="mr-2 text-green-500">check_circle</mat-icon>
+                Completed
+              </h4>
+              <p class="text-sm text-gray-500">{{ tasksByStatus().completed.length }} tasks</p>
             </div>
-            <div class="p-4 space-y-4">
-              @for (task of tasks(); track task.id) {
-                @if (task.status === TaskStatus.Completed) {
+            <div class="p-4 min-h-[400px]"
+                 cdkDropList
+                 [cdkDropListData]="tasksByStatus().completed"
+                 [cdkDropListConnectedTo]="dropListIds"
+                 id="completed-list"
+                 [class.empty-kanban-column]="tasksByStatus().completed.length === 0"
+                 (cdkDropListDropped)="onTaskDropped($event)">
+              @for (task of tasksByStatus().completed; track task.id) {
+                <div class="mb-4" cdkDrag>
                   <app-task-card 
                     [task]="task"
                     (taskToggled)="onTaskToggled($event)"
@@ -203,22 +255,41 @@
                     (taskViewed)="onTaskViewed($event)"
                     (taskDeleted)="onTaskDeleted($event)">
                   </app-task-card>
-                }
+                  
+                  <!-- Drag preview -->
+                  <div *cdkDragPreview class="bg-white rounded-lg shadow-lg border border-gray-300 p-4 max-w-sm">
+                    <div class="font-medium text-gray-900">{{ task.title }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ task.projectName }}</div>
+                  </div>
+                </div>
+              }
+              @empty {
+                <div class="text-center text-gray-500 py-8">
+                  <mat-icon class="text-gray-300 mb-2" style="font-size: 48px; width: 48px; height: 48px;">check_circle_outline</mat-icon>
+                  <p>No completed tasks</p>
+                </div>
               }
             </div>
           </div>
           
           <!-- Cancelled Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 kanban-column">
             <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">Cancelled</h4>
-              <p class="text-sm text-gray-500">
-                {{ cancelledTasksCount() }} tasks
-              </p>
+              <h4 class="font-medium text-gray-900 flex items-center">
+                <mat-icon class="mr-2 text-red-500">cancel</mat-icon>
+                Cancelled
+              </h4>
+              <p class="text-sm text-gray-500">{{ tasksByStatus().cancelled.length }} tasks</p>
             </div>
-            <div class="p-4 space-y-4">
-              @for (task of tasks(); track task.id) {
-                @if (task.status === TaskStatus.Cancelled) {
+            <div class="p-4 min-h-[400px]"
+                 cdkDropList
+                 [cdkDropListData]="tasksByStatus().cancelled"
+                 [cdkDropListConnectedTo]="dropListIds"
+                 id="cancelled-list"
+                 [class.empty-kanban-column]="tasksByStatus().cancelled.length === 0"
+                 (cdkDropListDropped)="onTaskDropped($event)">
+              @for (task of tasksByStatus().cancelled; track task.id) {
+                <div class="mb-4" cdkDrag>
                   <app-task-card 
                     [task]="task"
                     (taskToggled)="onTaskToggled($event)"
@@ -227,7 +298,19 @@
                     (taskViewed)="onTaskViewed($event)"
                     (taskDeleted)="onTaskDeleted($event)">
                   </app-task-card>
-                }
+                  
+                  <!-- Drag preview -->
+                  <div *cdkDragPreview class="bg-white rounded-lg shadow-lg border border-gray-300 p-4 max-w-sm">
+                    <div class="font-medium text-gray-900">{{ task.title }}</div>
+                    <div class="text-sm text-gray-600 mt-1">{{ task.projectName }}</div>
+                  </div>
+                </div>
+              }
+              @empty {
+                <div class="text-center text-gray-500 py-8">
+                  <mat-icon class="text-gray-300 mb-2" style="font-size: 48px; width: 48px; height: 48px;">cancel</mat-icon>
+                  <p>No cancelled tasks</p>
+                </div>
               }
             </div>
           </div>
