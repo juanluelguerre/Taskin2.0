@@ -119,21 +119,21 @@ export class TasksComponent implements OnInit {
 
   private loadProjects(): void {
     this.projectService.getProjectsForDropdown().subscribe({
-      next: (projects) => this.projects.set(projects),
-      error: (error) => {
+      next: projects => this.projects.set(projects),
+      error: error => {
         console.error('Error loading projects:', error);
         this.notificationService.notifyError('Failed to load projects');
-      }
+      },
     });
   }
 
   private loadAssignees(): void {
     this.assigneeService.getAssigneesForDropdown().subscribe({
-      next: (assignees) => this.assignees.set(assignees),
-      error: (error) => {
+      next: assignees => this.assignees.set(assignees),
+      error: error => {
         console.error('Error loading assignees:', error);
         this.notificationService.notifyError('Failed to load assignees');
-      }
+      },
     });
   }
 
@@ -236,7 +236,6 @@ export class TasksComponent implements OnInit {
 
   onTaskDropped(event: CdkDragDrop<TaskViewModel[]>): void {
     if (event.previousContainer === event.container) {
-      // Reordering within the same column - no status change needed
       console.log('Same container, no status change needed');
       return;
     }
@@ -261,5 +260,4 @@ export class TasksComponent implements OnInit {
       });
     }
   }
-
 }

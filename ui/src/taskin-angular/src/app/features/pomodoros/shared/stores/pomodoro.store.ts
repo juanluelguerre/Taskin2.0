@@ -145,8 +145,6 @@ export const PomodoroStore = signalStore(
         },
         timerIntervalId: intervalId as any,
       });
-
-      console.log('Timer started with interval ID: ---> ', intervalId, store.timer());
     },
 
     pauseTimer: () => {

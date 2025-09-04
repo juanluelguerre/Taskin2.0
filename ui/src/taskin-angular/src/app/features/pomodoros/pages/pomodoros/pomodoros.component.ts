@@ -194,8 +194,6 @@ export class PomodorosComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   canDeactivate(): boolean {
     const timer = this.timer();
-    const hasActiveSession = timer.isRunning || timer.isPaused;
-    console.log('PomodorosComponent: canDeactivate called, hasActiveSession:', hasActiveSession);
-    return hasActiveSession;
+    return timer.isRunning || timer.isPaused;
   }
 }
