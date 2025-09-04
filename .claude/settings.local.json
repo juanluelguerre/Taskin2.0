@@ -8,7 +8,12 @@
       "Bash(curl:*)",
       "Bash(dotnet run:*)",
       "Bash(cmd /c:*)",
-      "Read(/C:\\code\\elguerre\\Taskin2.0/**)"
+      "Bash(dir:*)",
+      "Read(/C:\\code\\elguerre\\Taskin2.0/**)",
+      "Read(/C:\\code\\elguerre\\Taskin2.0\\back/**)",
+      "Read(/C:\\code\\elguerre\\Taskin2.0\\ui/**)",
+      "Read(/C:\\code\\elguerre\\Taskin2.0\\back/**)",
+      "Read(/C:\\code\\elguerre\\Taskin2.0\\back\\src\\Taskin.Api\\ElGuerre.Taskin.Api/**)"
     ],
     "deny": [],
     "ask": []
