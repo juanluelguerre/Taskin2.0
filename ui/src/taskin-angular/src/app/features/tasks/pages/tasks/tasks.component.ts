@@ -8,6 +8,7 @@ import {
   computed,
   effect,
   inject,
+  signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -15,10 +16,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { AssigneeService, Assignee } from '@core/services/assignee.service';
 import { NotificationService } from '@core/services/notification.service';
+import { ProjectService, ProjectListDto } from '../../../projects/shared/services/project.service';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
 import { TaskCardComponent, TaskFiltersComponent, TaskStatsComponent } from '../../components';
 import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared';
+import { ContainerToStatusPipe } from '../../shared/pipes/container-to-status.pipe';
 
 @Component({
   selector: 'app-tasks',
@@ -47,6 +51,9 @@ export class TasksComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
   private readonly confirmationService = inject(UiConfirmationService);
+  private readonly projectService = inject(ProjectService);
+  private readonly assigneeService = inject(AssigneeService);
+  private readonly containerToStatusPipe = new ContainerToStatusPipe();
 
   readonly tasks = this.store.taskViewModels;
   readonly stats = this.store.taskStatistics;
@@ -61,19 +68,8 @@ export class TasksComponent implements OnInit {
   readonly hasNextPage = this.store.hasNextPage;
   readonly hasPreviousPage = this.store.hasPreviousPage;
 
-  readonly projects = [
-    { id: '1', name: 'Taskin 2.0' },
-    { id: '2', name: 'E-commerce Platform' },
-    { id: '3', name: 'Mobile App Redesign' },
-    { id: '4', name: 'API Documentation' },
-  ];
-
-  readonly assignees = [
-    { id: '1', name: 'John Doe' },
-    { id: '2', name: 'Jane Smith' },
-    { id: '3', name: 'Mike Johnson' },
-    { id: '4', name: 'Sarah Wilson' },
-  ];
+  readonly projects = signal<ProjectListDto[]>([]);
+  readonly assignees = signal<Assignee[]>([]);
 
   readonly hasActiveFilters = computed(() => {
     const filters = this.filters();
@@ -117,6 +113,28 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.loadTasks();
+    this.loadProjects();
+    this.loadAssignees();
+  }
+
+  private loadProjects(): void {
+    this.projectService.getProjectsForDropdown().subscribe({
+      next: (projects) => this.projects.set(projects),
+      error: (error) => {
+        console.error('Error loading projects:', error);
+        this.notificationService.notifyError('Failed to load projects');
+      }
+    });
+  }
+
+  private loadAssignees(): void {
+    this.assigneeService.getAssigneesForDropdown().subscribe({
+      next: (assignees) => this.assignees.set(assignees),
+      error: (error) => {
+        console.error('Error loading assignees:', error);
+        this.notificationService.notifyError('Failed to load assignees');
+      }
+    });
   }
 
   onTaskToggled(task: TaskViewModel): void {
@@ -226,7 +244,7 @@ export class TasksComponent implements OnInit {
     const task = event.previousContainer.data[event.previousIndex];
     console.log('Task to update:', task);
 
-    const newStatus = this.getStatusFromContainerId(event.container.id);
+    const newStatus = this.containerToStatusPipe.transform(event.container.id);
     console.log('New status:', newStatus);
 
     if (newStatus && task.status !== newStatus) {
@@ -244,18 +262,4 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  private getStatusFromContainerId(containerId: string): TaskStatus | null {
-    switch (containerId) {
-      case 'pending-list':
-        return TaskStatus.Pending;
-      case 'in-progress-list':
-        return TaskStatus.InProgress;
-      case 'completed-list':
-        return TaskStatus.Completed;
-      case 'cancelled-list':
-        return TaskStatus.Cancelled;
-      default:
-        return null;
-    }
-  }
 }

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
+import { map, switchMap } from 'rxjs/operators'
 import { environment } from '@env/environment'
 import { 
   Task, 
@@ -59,11 +59,15 @@ export class TaskService implements ITaskService {
   }
 
   create(request: CreateTaskRequest): Observable<Task> {
-    return this.http.post<Task>(this.baseUrl, request)
+    return this.http.post<string>(this.baseUrl, request).pipe(
+      switchMap(taskId => this.getById(taskId))
+    );
   }
 
   update(id: string, request: UpdateTaskRequest): Observable<Task> {
-    return this.http.put<Task>(`${this.baseUrl}/${id}`, request)
+    return this.http.put(`${this.baseUrl}/${id}`, request).pipe(
+      switchMap(() => this.getById(id))
+    );
   }
 
   delete(id: string): Observable<void> {
@@ -71,7 +75,23 @@ export class TaskService implements ITaskService {
   }
 
   search(request: TaskSearchRequest): Observable<TaskListResponse> {
-    return this.http.post<TaskListResponse>(`${this.baseUrl}/search`, request)
+    const cleanRequest = {
+      ...request,
+      query: request.query || '',
+      filters: request.filters ? {
+        ...request.filters,
+        // Only include non-null/undefined filters
+        ...(request.filters.status !== undefined && { status: request.filters.status }),
+        ...(request.filters.priority !== undefined && { priority: request.filters.priority }),
+        ...(request.filters.projectId && { projectId: request.filters.projectId }),
+        ...(request.filters.assigneeId && { assigneeId: request.filters.assigneeId }),
+        ...(request.filters.tags?.length && { tags: request.filters.tags }),
+        ...(request.filters.isOverdue !== undefined && { isOverdue: request.filters.isOverdue }),
+        ...(request.filters.isCompleted !== undefined && { isCompleted: request.filters.isCompleted }),
+      } : undefined,
+    };
+    
+    return this.http.post<TaskListResponse>(`${this.baseUrl}/search`, cleanRequest);
   }
 
   getTasksByProjectId(projectId: string): Observable<Task[]> {

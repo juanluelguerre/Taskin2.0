@@ -13,7 +13,8 @@
       "Read(/C:\\code\\elguerre\\Taskin2.0\\back/**)",
       "Read(/C:\\code\\elguerre\\Taskin2.0\\ui/**)",
       "Read(/C:\\code\\elguerre\\Taskin2.0\\back/**)",
-      "Read(/C:\\code\\elguerre\\Taskin2.0\\back\\src\\Taskin.Api\\ElGuerre.Taskin.Api/**)"
+      "Read(/C:\\code\\elguerre\\Taskin2.0\\back\\src\\Taskin.Api\\ElGuerre.Taskin.Api/**)",
+      "Bash(npm start)"
     ],
     "deny": [],
     "ask": []

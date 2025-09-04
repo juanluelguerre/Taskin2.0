@@ -187,13 +187,16 @@ export class TaskStore extends signalStore(
         switchMap(() => {
           patchState(store, { loading: true, error: null });
 
-          const params = {
+          const request: TaskSearchRequest = {
+            query: store.searchTerm(),
+            filters: store.filters(),
+            sortBy: store.sortBy(),
+            sortDirection: store.sortDirection(),
             page: store.currentPage(),
             size: store.pageSize(),
-            projectId: store.filters().projectId,
           };
 
-          return taskService.getAll(params).pipe(
+          return taskService.search(request).pipe(
             tapResponse({
               next: (response: TaskListResponse) => {
                 patchState(store, {

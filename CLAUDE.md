@@ -533,4 +533,4 @@ dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuer
 - Both applications support production deployment
 - CORS configured for Angular development (localhost:4200)
 - Health checks available at `/health` endpoint
-- Never include comments if they are not really necessary and only in complex parts of the code
+- Never include comments in code.

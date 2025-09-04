@@ -1,7 +1,7 @@
 import { Injectable, inject, computed } from '@angular/core'
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals'
 import { rxMethod } from '@ngrx/signals/rxjs-interop'
-import { pipe, switchMap, tap } from 'rxjs'
+import { pipe, switchMap, tap, interval, takeWhile } from 'rxjs'
 import { 
   Pomodoro,
   PomodoroStatus,
@@ -24,6 +24,7 @@ type PomodoroState = {
   saving: boolean
   deleting: boolean
   error: string | null
+  timerIntervalId: number | null
 }
 
 const initialTimer: PomodoroTimer = {
@@ -59,7 +60,8 @@ export const PomodoroStore = signalStore(
     loading: false,
     saving: false,
     deleting: false,
-    error: null
+    error: null,
+    timerIntervalId: null
   }),
   withComputed((state) => ({
     todayPomodoros: computed(() => {
@@ -108,17 +110,48 @@ export const PomodoroStore = signalStore(
     // Timer controls
     startTimer: () => {
       const currentTimer = store.timer()
+      
+      // Clear any existing interval
+      if (store.timerIntervalId()) {
+        clearInterval(store.timerIntervalId()!)
+      }
+      
+      // Start the timer interval
+      const intervalId = setInterval(() => {
+        const timer = store.timer()
+        if (timer.isRunning && timer.timeRemaining > 0) {
+          patchState(store, {
+            timer: {
+              ...timer,
+              timeRemaining: timer.timeRemaining - 1
+            }
+          })
+        } else if (timer.timeRemaining <= 0) {
+          // Timer completed - we need to call the method directly
+          const methods = store as any;
+          methods.completeCurrentTimer()
+        }
+      }, 1000)
+      
       patchState(store, {
         timer: {
           ...currentTimer,
           isRunning: true,
           isPaused: false
-        }
+        },
+        timerIntervalId: intervalId as any
       })
     },
 
     pauseTimer: () => {
       const currentTimer = store.timer()
+      
+      // Clear the interval
+      if (store.timerIntervalId()) {
+        clearInterval(store.timerIntervalId()!)
+        patchState(store, { timerIntervalId: null })
+      }
+      
       patchState(store, {
         timer: {
           ...currentTimer,
@@ -129,17 +162,18 @@ export const PomodoroStore = signalStore(
     },
 
     resumeTimer: () => {
-      const currentTimer = store.timer()
-      patchState(store, {
-        timer: {
-          ...currentTimer,
-          isRunning: true,
-          isPaused: false
-        }
-      })
+      // Use the same logic as startTimer for consistency
+      const methods = store as any;
+      methods.startTimer()
     },
 
     resetTimer: () => {
+      // Clear any existing interval
+      if (store.timerIntervalId()) {
+        clearInterval(store.timerIntervalId()!)
+        patchState(store, { timerIntervalId: null })
+      }
+      
       const settings = store.settings()
       const duration = settings?.workDuration || 25
       patchState(store, {
@@ -154,6 +188,12 @@ export const PomodoroStore = signalStore(
     },
 
     completeCurrentTimer: () => {
+      // Clear any existing interval
+      if (store.timerIntervalId()) {
+        clearInterval(store.timerIntervalId()!)
+        patchState(store, { timerIntervalId: null })
+      }
+      
       const currentTimer = store.timer()
       const nextType = currentTimer.currentType === PomodoroType.Work 
         ? PomodoroType.ShortBreak 
@@ -163,6 +203,28 @@ export const PomodoroStore = signalStore(
       const nextDuration = nextType === PomodoroType.Work 
         ? (settings?.workDuration || 25)
         : (settings?.shortBreakDuration || 5)
+
+      // Update statistics when completing a pomodoro
+      if (currentTimer.currentType === PomodoroType.Work) {
+        const completedPomodoro: Pomodoro = {
+          id: Date.now().toString(),
+          taskId: currentTimer.currentPomodoroId || 'no-task',
+          type: PomodoroType.Work,
+          status: PomodoroStatus.Completed,
+          plannedDuration: currentTimer.totalTime / 60,
+          actualDuration: (currentTimer.totalTime - currentTimer.timeRemaining) / 60,
+          startTime: new Date(),
+          endTime: new Date(),
+          notes: undefined,
+          interruptions: 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+        
+        patchState(store, {
+          pomodoros: [...store.pomodoros(), completedPomodoro]
+        })
+      }
 
       patchState(store, {
         timer: {
@@ -269,6 +331,14 @@ export const PomodoroStore = signalStore(
     refreshPomodoros: () => {
       patchState(store, { loading: true, error: null })
       patchState(store, { loading: false })
+    },
+
+    // Cleanup method for timer interval
+    cleanupTimer: () => {
+      if (store.timerIntervalId()) {
+        clearInterval(store.timerIntervalId()!)
+        patchState(store, { timerIntervalId: null })
+      }
     }
   }))
 )

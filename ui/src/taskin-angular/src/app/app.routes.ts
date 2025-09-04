@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { DashboardComponent } from './features/dashboard/pages/dashboard/dashboard.component';
 import { PomodorosComponent } from './features/pomodoros/pages/pomodoros/pomodoros.component';
+import { pomodoroExitGuard } from './features/pomodoros/shared/guards/pomodoro-exit.guard';
 import { ProjectsComponent } from './features/projects/pages/projects/projects.component';
 import { ProjectDetailsComponent } from './features/projects/pages/project-details/project-details.component';
 import { ProjectNewComponent } from './features/projects/pages/project-new/project-new.component';
@@ -25,6 +26,6 @@ export const routes: Route[] = [
   { path: 'tasks/:id', component: TaskDetailsComponent },
   { path: 'tasks/:id/edit', component: TaskNewComponent },
   
-  { path: 'pomodoros', component: PomodorosComponent },
+  { path: 'pomodoros', component: PomodorosComponent, canDeactivate: [pomodoroExitGuard] },
   { path: '**', redirectTo: '/dashboard', pathMatch: 'full' },
 ];

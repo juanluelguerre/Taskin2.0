@@ -33,6 +33,7 @@ import { TaskStore } from '../shared/stores/task.store';
 export class TaskCardComponent {
   // Inputs
   task = input.required<TaskViewModel>();
+  viewMode = input<'list' | 'grid' | 'kanban'>('list');
 
   // Outputs
   taskToggled = output<TaskViewModel>();
@@ -40,4 +41,19 @@ export class TaskCardComponent {
   taskDuplicated = output<TaskViewModel>();
   taskViewed = output<TaskViewModel>();
   taskDeleted = output<TaskViewModel>();
+
+  getStatusIcon(status: number): string {
+    switch (status) {
+      case 0: // Pending
+        return 'pending';
+      case 1: // InProgress
+        return 'work';
+      case 2: // Completed
+        return 'check_circle';
+      case 3: // Cancelled
+        return 'cancel';
+      default:
+        return 'pending';
+    }
+  }
 }

@@ -2,27 +2,31 @@
   class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
 >
   <div class="flex items-start space-x-4">
-    <!-- Drag Handle -->
-    <div class="flex-shrink-0 pt-1">
-      <mat-icon
-        class="text-gray-400 cursor-grab hover:text-gray-600 transition-colors"
-        cdkDragHandle
-        matTooltip="Drag to move between columns"
-      >
-        drag_indicator
-      </mat-icon>
-    </div>
+    <!-- Drag Handle - Only show in Kanban view -->
+    @if (viewMode() === 'kanban') {
+      <div class="flex-shrink-0 pt-1">
+        <mat-icon
+          class="text-gray-400 cursor-grab hover:text-gray-600 transition-colors"
+          cdkDragHandle
+          matTooltip="Drag to move between columns"
+        >
+          drag_indicator
+        </mat-icon>
+      </div>
+    }
 
-    <!-- Checkbox -->
-    <div class="flex-shrink-0 pt-1">
-      <mat-checkbox
-        [checked]="task().isCompleted"
-        [disabled]="task().isCompleted"
-        (change)="taskToggled.emit(task())"
-        [color]="'primary'"
-      >
-      </mat-checkbox>
-    </div>
+    <!-- Checkbox - Show only in List and Grid views -->
+    @if (viewMode() !== 'kanban') {
+      <div class="flex-shrink-0 pt-1">
+        <mat-checkbox
+          [checked]="task().isCompleted"
+          [disabled]="task().isCompleted"
+          (change)="taskToggled.emit(task())"
+          [color]="'primary'"
+        >
+        </mat-checkbox>
+      </div>
+    }
 
     <!-- Task Content -->
     <div class="flex-1 min-w-0">
@@ -107,7 +111,7 @@
         </div>
 
         <!-- Actions and Status -->
-        <div class="flex items-center space-x-3 ml-4">
+        <div class="flex items-center space-x-3 ml-4 flex-shrink-0">
           <!-- Priority Badge -->
           <span
             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -116,16 +120,24 @@
             {{ task().priority | taskPriorityDisplay }}
           </span>
 
-          <!-- Status Badge -->
-          <span
-            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-            [ngClass]="task().statusColor"
-          >
-            {{ task().status | taskStatusDisplay }}
-          </span>
+          <!-- Status Badge/Icon -->
+          @if (viewMode() === 'kanban') {
+            <mat-icon 
+              class="text-gray-600"
+              [matTooltip]="task().status | taskStatusDisplay">
+              {{ getStatusIcon(task().status) }}
+            </mat-icon>
+          } @else {
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [ngClass]="task().statusColor"
+            >
+              {{ task().status | taskStatusDisplay }}
+            </span>
+          }
 
           <!-- Actions Menu -->
-          <button mat-icon-button [matMenuTriggerFor]="taskMenu">
+          <button mat-icon-button [matMenuTriggerFor]="taskMenu" class="flex-shrink-0">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #taskMenu="matMenu">

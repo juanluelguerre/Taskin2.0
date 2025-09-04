@@ -8,6 +8,7 @@ import { PomodoroStore } from '../../shared/stores/pomodoro.store';
 import { PomodoroType, PomodoroStatus } from '../../shared/types/pomodoro.types';
 import { FormatTimePipe } from '@shared/pipes/format-time.pipe';
 import { SessionTypeDisplayPipe } from '@shared/pipes/session-type-display.pipe';
+import { CanComponentDeactivate } from '../../shared/guards/pomodoro-exit.guard';
 
 @Component({
   selector: 'app-pomodoros',
@@ -27,7 +28,7 @@ import { SessionTypeDisplayPipe } from '@shared/pipes/session-type-display.pipe'
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [PomodoroStore]
 })
-export class PomodorosComponent implements OnInit, OnDestroy {
+export class PomodorosComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   private readonly store = inject(PomodoroStore)
 
   // Expose store signals for template
@@ -120,7 +121,8 @@ export class PomodorosComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Timer cleanup is handled in the store
+    // Clean up timer interval to prevent memory leaks
+    this.store.cleanupTimer()
   }
 
   toggleTimer(): void {
@@ -180,5 +182,25 @@ export class PomodorosComponent implements OnInit, OnDestroy {
 
   clearError(): void {
     this.store.clearError()
+  }
+
+  canDeactivate(): boolean {
+    const timer = this.timer();
+    
+    // If timer is running or paused, show confirmation
+    if (timer.isRunning || timer.isPaused) {
+      const confirmed = window.confirm(
+        'You have an active pomodoro session. Are you sure you want to leave? Your timer will be reset.'
+      );
+      
+      if (confirmed) {
+        // Stop and clean up timer if user confirms
+        this.store.resetTimer();
+      }
+      
+      return confirmed;
+    }
+    
+    return true;
   }
 }
