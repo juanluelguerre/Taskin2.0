@@ -18,10 +18,11 @@ Standalone Angular application using Angular Material, CDK, TailwindCSS and Tran
 
 ## Quick Start
 
-1. Install deps: `pnpm i` or `npm i`.
-2. Dev server: `npm start` (opens `http://localhost:4200/`).
-3. Production build: `npm run build` (outputs to `dist/`).
-4. Unit tests: `npm test`.
+1. Prerequisite: Node >= 20.0.0 (use `nvm use` if available).
+2. Install deps: `npm i`.
+3. Dev server: `npm start` (opens `http://localhost:4200/`).
+4. Production build: `npm run build` (outputs to `dist/`).
+5. Unit tests: `npm test`.
 
 ## Generate standalone components
 

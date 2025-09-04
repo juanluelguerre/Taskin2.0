@@ -1,51 +1,58 @@
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+<div
+  class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+>
   <div class="flex items-start space-x-4">
     <!-- Drag Handle -->
     <div class="flex-shrink-0 pt-1">
-      <mat-icon class="text-gray-400 cursor-grab hover:text-gray-600 transition-colors" 
-                cdkDragHandle 
-                matTooltip="Drag to move between columns">
+      <mat-icon
+        class="text-gray-400 cursor-grab hover:text-gray-600 transition-colors"
+        cdkDragHandle
+        matTooltip="Drag to move between columns"
+      >
         drag_indicator
       </mat-icon>
     </div>
-    
+
     <!-- Checkbox -->
     <div class="flex-shrink-0 pt-1">
-      <mat-checkbox 
+      <mat-checkbox
         [checked]="task().isCompleted"
         [disabled]="task().isCompleted"
         (change)="taskToggled.emit(task())"
-        [color]="'primary'">
+        [color]="'primary'"
+      >
       </mat-checkbox>
     </div>
-    
+
     <!-- Task Content -->
     <div class="flex-1 min-w-0">
       <div class="flex items-start justify-between">
         <div class="flex-1">
           <!-- Title -->
-          <h4 class="text-lg font-medium text-gray-900 mb-1"
-              [class.line-through]="task().isCompleted"
-              [class.text-gray-500]="task().isCompleted">
+          <h4
+            class="text-lg font-medium text-gray-900 mb-1"
+            [class.line-through]="task().isCompleted"
+            [class.text-gray-500]="task().isCompleted"
+          >
             {{ task().title }}
           </h4>
-          
+
           <!-- Description -->
           @if (task().description) {
-            <p class="text-sm text-gray-600 mb-3 line-clamp-2">
-              {{ task().description }}
-            </p>
+          <p class="text-sm text-gray-600 mb-3 line-clamp-2">
+            {{ task().description }}
+          </p>
           }
-          
+
           <!-- Tags -->
           @if (task().tags.length > 0) {
-            <div class="flex flex-wrap gap-2 mb-3">
-              @for (tag of task().tags; track tag) {
-                <mat-chip class="text-xs">{{ tag }}</mat-chip>
-              }
-            </div>
+          <div class="flex flex-wrap gap-2 mb-3">
+            @for (tag of task().tags; track tag) {
+            <mat-chip class="text-xs">{{ tag }}</mat-chip>
+            }
+          </div>
           }
-          
+
           <!-- Meta Information -->
           <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
             <!-- Project -->
@@ -53,65 +60,70 @@
               <mat-icon class="text-gray-400 mr-1 text-base">folder</mat-icon>
               <span>{{ task().projectName }}</span>
             </div>
-            
+
             <!-- Due Date -->
             @if (task().dueDate) {
-              <div class="flex items-center"
-                   [class.text-red-600]="task().isOverdue">
-                <mat-icon class="text-gray-400 mr-1 text-base"
-                          [class.text-red-400]="task().isOverdue">schedule</mat-icon>
-                <span>
-                  @if (task().isOverdue) {
-                    Overdue
-                  } @else if (task().daysUntilDue !== undefined) {
-                    @if (task().daysUntilDue === 0) {
-                      Due today
-                    } @else if (task().daysUntilDue === 1) {
-                      Due tomorrow
-                    } @else if (task().daysUntilDue !== undefined && task().daysUntilDue! > 0) {
-                      {{ task().daysUntilDue }} days left
-                    }
-                  }
-                </span>
-              </div>
+            <div class="flex items-center" [class.text-red-600]="task().isOverdue">
+              <mat-icon class="text-gray-400 mr-1 text-base" [class.text-red-400]="task().isOverdue"
+                >schedule</mat-icon
+              >
+              <span>
+                @if (task().isOverdue) { Overdue } @else if (task().daysUntilDue !== undefined) {
+                @if (task().daysUntilDue === 0) { Due today } @else if (task().daysUntilDue === 1) {
+                Due tomorrow } @else if (task().daysUntilDue !== undefined && task().daysUntilDue! >
+                0) {
+                {{ task().daysUntilDue }} days left } }
+              </span>
+            </div>
             }
-            
+
             <!-- Assignee -->
             @if (task().assigneeName) {
-              <div class="flex items-center">
-                <mat-icon class="text-gray-400 mr-1 text-base">person</mat-icon>
-                <span>{{ task().assigneeName }}</span>
-              </div>
+            <div class="flex items-center">
+              <mat-icon class="text-gray-400 mr-1 text-base">person</mat-icon>
+              <span>{{ task().assigneeName }}</span>
+            </div>
             }
-            
+
             <!-- Progress -->
             @if (task().estimatedPomodoros) {
-              <div class="flex items-center">
-                <mat-icon class="text-gray-400 mr-1 text-base">timer</mat-icon>
-                <span>{{ task().completedPomodoros || 0 }}/{{ task().estimatedPomodoros }} pomodoros</span>
-                <div class="ml-2 w-16 h-1 bg-gray-200 rounded">
-                  <div class="h-full bg-blue-600 rounded" 
-                       [style.width.%]="task().completionPercentage"></div>
-                </div>
+            <div class="flex items-center">
+              <mat-icon class="text-gray-400 mr-1 text-base">timer</mat-icon>
+              <span
+                >{{ task().completedPomodoros || 0 }}/{{
+                  task().estimatedPomodoros
+                }}
+                pomodoros</span
+              >
+              <div class="ml-2 w-16 h-1 bg-gray-200 rounded">
+                <div
+                  class="h-full bg-blue-600 rounded"
+                  [style.width.%]="task().completionPercentage"
+                ></div>
               </div>
+            </div>
             }
           </div>
         </div>
-        
+
         <!-- Actions and Status -->
         <div class="flex items-center space-x-3 ml-4">
           <!-- Priority Badge -->
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                [ngClass]="task().priorityColor">
-            {{ task().priority | uppercase }}
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+            [ngClass]="task().priorityColor"
+          >
+            {{ task().priority | taskPriorityDisplay }}
           </span>
-          
+
           <!-- Status Badge -->
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                [ngClass]="task().statusColor">
-            {{ task().status | titlecase }}
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+            [ngClass]="task().statusColor"
+          >
+            {{ task().status | taskStatusDisplay }}
           </span>
-          
+
           <!-- Actions Menu -->
           <button mat-icon-button [matMenuTriggerFor]="taskMenu">
             <mat-icon>more_vert</mat-icon>
@@ -130,9 +142,7 @@
               View Details
             </button>
             <div class="border-t border-gray-200 my-1"></div>
-            <button mat-menu-item 
-                    class="text-red-600" 
-                    (click)="taskDeleted.emit(task())">
+            <button mat-menu-item class="text-red-600" (click)="taskDeleted.emit(task())">
               <mat-icon class="text-red-600">delete</mat-icon>
               Delete Task
             </button>

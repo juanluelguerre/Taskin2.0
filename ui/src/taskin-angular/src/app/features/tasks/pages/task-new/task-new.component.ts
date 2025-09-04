@@ -21,6 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
@@ -49,6 +50,7 @@ import {
     MatNativeDateModule,
     MatChipsModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatAutocompleteModule,
   ],
   templateUrl: './task-new.component.html',
@@ -68,7 +70,7 @@ export class TaskNewComponent implements OnInit {
 
   // Form and state
   readonly form: FormGroup;
-  private readonly isEditMode = signal<boolean>(false);
+  readonly isEditMode = signal<boolean>(false);
   private readonly taskId = signal<string | null>(null);
 
   // Store selectors

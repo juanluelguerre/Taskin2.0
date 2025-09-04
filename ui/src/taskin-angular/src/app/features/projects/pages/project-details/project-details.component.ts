@@ -110,4 +110,14 @@ export class ProjectDetailsComponent implements OnInit {
     this.router.navigate(['/tasks', taskId]);
   }
 
+  onAddTask() {
+    const project = this.project();
+    if (project) {
+      // Navigate to new task with project context
+      this.router.navigate(['/tasks/new'], {
+        queryParams: { projectId: project.id }
+      });
+    }
+  }
+
 }

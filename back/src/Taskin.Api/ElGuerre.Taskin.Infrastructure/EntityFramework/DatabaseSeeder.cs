@@ -135,6 +135,7 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Setup project structure and React app",
                 Description = "Setup project structure and initialize React app with TypeScript, ESLint, and modern tooling configuration",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
@@ -143,6 +144,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Design responsive product catalog pages",
                 Description = "Design responsive product catalog pages with filtering, search, and pagination functionality",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
@@ -151,6 +153,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Integrate Stripe payment gateway",
                 Description = "Integrate Stripe payment gateway with secure checkout flow and webhook handling",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
@@ -159,6 +162,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Implement user authentication",
                 Description = "Implement user authentication with JWT tokens and refresh mechanism",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
@@ -167,6 +171,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Create shopping cart functionality",
                 Description = "Create shopping cart functionality with persistent storage and real-time updates",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
@@ -181,6 +186,7 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Conduct user research and stakeholder interviews",
                 Description = "Conduct comprehensive user research and stakeholder interviews to understand pain points",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
@@ -189,6 +195,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Create detailed wireframes and user journeys",
                 Description = "Create detailed wireframes and user journey flows for all major app sections",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
@@ -197,6 +204,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Establish comprehensive design system",
                 Description = "Establish comprehensive design system with components, colors, and typography guidelines",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
@@ -205,6 +213,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Build interactive prototype",
                 Description = "Build interactive prototype with animations and micro-interactions for user testing",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
@@ -213,6 +222,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Conduct usability testing sessions",
                 Description = "Conduct usability testing sessions and iterate based on user feedback",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
@@ -227,6 +237,7 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Document all REST API endpoints",
                 Description = "Document all REST API endpoints with request/response examples and error codes",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
@@ -235,6 +246,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Create authentication flow guide",
                 Description = "Create comprehensive authentication flow guide with JWT implementation details",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
@@ -243,6 +255,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Add code examples in multiple languages",
                 Description = "Add practical code examples in multiple programming languages (Python, JavaScript, cURL)",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
@@ -257,6 +270,7 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Design conversion-optimized landing page",
                 Description = "Design conversion-optimized landing page with clear value proposition and CTAs",
                 ProjectId = marketingProject.Id,
                 Project = marketingProject,
@@ -265,6 +279,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Implement SEO best practices",
                 Description = "Implement SEO best practices and schema markup for better search visibility",
                 ProjectId = marketingProject.Id,
                 Project = marketingProject,
@@ -279,6 +294,7 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Design interactive charts and KPI widgets",
                 Description = "Design interactive charts and KPI widgets with real-time data visualization",
                 ProjectId = analyticsProject.Id,
                 Project = analyticsProject,
@@ -287,6 +303,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Implement automated report generation",
                 Description = "Implement automated report generation with PDF export and email scheduling",
                 ProjectId = analyticsProject.Id,
                 Project = analyticsProject,
@@ -295,6 +312,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Set up data pipelines and ETL processes",
                 Description = "Set up data pipelines and ETL processes for business intelligence metrics",
                 ProjectId = analyticsProject.Id,
                 Project = analyticsProject,
@@ -309,6 +327,7 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Conduct penetration testing",
                 Description = "Conduct penetration testing on web application and API endpoints",
                 ProjectId = securityProject.Id,
                 Project = securityProject,
@@ -317,6 +336,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Review code for security vulnerabilities",
                 Description = "Review code for security vulnerabilities and implement OWASP recommendations",
                 ProjectId = securityProject.Id,
                 Project = securityProject,
@@ -325,6 +345,7 @@ public static class DatabaseSeeder
             },
             new Domain.Entities.Task
             {
+                Title = "Set up automated security scanning",
                 Description = "Set up automated security scanning and monitoring systems",
                 ProjectId = securityProject.Id,
                 Project = securityProject,
