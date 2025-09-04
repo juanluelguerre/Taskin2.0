@@ -1,3 +1,4 @@
+import { CdkDrag, CdkDragDrop, CdkDragPreview, CdkDropList } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -8,14 +9,6 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import { 
-  CdkDragDrop, 
-  CdkDropList, 
-  CdkDrag, 
-  CdkDragPreview,
-  moveItemInArray, 
-  transferArrayItem 
-} from '@angular/cdk/drag-drop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
@@ -45,105 +38,30 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
     TaskFiltersComponent,
   ],
   templateUrl: './tasks.component.html',
-  styles: `
-    .loading-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-    }
-
-    /* Drag & Drop Styles */
-    .cdk-drop-list {
-      transition: background-color 250ms ease;
-    }
-
-    .cdk-drop-list.cdk-drop-list-receiving {
-      background-color: rgba(59, 130, 246, 0.05);
-      border-radius: 8px;
-    }
-
-    .cdk-drag {
-      transition: transform 250ms ease;
-      cursor: grab;
-    }
-
-    .cdk-drag:active {
-      cursor: grabbing;
-    }
-
-    .cdk-drag.cdk-drag-animating {
-      transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
-    }
-
-    .cdk-drag-preview {
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
-                  0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      border: 2px solid #3b82f6;
-      transform: rotate(5deg);
-      z-index: 1000;
-    }
-
-    .cdk-drag-placeholder {
-      opacity: 0.3;
-      border: 2px dashed #d1d5db;
-      background-color: #f9fafb;
-      border-radius: 8px;
-    }
-
-    .cdk-drop-list-dragging .cdk-drag {
-      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-    }
-
-    /* Kanban column hover effects */
-    .kanban-column {
-      position: relative;
-      transition: all 200ms ease;
-    }
-
-    .kanban-column:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-                  0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Empty state styling */
-    .empty-kanban-column {
-      border: 2px dashed #e5e7eb;
-      background-color: #f9fafb;
-      border-radius: 8px;
-      transition: all 200ms ease;
-    }
-
-    .empty-kanban-column.cdk-drop-list-receiving {
-      border-color: #3b82f6;
-      background-color: rgba(59, 130, 246, 0.05);
-    }
-  `,
+  styleUrls: ['./tasks.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksComponent implements OnInit {
   // Dependencies
-  private readonly taskStore = inject(TaskStore);
+  private readonly store = inject(TaskStore);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
   private readonly confirmationService = inject(UiConfirmationService);
 
   // Store selectors - exposed as signals
-  readonly tasks = this.taskStore.taskViewModels;
-  readonly stats = this.taskStore.taskStatistics;
-  readonly loading = this.taskStore.loading;
-  readonly saving = this.taskStore.saving;
-  readonly error = this.taskStore.error;
-  readonly filters = this.taskStore.filters;
-  readonly searchTerm = this.taskStore.searchTerm;
-  readonly viewMode = this.taskStore.viewMode;
-  readonly totalPages = this.taskStore.totalPages;
-  readonly currentPage = this.taskStore.currentPage;
-  readonly hasNextPage = this.taskStore.hasNextPage;
-  readonly hasPreviousPage = this.taskStore.hasPreviousPage;
+  readonly tasks = this.store.taskViewModels;
+  readonly stats = this.store.taskStatistics;
+  readonly loading = this.store.loading;
+  readonly saving = this.store.saving;
+  readonly error = this.store.error;
+  readonly filters = this.store.filters;
+  readonly searchTerm = this.store.searchTerm;
+  readonly viewMode = this.store.viewMode;
+  readonly totalPages = this.store.totalPages;
+  readonly currentPage = this.store.currentPage;
+  readonly hasNextPage = this.store.hasNextPage;
+  readonly hasPreviousPage = this.store.hasPreviousPage;
 
   // Mock data for dropdowns (in real app, these would come from services)
   readonly projects = [
@@ -171,7 +89,10 @@ export class TasksComponent implements OnInit {
   readonly showingToIndex = computed(() => Math.min(this.currentPage() * 25, this.tasks().length));
 
   readonly cancelledTasksCount = computed(
-    () => this.tasks().filter(t => t.status === TaskStatus.Cancelled || (t.status as any) === 'cancelled').length
+    () =>
+      this.tasks().filter(
+        t => t.status === TaskStatus.Cancelled || (t.status as any) === 'cancelled'
+      ).length
   );
 
   // Computed tasks by status for kanban board
@@ -181,17 +102,14 @@ export class TasksComponent implements OnInit {
       pending: tasks.filter(t => t.status === TaskStatus.Pending),
       inProgress: tasks.filter(t => t.status === TaskStatus.InProgress),
       completed: tasks.filter(t => t.status === TaskStatus.Completed),
-      cancelled: tasks.filter(t => t.status === TaskStatus.Cancelled || (t.status as any) === 'cancelled')
+      cancelled: tasks.filter(
+        t => t.status === TaskStatus.Cancelled || (t.status as any) === 'cancelled'
+      ),
     };
   });
 
   // Drop container IDs for kanban board
-  readonly dropListIds = [
-    'pending-list',
-    'in-progress-list', 
-    'completed-list',
-    'cancelled-list'
-  ];
+  readonly dropListIds = ['pending-list', 'in-progress-list', 'completed-list', 'cancelled-list'];
 
   // Enum references for template use
   readonly TaskStatus = TaskStatus;
@@ -208,12 +126,13 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     // Load initial data
-    this.taskStore.refreshTasks();
+    this.store.refreshTasks();
+    this.store.loadTasks();
   }
 
   // Event handlers for task actions
   onTaskToggled(task: TaskViewModel): void {
-    this.taskStore.toggleTaskCompletion(task.id);
+    this.store.toggleTaskCompletion(task.id);
   }
 
   onTaskEdited(task: TaskViewModel): void {
@@ -221,7 +140,7 @@ export class TasksComponent implements OnInit {
   }
 
   onTaskDuplicated(task: TaskViewModel): void {
-    this.taskStore.duplicateTask(task.id);
+    this.store.duplicateTask(task.id);
     this.notificationService.notifySuccess('tasks.messages.duplicated', { name: task.title });
   }
 
@@ -254,7 +173,7 @@ export class TasksComponent implements OnInit {
 
     confirmationRef.afterClosed().subscribe(result => {
       if (result === 'confirmed') {
-        this.taskStore.deleteTask(task.id);
+        this.store.deleteTask(task.id);
         this.notificationService.notifySuccess('tasks.messages.deleted', { name: task.title });
       }
     });
@@ -262,17 +181,17 @@ export class TasksComponent implements OnInit {
 
   // Event handlers for filters
   onFiltersChanged(filters: TaskFilters): void {
-    this.taskStore.setFilters(filters);
-    this.taskStore.loadTasks();
+    this.store.setFilters(filters);
+    this.store.loadTasks();
   }
 
   onSearchChanged(searchTerm: string): void {
-    this.taskStore.searchTasks(searchTerm);
+    this.store.searchTasks(searchTerm);
   }
 
   onFiltersCleared(): void {
-    this.taskStore.clearFilters();
-    this.taskStore.loadTasks();
+    this.store.clearFilters();
+    this.store.loadTasks();
   }
 
   // Navigation and view actions
@@ -281,36 +200,36 @@ export class TasksComponent implements OnInit {
   }
 
   onViewModeChanged(viewMode: 'list' | 'grid' | 'kanban'): void {
-    this.taskStore.setViewMode(viewMode);
+    this.store.setViewMode(viewMode);
   }
 
   // Pagination
   onPageChanged(page: number): void {
-    this.taskStore.setPage(page);
-    this.taskStore.loadTasks();
+    this.store.setPage(page);
+    this.store.loadTasks();
   }
 
   onNextPage(): void {
     if (this.hasNextPage()) {
-      this.taskStore.setPage(this.currentPage() + 1);
-      this.taskStore.loadTasks();
+      this.store.setPage(this.currentPage() + 1);
+      this.store.loadTasks();
     }
   }
 
   onPreviousPage(): void {
     if (this.hasPreviousPage()) {
-      this.taskStore.setPage(this.currentPage() - 1);
-      this.taskStore.loadTasks();
+      this.store.setPage(this.currentPage() - 1);
+      this.store.loadTasks();
     }
   }
 
   // Utility methods
   onRefresh(): void {
-    this.taskStore.loadTasks();
+    this.store.loadTasks();
   }
 
   onDismissError(): void {
-    this.taskStore.clearError();
+    this.store.clearError();
   }
 
   // Drag & Drop handlers
@@ -320,7 +239,7 @@ export class TasksComponent implements OnInit {
     console.log('Current container:', event.container.id);
     console.log('Previous index:', event.previousIndex);
     console.log('Current index:', event.currentIndex);
-    
+
     if (event.previousContainer === event.container) {
       // Reordering within the same column - no status change needed
       console.log('Same container, no status change needed');
@@ -330,22 +249,22 @@ export class TasksComponent implements OnInit {
     // Task moved between columns - update status
     const task = event.previousContainer.data[event.previousIndex];
     console.log('Task to update:', task);
-    
+
     const newStatus = this.getStatusFromContainerId(event.container.id);
     console.log('New status:', newStatus);
-    
+
     if (newStatus && task.status !== newStatus) {
       // Create update request
       const updateRequest = {
         id: task.id,
-        status: newStatus
+        status: newStatus,
       };
-      
+
       console.log('Updating task with request:', updateRequest);
-      this.taskStore.updateTask({ id: task.id, request: updateRequest });
-      this.notificationService.notifySuccess('Task moved successfully', { 
-        taskName: task.title, 
-        newStatus: newStatus 
+      this.store.updateTask({ id: task.id, request: updateRequest });
+      this.notificationService.notifySuccess('Task moved successfully', {
+        taskName: task.title,
+        newStatus: newStatus,
       });
     }
   }

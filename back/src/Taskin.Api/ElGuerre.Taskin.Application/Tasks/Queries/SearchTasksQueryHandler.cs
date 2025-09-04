@@ -1,4 +1,5 @@
 using ElGuerre.Taskin.Application.Data;
+using ElGuerre.Taskin.Application.Tasks.DTOs;
 using ElGuerre.Taskin.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

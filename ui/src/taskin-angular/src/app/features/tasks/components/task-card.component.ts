@@ -29,7 +29,6 @@ import { TaskStore } from '../shared/stores/task.store';
   ],
   templateUrl: './task-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TaskStore],
 })
 export class TaskCardComponent {
   // Inputs
