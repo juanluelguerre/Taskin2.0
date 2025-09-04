@@ -24,7 +24,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AssigneeService, Assignee } from '@core/services/assignee.service';
 import { NotificationService } from '@core/services/notification.service';
+import { ProjectService, ProjectListDto } from '../../../projects/shared/services/project.service';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
 import {
   CreateTaskRequest,
@@ -57,7 +59,6 @@ import {
   styleUrl: './task-new.component.scss',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TaskStore],
 })
 export class TaskNewComponent implements OnInit {
   // Dependencies
@@ -65,6 +66,8 @@ export class TaskNewComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly taskStore = inject(TaskStore);
+  private readonly projectService = inject(ProjectService);
+  private readonly assigneeService = inject(AssigneeService);
   private readonly notificationService = inject(NotificationService);
   private readonly confirmationService = inject(UiConfirmationService);
 
@@ -97,19 +100,8 @@ export class TaskNewComponent implements OnInit {
     { value: TaskStatus.Cancelled, label: 'Cancelled' },
   ];
 
-  readonly projects = [
-    { id: '1', name: 'Taskin 2.0' },
-    { id: '2', name: 'E-commerce Platform' },
-    { id: '3', name: 'Mobile App Redesign' },
-    { id: '4', name: 'API Documentation' },
-  ];
-
-  readonly assignees = [
-    { id: '1', name: 'Juan Luis' },
-    { id: '2', name: 'Jane Smith' },
-    { id: '3', name: 'Mike Johnson' },
-    { id: '4', name: 'Sarah Wilson' },
-  ];
+  readonly projects = signal<ProjectListDto[]>([]);
+  readonly assignees = signal<Assignee[]>([]);
 
   // Computed properties
   readonly pageTitle = computed(() => (this.isEditMode() ? 'Edit Task' : 'Create New Task'));
@@ -131,21 +123,44 @@ export class TaskNewComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Load projects and assignees
+    this.loadProjects();
+    this.loadAssignees();
+    
     // Check if we're in edit mode
     this.route.params.subscribe(params => {
       const id = params['id'];
+      console.log('Route params changed - id:', id);
+      
       if (id && id !== 'new') {
+        console.log('Setting edit mode for task ID:', id);
         this.isEditMode.set(true);
         this.taskId.set(id);
+        
+        // First clear any existing selection
+        console.log('Clearing previous task selection');
+        this.taskStore.clearSelection();
+        
+        // Load the task
+        console.log('Loading task with ID:', id);
         this.taskStore.loadTask(id);
+      } else {
+        console.log('Create mode - resetting form');
+        this.isEditMode.set(false);
+        this.taskId.set(null);
+        this.taskStore.clearSelection();
+      }
+    });
 
-        // Watch for task changes to populate form
-        effect(() => {
-          const task = this.taskStore.selectedTask();
-          if (task) {
-            this.populateFormFromTask(task);
-          }
-        });
+    // Watch for task changes to populate form
+    effect(() => {
+      const task = this.taskStore.selectedTask();
+      const isEdit = this.isEditMode();
+      console.log('Task effect triggered - selectedTask:', task, 'isEditMode:', isEdit);
+      
+      if (task && isEdit) {
+        console.log('Populating form with task ID:', task.id);
+        this.populateFormFromTask(task);
       }
     });
 
@@ -158,7 +173,29 @@ export class TaskNewComponent implements OnInit {
     });
   }
 
+  private loadProjects(): void {
+    this.projectService.getProjectsForDropdown().subscribe({
+      next: (projects) => this.projects.set(projects),
+      error: (error) => {
+        console.error('Error loading projects:', error);
+        this.notificationService.notifyError('Failed to load projects');
+      }
+    });
+  }
+
+  private loadAssignees(): void {
+    this.assigneeService.getAssigneesForDropdown().subscribe({
+      next: (assignees) => this.assignees.set(assignees),
+      error: (error) => {
+        console.error('Error loading assignees:', error);
+        this.notificationService.notifyError('Failed to load assignees');
+      }
+    });
+  }
+
   private populateFormFromTask(task: any): void {
+    console.log('Populating form with task:', task);
+    
     this.form.patchValue({
       title: task.title,
       description: task.description || '',
@@ -170,8 +207,12 @@ export class TaskNewComponent implements OnInit {
       estimatedPomodoros: task.estimatedPomodoros || null,
     });
 
-    // Set tags
-    this.tags.set([...task.tags]);
+    // Set tags - ensure tags is an array
+    const taskTags = task.tags && Array.isArray(task.tags) ? task.tags : [];
+    this.tags.set([...taskTags]);
+    
+    console.log('Form populated successfully. Form value:', this.form.value);
+    console.log('Tags set:', this.tags());
   }
 
   // Tag management

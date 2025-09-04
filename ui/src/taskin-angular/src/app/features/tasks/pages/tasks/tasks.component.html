@@ -142,7 +142,7 @@
       }
       
       @case ('kanban') {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
              cdkDropListGroup>
           <!-- Pending Column -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 kanban-column">
@@ -276,49 +276,6 @@
             </div>
           </div>
           
-          <!-- Cancelled Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 kanban-column">
-            <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900 flex items-center">
-                <mat-icon class="mr-2 text-red-500">cancel</mat-icon>
-                Cancelled
-              </h4>
-              <p class="text-sm text-gray-500">{{ tasksByStatus().cancelled.length }} tasks</p>
-            </div>
-            <div class="p-4 min-h-[400px]"
-                 cdkDropList
-                 [cdkDropListData]="tasksByStatus().cancelled"
-                 [cdkDropListConnectedTo]="dropListIds"
-                 id="cancelled-list"
-                 [class.empty-kanban-column]="tasksByStatus().cancelled.length === 0"
-                 (cdkDropListDropped)="onTaskDropped($event)">
-              @for (task of tasksByStatus().cancelled; track task.id) {
-                <div class="mb-4" cdkDrag>
-                  <app-task-card 
-                    [task]="task"
-                    [viewMode]="'kanban'"
-                    (taskToggled)="onTaskToggled($event)"
-                    (taskEdited)="onTaskEdited($event)"
-                    (taskDuplicated)="onTaskDuplicated($event)"
-                    (taskViewed)="onTaskViewed($event)"
-                    (taskDeleted)="onTaskDeleted($event)">
-                  </app-task-card>
-                  
-                  <!-- Drag preview -->
-                  <div *cdkDragPreview class="bg-white rounded-lg shadow-lg border border-gray-300 p-4 max-w-sm">
-                    <div class="font-medium text-gray-900">{{ task.title }}</div>
-                    <div class="text-sm text-gray-600 mt-1">{{ task.projectName }}</div>
-                  </div>
-                </div>
-              }
-              @empty {
-                <div class="text-center text-gray-500 py-8">
-                  <mat-icon class="text-gray-300 mb-2" style="font-size: 48px; width: 48px; height: 48px;">cancel</mat-icon>
-                  <p>No cancelled tasks</p>
-                </div>
-              }
-            </div>
-          </div>
         </div>
       }
       

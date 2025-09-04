@@ -14,7 +14,8 @@
       "Read(/C:\\code\\elguerre\\Taskin2.0\\ui/**)",
       "Read(/C:\\code\\elguerre\\Taskin2.0\\back/**)",
       "Read(/C:\\code\\elguerre\\Taskin2.0\\back\\src\\Taskin.Api\\ElGuerre.Taskin.Api/**)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(ng serve:*)"
     ],
     "deny": [],
     "ask": []

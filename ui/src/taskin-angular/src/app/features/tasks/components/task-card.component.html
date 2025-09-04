@@ -31,15 +31,44 @@
     <!-- Task Content -->
     <div class="flex-1 min-w-0">
       <div class="flex items-start justify-between">
-        <div class="flex-1">
-          <!-- Title -->
-          <h4
-            class="text-lg font-medium text-gray-900 mb-1"
-            [class.line-through]="task().isCompleted"
-            [class.text-gray-500]="task().isCompleted"
-          >
-            {{ task().title }}
-          </h4>
+        <div class="flex-1 min-w-0">
+          <!-- Title - optimized for Grid and Kanban views -->
+          <div class="flex items-start justify-between mb-1">
+            <h4
+              class="text-lg font-medium text-gray-900 flex-1 min-w-0 pr-2"
+              [class.line-through]="task().isCompleted"
+              [class.text-gray-500]="task().isCompleted"
+              [class.text-base]="viewMode() === 'kanban'"
+            >
+              {{ task().title }}
+            </h4>
+            
+            <!-- Actions Menu - repositioned for Grid and Kanban -->
+            @if (viewMode() === 'grid' || viewMode() === 'kanban') {
+              <button mat-icon-button [matMenuTriggerFor]="taskMenu" class="flex-shrink-0 -mt-1 -mr-2">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #taskMenu="matMenu">
+                <button mat-menu-item (click)="taskEdited.emit(task())">
+                  <mat-icon>edit</mat-icon>
+                  Edit Task
+                </button>
+                <button mat-menu-item (click)="taskDuplicated.emit(task())">
+                  <mat-icon>content_copy</mat-icon>
+                  Duplicate
+                </button>
+                <button mat-menu-item (click)="taskViewed.emit(task())">
+                  <mat-icon>visibility</mat-icon>
+                  View Details
+                </button>
+                <div class="border-t border-gray-200 my-1"></div>
+                <button mat-menu-item class="text-red-600" (click)="taskDeleted.emit(task())">
+                  <mat-icon class="text-red-600">delete</mat-icon>
+                  Delete Task
+                </button>
+              </mat-menu>
+            }
+          </div>
 
           <!-- Description -->
           @if (task().description) {
@@ -110,57 +139,87 @@
           </div>
         </div>
 
-        <!-- Actions and Status -->
-        <div class="flex items-center space-x-3 ml-4 flex-shrink-0">
-          <!-- Priority Badge -->
-          <span
-            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-            [ngClass]="task().priorityColor"
-          >
-            {{ task().priority | taskPriorityDisplay }}
-          </span>
+        <!-- Actions and Status - Only for List view -->
+        @if (viewMode() === 'list') {
+          <div class="flex items-center space-x-3 ml-4 flex-shrink-0">
+            <!-- Priority Badge -->
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [ngClass]="task().priorityColor"
+            >
+              {{ task().priority | taskPriorityDisplay }}
+            </span>
 
-          <!-- Status Badge/Icon -->
-          @if (viewMode() === 'kanban') {
-            <mat-icon 
-              class="text-gray-600"
-              [matTooltip]="task().status | taskStatusDisplay">
-              {{ getStatusIcon(task().status) }}
-            </mat-icon>
-          } @else {
+            <!-- Status Badge for List view -->
             <span
               class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
               [ngClass]="task().statusColor"
             >
               {{ task().status | taskStatusDisplay }}
             </span>
-          }
 
-          <!-- Actions Menu -->
-          <button mat-icon-button [matMenuTriggerFor]="taskMenu" class="flex-shrink-0">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #taskMenu="matMenu">
-            <button mat-menu-item (click)="taskEdited.emit(task())">
-              <mat-icon>edit</mat-icon>
-              Edit Task
+            <!-- Actions Menu for List view -->
+            <button mat-icon-button [matMenuTriggerFor]="taskMenuList" class="flex-shrink-0">
+              <mat-icon>more_vert</mat-icon>
             </button>
-            <button mat-menu-item (click)="taskDuplicated.emit(task())">
-              <mat-icon>content_copy</mat-icon>
-              Duplicate
-            </button>
-            <button mat-menu-item (click)="taskViewed.emit(task())">
-              <mat-icon>visibility</mat-icon>
-              View Details
-            </button>
-            <div class="border-t border-gray-200 my-1"></div>
-            <button mat-menu-item class="text-red-600" (click)="taskDeleted.emit(task())">
-              <mat-icon class="text-red-600">delete</mat-icon>
-              Delete Task
-            </button>
-          </mat-menu>
-        </div>
+          </div>
+        }
+        
+        <!-- Priority Badge for Grid and Kanban (positioned below title) -->
+        @if (viewMode() === 'grid' || viewMode() === 'kanban') {
+          <div class="mt-2">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [ngClass]="task().priorityColor"
+            >
+              {{ task().priority | taskPriorityDisplay }}
+            </span>
+          </div>
+        }
       </div>
     </div>
   </div>
 </div>
+
+<!-- Menu Templates -->
+<!-- Menu for Grid and Kanban views -->
+<mat-menu #taskMenu="matMenu">
+  <button mat-menu-item (click)="taskEdited.emit(task())">
+    <mat-icon>edit</mat-icon>
+    Edit Task
+  </button>
+  <button mat-menu-item (click)="taskDuplicated.emit(task())">
+    <mat-icon>content_copy</mat-icon>
+    Duplicate
+  </button>
+  <button mat-menu-item (click)="taskViewed.emit(task())">
+    <mat-icon>visibility</mat-icon>
+    View Details
+  </button>
+  <div class="border-t border-gray-200 my-1"></div>
+  <button mat-menu-item class="text-red-600" (click)="taskDeleted.emit(task())">
+    <mat-icon class="text-red-600">delete</mat-icon>
+    Delete Task
+  </button>
+</mat-menu>
+
+<!-- Menu for List view -->
+<mat-menu #taskMenuList="matMenu">
+  <button mat-menu-item (click)="taskEdited.emit(task())">
+    <mat-icon>edit</mat-icon>
+    Edit Task
+  </button>
+  <button mat-menu-item (click)="taskDuplicated.emit(task())">
+    <mat-icon>content_copy</mat-icon>
+    Duplicate
+  </button>
+  <button mat-menu-item (click)="taskViewed.emit(task())">
+    <mat-icon>visibility</mat-icon>
+    View Details
+  </button>
+  <div class="border-t border-gray-200 my-1"></div>
+  <button mat-menu-item class="text-red-600" (click)="taskDeleted.emit(task())">
+    <mat-icon class="text-red-600">delete</mat-icon>
+    Delete Task
+  </button>
+</mat-menu>

@@ -99,7 +99,7 @@ export class TasksComponent implements OnInit {
     };
   });
 
-  readonly dropListIds = ['pending-list', 'in-progress-list', 'completed-list', 'cancelled-list'];
+  readonly dropListIds = ['pending-list', 'in-progress-list', 'completed-list'];
   readonly TaskStatus = TaskStatus;
 
   constructor() {

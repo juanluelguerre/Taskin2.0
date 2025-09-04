@@ -10,7 +10,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TaskPriorityDisplayPipe } from '@shared/pipes/task-priority-display.pipe';
 import { TaskStatusDisplayPipe } from '@shared/pipes/task-status-display.pipe';
 import { TaskViewModel } from '../shared/types/task.types';
-import { TaskStore } from '../shared/stores/task.store';
 
 @Component({
   selector: 'app-task-card',
@@ -24,8 +23,8 @@ import { TaskStore } from '../shared/stores/task.store';
     MatCheckboxModule,
     MatChipsModule,
     MatTooltipModule,
-    TaskStatusDisplayPipe,
     TaskPriorityDisplayPipe,
+    TaskStatusDisplayPipe,
   ],
   templateUrl: './task-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
