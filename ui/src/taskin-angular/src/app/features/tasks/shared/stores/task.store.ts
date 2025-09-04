@@ -70,14 +70,11 @@ const initialState: TaskState = {
 export class TaskStore extends signalStore(
   withState(initialState),
   withComputed(store => ({
-    // Task view models with calculated properties
     taskViewModels: computed((): TaskViewModel[] => {
-      // Apply filters directly here instead of using filteredTasks
       let filtered = store.tasks();
       const currentFilters = store.filters();
       const search = store.searchTerm().toLowerCase().trim();
 
-      // Apply search
       if (search) {
         filtered = filtered.filter(
           task =>
@@ -87,7 +84,6 @@ export class TaskStore extends signalStore(
         );
       }
 
-      // Apply filters
       if (currentFilters.status) {
         filtered = filtered.filter(task => task.status === currentFilters.status);
       }
@@ -139,7 +135,6 @@ export class TaskStore extends signalStore(
       }));
     }),
 
-    // Statistics computed from current tasks
     taskStatistics: computed((): TaskStatsViewModel => {
       const currentTasks = store.tasks();
       const now = new Date();
@@ -163,7 +158,6 @@ export class TaskStore extends signalStore(
       };
     }),
 
-    // Tasks by status for Kanban view
     tasksByStatus: computed(() => {
       const filtered = store.tasks();
       return {
@@ -174,7 +168,6 @@ export class TaskStore extends signalStore(
       };
     }),
 
-    // Pagination info
     totalPages: computed(() => {
       return Math.ceil(store.totalCount() / store.pageSize());
     }),
@@ -189,7 +182,6 @@ export class TaskStore extends signalStore(
     }),
   })),
   withMethods((store, taskService = inject(TaskService), router = inject(Router)) => ({
-    // Load methods
     loadTasks: rxMethod<void>(
       pipe(
         switchMap(() => {
@@ -252,10 +244,14 @@ export class TaskStore extends signalStore(
     loadTaskStats: rxMethod<void>(
       pipe(
         switchMap(() => {
+          patchState(store, { loading: true });
           return taskService.getTaskStats().pipe(
             tapResponse({
               next: (stats: TaskStats) => {
                 patchState(store, { stats });
+              },
+              complete: () => {
+                patchState(store, { loading: false });
               },
               error: (error: any) => {
                 console.error('Load task stats error:', error);
@@ -266,7 +262,6 @@ export class TaskStore extends signalStore(
       )
     ),
 
-    // Search method
     searchTasks: rxMethod<string>(
       pipe(
         debounceTime(300),
@@ -306,7 +301,6 @@ export class TaskStore extends signalStore(
       )
     ),
 
-    // CRUD operations
     createTask: rxMethod<CreateTaskRequest>(
       pipe(
         exhaustMap(request => {
@@ -474,19 +468,10 @@ export class TaskStore extends signalStore(
       patchState(store, { viewMode });
     },
 
-    // Utility methods
     clearError: () => patchState(store, { error: null }),
 
     clearSelection: () => patchState(store, { selectedTask: null }),
 
-    refreshTasks: () => {
-      // Trigger refresh - would normally call API to get data from backend
-      patchState(store, { loading: true });
-      // For now, just clear loading state
-      patchState(store, { loading: false });
-    },
-
-    // Bulk operations
     bulkUpdateStatus: rxMethod<{ taskIds: string[]; status: TaskStatus }>(
       pipe(
         exhaustMap(({ taskIds, status }) => {
@@ -495,7 +480,6 @@ export class TaskStore extends signalStore(
           return taskService.bulkUpdateStatus(taskIds, status).pipe(
             tapResponse({
               next: () => {
-                // Update local state
                 patchState(store, {
                   tasks: store
                     .tasks()
@@ -522,7 +506,6 @@ export class TaskStore extends signalStore(
   }))
 ) {}
 
-// Helper functions
 function getStatusColor(status: TaskStatus): string {
   switch (status) {
     case TaskStatus.Pending:

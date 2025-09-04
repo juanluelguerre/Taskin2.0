@@ -43,13 +43,11 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksComponent implements OnInit {
-  // Dependencies
   private readonly store = inject(TaskStore);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
   private readonly confirmationService = inject(UiConfirmationService);
 
-  // Store selectors - exposed as signals
   readonly tasks = this.store.taskViewModels;
   readonly stats = this.store.taskStatistics;
   readonly loading = this.store.loading;
@@ -63,7 +61,6 @@ export class TasksComponent implements OnInit {
   readonly hasNextPage = this.store.hasNextPage;
   readonly hasPreviousPage = this.store.hasPreviousPage;
 
-  // Mock data for dropdowns (in real app, these would come from services)
   readonly projects = [
     { id: '1', name: 'Taskin 2.0' },
     { id: '2', name: 'E-commerce Platform' },
@@ -78,7 +75,6 @@ export class TasksComponent implements OnInit {
     { id: '4', name: 'Sarah Wilson' },
   ];
 
-  // Computed properties for template expressions
   readonly hasActiveFilters = computed(() => {
     const filters = this.filters();
     return Object.keys(filters).some(key => filters[key as keyof typeof filters]);
@@ -95,7 +91,6 @@ export class TasksComponent implements OnInit {
       ).length
   );
 
-  // Computed tasks by status for kanban board
   readonly tasksByStatus = computed(() => {
     const tasks = this.tasks();
     return {
@@ -108,14 +103,10 @@ export class TasksComponent implements OnInit {
     };
   });
 
-  // Drop container IDs for kanban board
   readonly dropListIds = ['pending-list', 'in-progress-list', 'completed-list', 'cancelled-list'];
-
-  // Enum references for template use
   readonly TaskStatus = TaskStatus;
 
   constructor() {
-    // React to errors using effect
     effect(() => {
       const error = this.error();
       if (error) {
@@ -125,8 +116,6 @@ export class TasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Load initial data
-    this.store.refreshTasks();
     this.store.loadTasks();
   }
 
