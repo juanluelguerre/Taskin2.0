@@ -119,7 +119,6 @@ export class TasksComponent implements OnInit {
     this.store.loadTasks();
   }
 
-  // Event handlers for task actions
   onTaskToggled(task: TaskViewModel): void {
     this.store.toggleTaskCompletion(task.id);
   }
@@ -168,7 +167,6 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  // Event handlers for filters
   onFiltersChanged(filters: TaskFilters): void {
     this.store.setFilters(filters);
     this.store.loadTasks();
@@ -183,7 +181,6 @@ export class TasksComponent implements OnInit {
     this.store.loadTasks();
   }
 
-  // Navigation and view actions
   onNewTaskClick(): void {
     this.router.navigate(['/tasks/new']);
   }
@@ -192,7 +189,6 @@ export class TasksComponent implements OnInit {
     this.store.setViewMode(viewMode);
   }
 
-  // Pagination
   onPageChanged(page: number): void {
     this.store.setPage(page);
     this.store.loadTasks();
@@ -212,7 +208,6 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  // Utility methods
   onRefresh(): void {
     this.store.loadTasks();
   }
@@ -221,21 +216,13 @@ export class TasksComponent implements OnInit {
     this.store.clearError();
   }
 
-  // Drag & Drop handlers
   onTaskDropped(event: CdkDragDrop<TaskViewModel[]>): void {
-    console.log('Task dropped:', event);
-    console.log('Previous container:', event.previousContainer.id);
-    console.log('Current container:', event.container.id);
-    console.log('Previous index:', event.previousIndex);
-    console.log('Current index:', event.currentIndex);
-
     if (event.previousContainer === event.container) {
       // Reordering within the same column - no status change needed
       console.log('Same container, no status change needed');
       return;
     }
 
-    // Task moved between columns - update status
     const task = event.previousContainer.data[event.previousIndex];
     console.log('Task to update:', task);
 
@@ -243,7 +230,6 @@ export class TasksComponent implements OnInit {
     console.log('New status:', newStatus);
 
     if (newStatus && task.status !== newStatus) {
-      // Create update request
       const updateRequest = {
         id: task.id,
         status: newStatus,
