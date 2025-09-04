@@ -160,4 +160,24 @@ public class BulkUpdateStatusRequest
 {
     public List<Guid> TaskIds { get; set; } = [];
     public Domain.Entities.TaskStatus Status { get; set; }
+    // PUT: api/Tasks/bulk-status
+    [HttpPut("bulk-status")]
+    public async Task<IActionResult> BulkUpdateTaskStatus([FromBody] BulkUpdateTaskStatusCommand command)
+    {
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
+    // PUT: api/Tasks/{id}/status
+    [HttpPut("{id}/status")]
+    public async Task<IActionResult> UpdateTaskStatus(Guid id, [FromBody] UpdateTaskStatusCommand command)
+    {
+        if (id != command.Id)
+        {
+            return BadRequest();
+        }
+
+        await _mediator.Send(command);
+        return NoContent();
+    }
 }
