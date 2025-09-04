@@ -137,6 +137,18 @@
             </div>
             }
           </div>
+
+          <!-- Priority Badge for Grid and Kanban (positioned at the bottom) -->
+          @if (viewMode() === 'grid' || viewMode() === 'kanban') {
+            <div class="mt-3 flex justify-end">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                [ngClass]="task().priorityColor"
+              >
+                {{ task().priority | taskPriorityDisplay }}
+              </span>
+            </div>
+          }
         </div>
 
         <!-- Actions and Status - Only for List view -->
@@ -162,18 +174,6 @@
             <button mat-icon-button [matMenuTriggerFor]="taskMenuList" class="flex-shrink-0">
               <mat-icon>more_vert</mat-icon>
             </button>
-          </div>
-        }
-        
-        <!-- Priority Badge for Grid and Kanban (positioned below title) -->
-        @if (viewMode() === 'grid' || viewMode() === 'kanban') {
-          <div class="mt-2">
-            <span
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-              [ngClass]="task().priorityColor"
-            >
-              {{ task().priority | taskPriorityDisplay }}
-            </span>
           </div>
         }
       </div>

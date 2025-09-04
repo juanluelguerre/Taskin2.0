@@ -130,22 +130,17 @@ export class TaskNewComponent implements OnInit {
     // Check if we're in edit mode
     this.route.params.subscribe(params => {
       const id = params['id'];
-      console.log('Route params changed - id:', id);
       
       if (id && id !== 'new') {
-        console.log('Setting edit mode for task ID:', id);
         this.isEditMode.set(true);
         this.taskId.set(id);
         
         // First clear any existing selection
-        console.log('Clearing previous task selection');
         this.taskStore.clearSelection();
         
         // Load the task
-        console.log('Loading task with ID:', id);
         this.taskStore.loadTask(id);
       } else {
-        console.log('Create mode - resetting form');
         this.isEditMode.set(false);
         this.taskId.set(null);
         this.taskStore.clearSelection();
@@ -156,10 +151,8 @@ export class TaskNewComponent implements OnInit {
     effect(() => {
       const task = this.taskStore.selectedTask();
       const isEdit = this.isEditMode();
-      console.log('Task effect triggered - selectedTask:', task, 'isEditMode:', isEdit);
       
       if (task && isEdit) {
-        console.log('Populating form with task ID:', task.id);
         this.populateFormFromTask(task);
       }
     });
@@ -194,8 +187,6 @@ export class TaskNewComponent implements OnInit {
   }
 
   private populateFormFromTask(task: any): void {
-    console.log('Populating form with task:', task);
-    
     this.form.patchValue({
       title: task.title,
       description: task.description || '',
@@ -210,9 +201,6 @@ export class TaskNewComponent implements OnInit {
     // Set tags - ensure tags is an array
     const taskTags = task.tags && Array.isArray(task.tags) ? task.tags : [];
     this.tags.set([...taskTags]);
-    
-    console.log('Form populated successfully. Form value:', this.form.value);
-    console.log('Tags set:', this.tags());
   }
 
   // Tag management
