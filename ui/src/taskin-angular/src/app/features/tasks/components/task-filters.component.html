@@ -15,13 +15,13 @@
     
     <!-- Status Filter -->
     <div class="flex items-center justify-center lg:justify-end">
-      <mat-button-toggle-group [value]="filters().status || 'all'" 
+      <mat-button-toggle-group [value]="filters().status !== undefined ? filters().status : 'all'" 
                               (change)="onStatusChange($event.value)" 
                               class="border rounded shadow-sm">
         <mat-button-toggle value="all" class="px-4 py-2">All</mat-button-toggle>
-        <mat-button-toggle value="pending" class="px-4 py-2">Pending</mat-button-toggle>
-        <mat-button-toggle value="in-progress" class="px-4 py-2">In Progress</mat-button-toggle>
-        <mat-button-toggle value="completed" class="px-4 py-2">Completed</mat-button-toggle>
+        <mat-button-toggle [value]="0" class="px-4 py-2">Pending</mat-button-toggle>
+        <mat-button-toggle [value]="1" class="px-4 py-2">In Progress</mat-button-toggle>
+        <mat-button-toggle [value]="2" class="px-4 py-2">Completed</mat-button-toggle>
       </mat-button-toggle-group>
     </div>
   </div>

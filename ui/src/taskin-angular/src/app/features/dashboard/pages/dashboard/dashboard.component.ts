@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -36,6 +36,8 @@ interface RecentActivity {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
+  private router = inject(Router);
+  
   userName = 'JuanLu';
 
   stats = signal<DashboardStats>({
@@ -74,4 +76,13 @@ export class DashboardComponent {
       time: '2 hours ago'
     }
   ]);
+
+  // Navigation methods
+  navigateToNewTask(): void {
+    this.router.navigate(['/tasks/new']);
+  }
+
+  navigateToNewProject(): void {
+    this.router.navigate(['/projects/new']);
+  }
 }

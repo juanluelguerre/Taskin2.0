@@ -57,19 +57,19 @@ export class TaskFiltersComponent {
   // Computed properties
   hasActiveFilters = () => {
     const f = this.filters()
-    return !!(f.status || f.priority || f.projectId || f.assigneeId || f.isOverdue || (f.tags && f.tags.length > 0))
+    return !!(f.status !== undefined || f.priority !== undefined || f.projectId || f.assigneeId || f.isOverdue || (f.tags && f.tags.length > 0))
   }
   
   activeFilterChips = () => {
     const chips: Array<{key: string, label: string}> = []
     const f = this.filters()
     
-    if (f.status) {
-      chips.push({ key: 'status', label: `Status: ${f.status}` })
+    if (f.status !== undefined) {
+      chips.push({ key: 'status', label: `Status: ${this.getStatusDisplay(f.status)}` })
     }
     
-    if (f.priority) {
-      chips.push({ key: 'priority', label: `Priority: ${f.priority}` })
+    if (f.priority !== undefined) {
+      chips.push({ key: 'priority', label: `Priority: ${this.getPriorityDisplay(f.priority)}` })
     }
     
     if (f.projectId) {
@@ -104,13 +104,13 @@ export class TaskFiltersComponent {
     this.searchChanged.emit(target.value)
   }
   
-  onStatusChange(status: string): void {
-    const newStatus = status === 'all' ? undefined : status as TaskStatus
+  onStatusChange(status: string | number): void {
+    const newStatus = status === 'all' ? undefined : Number(status) as TaskStatus
     this.updateFilters({ status: newStatus })
   }
   
-  onPriorityChange(priority: string): void {
-    const newPriority = priority === 'all' ? undefined : priority as TaskPriority
+  onPriorityChange(priority: string | number): void {
+    const newPriority = priority === 'all' ? undefined : Number(priority) as TaskPriority
     this.updateFilters({ priority: newPriority })
   }
   
@@ -152,5 +152,35 @@ export class TaskFiltersComponent {
   private updateFilters(updates: Partial<TaskFilters>): void {
     const newFilters = { ...this.filters(), ...updates }
     this.filtersChanged.emit(newFilters)
+  }
+  
+  private getStatusDisplay(status: TaskStatus): string {
+    switch (status) {
+      case TaskStatus.Pending:
+        return 'Pending';
+      case TaskStatus.InProgress:
+        return 'In Progress';
+      case TaskStatus.Completed:
+        return 'Completed';
+      case TaskStatus.Cancelled:
+        return 'Cancelled';
+      default:
+        return 'Unknown';
+    }
+  }
+  
+  private getPriorityDisplay(priority: TaskPriority): string {
+    switch (priority) {
+      case TaskPriority.Low:
+        return 'Low';
+      case TaskPriority.Medium:
+        return 'Medium';
+      case TaskPriority.High:
+        return 'High';
+      case TaskPriority.Critical:
+        return 'Critical';
+      default:
+        return 'Unknown';
+    }
   }
 }

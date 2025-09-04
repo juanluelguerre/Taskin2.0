@@ -94,13 +94,13 @@
           <!-- Priority Badge -->
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                 [ngClass]="task().priorityColor">
-            {{ task().priority | uppercase }}
+            {{ task().priority | taskPriorityDisplay }}
           </span>
           
           <!-- Status Badge -->
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                 [ngClass]="task().statusColor">
-            {{ task().status | titlecase }}
+            {{ task().status | taskStatusDisplay }}
           </span>
           
           <!-- Actions Menu -->
