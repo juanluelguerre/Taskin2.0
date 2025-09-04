@@ -1,31 +1,31 @@
-import { Injectable, inject, computed } from '@angular/core'
-import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals'
-import { rxMethod } from '@ngrx/signals/rxjs-interop'
-import { pipe, switchMap, tap, interval, takeWhile } from 'rxjs'
-import { 
-  Pomodoro,
-  PomodoroStatus,
-  PomodoroType,
-  PomodoroStats,
-  PomodoroTimer,
-  PomodoroSettings,
+import { computed, inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { pipe, switchMap, tap } from 'rxjs';
+import { PomodoroService } from '../services/pomodoro.service';
+import {
   CreatePomodoroRequest,
-  UpdatePomodoroRequest
-} from '../types/pomodoro.types'
-import { PomodoroService } from '../services/pomodoro.service'
+  Pomodoro,
+  PomodoroSettings,
+  PomodoroStats,
+  PomodoroStatus,
+  PomodoroTimer,
+  PomodoroType,
+  UpdatePomodoroRequest,
+} from '../types/pomodoro.types';
 
 type PomodoroState = {
-  pomodoros: Pomodoro[]
-  selectedPomodoro: Pomodoro | null
-  activePomodoro: Pomodoro | null
-  timer: PomodoroTimer
-  settings: PomodoroSettings | null
-  loading: boolean
-  saving: boolean
-  deleting: boolean
-  error: string | null
-  timerIntervalId: number | null
-}
+  pomodoros: Pomodoro[];
+  selectedPomodoro: Pomodoro | null;
+  activePomodoro: Pomodoro | null;
+  timer: PomodoroTimer;
+  settings: PomodoroSettings | null;
+  loading: boolean;
+  saving: boolean;
+  deleting: boolean;
+  error: string | null;
+  timerIntervalId: number | null;
+};
 
 const initialTimer: PomodoroTimer = {
   isRunning: false,
@@ -34,8 +34,8 @@ const initialTimer: PomodoroTimer = {
   timeRemaining: 25 * 60,
   totalTime: 25 * 60,
   currentPomodoroId: undefined,
-  currentSessionId: undefined
-}
+  currentSessionId: undefined,
+};
 
 const initialSettings: PomodoroSettings = {
   workDuration: 25,
@@ -46,11 +46,10 @@ const initialSettings: PomodoroSettings = {
   autoStartPomodoros: false,
   notificationsEnabled: true,
   soundEnabled: true,
-  tickingSoundEnabled: false
-}
+  tickingSoundEnabled: false,
+};
 
 export const PomodoroStore = signalStore(
-  { providedIn: 'root' },
   withState<PomodoroState>({
     pomodoros: [],
     selectedPomodoro: null,
@@ -61,150 +60,154 @@ export const PomodoroStore = signalStore(
     saving: false,
     deleting: false,
     error: null,
-    timerIntervalId: null
+    timerIntervalId: null,
   }),
-  withComputed((state) => ({
+  withComputed(state => ({
     todayPomodoros: computed(() => {
-      const today = new Date().toDateString()
-      return state.pomodoros().filter(p => 
-        p.startTime && new Date(p.startTime).toDateString() === today
-      )
+      const today = new Date().toDateString();
+      return state
+        .pomodoros()
+        .filter(p => p.startTime && new Date(p.startTime).toDateString() === today);
     }),
     pomodoroStatistics: computed(() => {
-      const today = new Date().toDateString()
-      const todayPomodoros = state.pomodoros().filter(p => 
-        p.startTime && new Date(p.startTime).toDateString() === today
-      )
-      const completedToday = todayPomodoros.filter(p => p.status === PomodoroStatus.Completed)
-      
+      const today = new Date().toDateString();
+      const todayPomodoros = state
+        .pomodoros()
+        .filter(p => p.startTime && new Date(p.startTime).toDateString() === today);
+      const completedToday = todayPomodoros.filter(p => p.status === PomodoroStatus.Completed);
+
       return {
         totalPomodoros: state.pomodoros().length,
-        completedPomodoros: state.pomodoros().filter(p => p.status === PomodoroStatus.Completed).length,
-        totalFocusTime: completedToday.reduce((sum, p) => sum + (p.actualDuration || p.plannedDuration), 0),
-        averageSessionLength: completedToday.length > 0 
-          ? completedToday.reduce((sum, p) => sum + (p.actualDuration || p.plannedDuration), 0) / completedToday.length
-          : 0,
+        completedPomodoros: state.pomodoros().filter(p => p.status === PomodoroStatus.Completed)
+          .length,
+        totalFocusTime: completedToday.reduce(
+          (sum, p) => sum + (p.actualDuration || p.plannedDuration),
+          0
+        ),
+        averageSessionLength:
+          completedToday.length > 0
+            ? completedToday.reduce((sum, p) => sum + (p.actualDuration || p.plannedDuration), 0) /
+              completedToday.length
+            : 0,
         todayPomodoros: todayPomodoros.length,
         thisWeekPomodoros: 0,
-        productivityScore: todayPomodoros.length > 0 
-          ? Math.round((completedToday.length / todayPomodoros.length) * 100) 
-          : 100,
+        productivityScore:
+          todayPomodoros.length > 0
+            ? Math.round((completedToday.length / todayPomodoros.length) * 100)
+            : 100,
         mostProductiveHour: 9,
-        averageInterruptions: 0
-      } as PomodoroStats
+        averageInterruptions: 0,
+      } as PomodoroStats;
     }),
     timerProgress: computed(() => {
-      const timer = state.timer()
-      if (timer.totalTime === 0) return 0
-      return ((timer.totalTime - timer.timeRemaining) / timer.totalTime) * 100
+      const timer = state.timer();
+      if (timer.totalTime === 0) return 0;
+      return ((timer.totalTime - timer.timeRemaining) / timer.totalTime) * 100;
     }),
     formattedTimeRemaining: computed(() => {
-      const seconds = state.timer().timeRemaining
-      const minutes = Math.floor(seconds / 60)
-      const remainingSeconds = seconds % 60
-      return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+      const seconds = state.timer().timeRemaining;
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+        .toString()
+        .padStart(2, '0')}`;
     }),
-    isTimerActive: computed(() => state.timer().isRunning)
+    isTimerActive: computed(() => state.timer().isRunning),
   })),
   withMethods((store, pomodoroService = inject(PomodoroService)) => ({
-    // Timer controls
     startTimer: () => {
-      const currentTimer = store.timer()
-      
-      // Clear any existing interval
+      const currentTimer = store.timer();
+
       if (store.timerIntervalId()) {
-        clearInterval(store.timerIntervalId()!)
+        clearInterval(store.timerIntervalId()!);
       }
-      
-      // Start the timer interval
+
       const intervalId = setInterval(() => {
-        const timer = store.timer()
+        const timer = store.timer();
         if (timer.isRunning && timer.timeRemaining > 0) {
           patchState(store, {
             timer: {
               ...timer,
-              timeRemaining: timer.timeRemaining - 1
-            }
-          })
+              timeRemaining: timer.timeRemaining - 1,
+            },
+          });
         } else if (timer.timeRemaining <= 0) {
-          // Timer completed - we need to call the method directly
           const methods = store as any;
-          methods.completeCurrentTimer()
+          methods.completeCurrentTimer();
         }
-      }, 1000)
-      
+      }, 1000);
+
       patchState(store, {
         timer: {
           ...currentTimer,
           isRunning: true,
-          isPaused: false
+          isPaused: false,
         },
-        timerIntervalId: intervalId as any
-      })
+        timerIntervalId: intervalId as any,
+      });
+
+      console.log('Timer started with interval ID: ---> ', intervalId, store.timer());
     },
 
     pauseTimer: () => {
-      const currentTimer = store.timer()
-      
-      // Clear the interval
+      const currentTimer = store.timer();
+
       if (store.timerIntervalId()) {
-        clearInterval(store.timerIntervalId()!)
-        patchState(store, { timerIntervalId: null })
+        clearInterval(store.timerIntervalId()!);
+        patchState(store, { timerIntervalId: null });
       }
-      
+
       patchState(store, {
         timer: {
           ...currentTimer,
           isRunning: false,
-          isPaused: true
-        }
-      })
+          isPaused: true,
+        },
+      });
     },
 
     resumeTimer: () => {
-      // Use the same logic as startTimer for consistency
       const methods = store as any;
-      methods.startTimer()
+      methods.startTimer();
     },
 
     resetTimer: () => {
-      // Clear any existing interval
       if (store.timerIntervalId()) {
-        clearInterval(store.timerIntervalId()!)
-        patchState(store, { timerIntervalId: null })
+        clearInterval(store.timerIntervalId()!);
+        patchState(store, { timerIntervalId: null });
       }
-      
-      const settings = store.settings()
-      const duration = settings?.workDuration || 25
+
+      const settings = store.settings();
+      const duration = settings?.workDuration || 25;
       patchState(store, {
         timer: {
           ...store.timer(),
           isRunning: false,
           isPaused: false,
           timeRemaining: duration * 60,
-          totalTime: duration * 60
-        }
-      })
+          totalTime: duration * 60,
+        },
+      });
     },
 
     completeCurrentTimer: () => {
-      // Clear any existing interval
       if (store.timerIntervalId()) {
-        clearInterval(store.timerIntervalId()!)
-        patchState(store, { timerIntervalId: null })
+        clearInterval(store.timerIntervalId()!);
+        patchState(store, { timerIntervalId: null });
       }
-      
-      const currentTimer = store.timer()
-      const nextType = currentTimer.currentType === PomodoroType.Work 
-        ? PomodoroType.ShortBreak 
-        : PomodoroType.Work
-      
-      const settings = store.settings()
-      const nextDuration = nextType === PomodoroType.Work 
-        ? (settings?.workDuration || 25)
-        : (settings?.shortBreakDuration || 5)
 
-      // Update statistics when completing a pomodoro
+      const currentTimer = store.timer();
+      const nextType =
+        currentTimer.currentType === PomodoroType.Work
+          ? PomodoroType.ShortBreak
+          : PomodoroType.Work;
+
+      const settings = store.settings();
+      const nextDuration =
+        nextType === PomodoroType.Work
+          ? settings?.workDuration || 25
+          : settings?.shortBreakDuration || 5;
+
       if (currentTimer.currentType === PomodoroType.Work) {
         const completedPomodoro: Pomodoro = {
           id: Date.now().toString(),
@@ -218,12 +221,12 @@ export const PomodoroStore = signalStore(
           notes: undefined,
           interruptions: 0,
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
-        
+          updatedAt: new Date(),
+        };
+
         patchState(store, {
-          pomodoros: [...store.pomodoros(), completedPomodoro]
-        })
+          pomodoros: [...store.pomodoros(), completedPomodoro],
+        });
       }
 
       patchState(store, {
@@ -233,93 +236,96 @@ export const PomodoroStore = signalStore(
           isPaused: false,
           currentType: nextType,
           timeRemaining: nextDuration * 60,
-          totalTime: nextDuration * 60
-        }
-      })
+          totalTime: nextDuration * 60,
+        },
+      });
     },
 
     updateSettings: (newSettings: PomodoroSettings) => {
-      patchState(store, { settings: newSettings })
+      patchState(store, { settings: newSettings });
     },
 
-    // Data operations
     createPomodoro: rxMethod<CreatePomodoroRequest>(
       pipe(
-        switchMap((request) => {
-          patchState(store, { saving: true, error: null })
+        switchMap(request => {
+          patchState(store, { saving: true, error: null });
           return pomodoroService.create(request).pipe(
             tap({
-              next: (pomodoro) => {
+              next: pomodoro => {
                 patchState(store, {
                   pomodoros: [...store.pomodoros(), pomodoro],
-                  saving: false
-                })
+                  saving: false,
+                });
               },
-              error: (error) => {
+              error: error => {
                 patchState(store, {
                   saving: false,
-                  error: 'Failed to create pomodoro'
-                })
-                console.error('Create pomodoro error:', error)
-              }
+                  error: 'Failed to create pomodoro',
+                });
+                console.error('Create pomodoro error:', error);
+              },
             })
-          )
+          );
         })
       )
     ),
 
     updatePomodoro: rxMethod<UpdatePomodoroRequest>(
       pipe(
-        switchMap((request) => {
-          patchState(store, { saving: true, error: null })
+        switchMap(request => {
+          patchState(store, { saving: true, error: null });
           return pomodoroService.update(request.id || '', request).pipe(
             tap({
-              next: (updatedPomodoro) => {
-                const updatedPomodoros = store.pomodoros().map((p: Pomodoro) => 
-                  p.id === updatedPomodoro.id ? updatedPomodoro : p
-                )
+              next: updatedPomodoro => {
+                const updatedPomodoros = store
+                  .pomodoros()
+                  .map((p: Pomodoro) => (p.id === updatedPomodoro.id ? updatedPomodoro : p));
                 patchState(store, {
                   pomodoros: updatedPomodoros,
-                  selectedPomodoro: store.selectedPomodoro()?.id === updatedPomodoro.id ? updatedPomodoro : store.selectedPomodoro(),
-                  saving: false
-                })
+                  selectedPomodoro:
+                    store.selectedPomodoro()?.id === updatedPomodoro.id
+                      ? updatedPomodoro
+                      : store.selectedPomodoro(),
+                  saving: false,
+                });
               },
-              error: (error) => {
+              error: error => {
                 patchState(store, {
                   saving: false,
-                  error: 'Failed to update pomodoro'
-                })
-                console.error('Update pomodoro error:', error)
-              }
+                  error: 'Failed to update pomodoro',
+                });
+                console.error('Update pomodoro error:', error);
+              },
             })
-          )
+          );
         })
       )
     ),
 
     deletePomodoro: rxMethod<string>(
       pipe(
-        switchMap((id) => {
-          patchState(store, { deleting: true, error: null })
+        switchMap(id => {
+          patchState(store, { deleting: true, error: null });
           return pomodoroService.delete(id).pipe(
             tap({
               next: () => {
-                const filteredPomodoros = store.pomodoros().filter((p: Pomodoro) => p.id !== id)
+                const filteredPomodoros = store.pomodoros().filter((p: Pomodoro) => p.id !== id);
                 patchState(store, {
                   pomodoros: filteredPomodoros,
-                  selectedPomodoro: store.selectedPomodoro()?.id === id ? null : store.selectedPomodoro(),
-                  deleting: false
-                })
+                  selectedPomodoro:
+                    store.selectedPomodoro()?.id === id ? null : store.selectedPomodoro(),
+                  deleting: false,
+                });
               },
-              error: (error) => {
+              error: error => {
                 patchState(store, {
                   deleting: false,
-                  error: 'Failed to delete pomodoro'
-                })
-                console.error('Delete pomodoro error:', error)
-              }
+                  error: 'Failed to delete pomodoro',
+                });
+                console.error('Delete pomodoro error:', error);
+              },
             })
-          )
+          );
         })
       )
     ),
@@ -327,18 +333,19 @@ export const PomodoroStore = signalStore(
     // Utility methods
     clearError: () => patchState(store, { error: null }),
     clearSelection: () => patchState(store, { selectedPomodoro: null }),
-    selectPomodoro: (pomodoro: Pomodoro | null) => patchState(store, { selectedPomodoro: pomodoro }),
+    selectPomodoro: (pomodoro: Pomodoro | null) =>
+      patchState(store, { selectedPomodoro: pomodoro }),
     refreshPomodoros: () => {
-      patchState(store, { loading: true, error: null })
-      patchState(store, { loading: false })
+      patchState(store, { loading: true, error: null });
+      patchState(store, { loading: false });
     },
 
     // Cleanup method for timer interval
     cleanupTimer: () => {
       if (store.timerIntervalId()) {
-        clearInterval(store.timerIntervalId()!)
-        patchState(store, { timerIntervalId: null })
+        clearInterval(store.timerIntervalId()!);
+        patchState(store, { timerIntervalId: null });
       }
-    }
+    },
   }))
-)
+);

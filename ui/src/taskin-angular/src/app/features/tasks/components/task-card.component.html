@@ -181,8 +181,6 @@
   </div>
 </div>
 
-<!-- Menu Templates -->
-<!-- Menu for Grid and Kanban views -->
 <mat-menu #taskMenu="matMenu">
   <button mat-menu-item (click)="taskEdited.emit(task())">
     <mat-icon>edit</mat-icon>
@@ -203,7 +201,6 @@
   </button>
 </mat-menu>
 
-<!-- Menu for List view -->
 <mat-menu #taskMenuList="matMenu">
   <button mat-menu-item (click)="taskEdited.emit(task())">
     <mat-icon>edit</mat-icon>

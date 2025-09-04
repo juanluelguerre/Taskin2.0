@@ -109,7 +109,6 @@ export class TaskNewComponent implements OnInit {
   readonly submitButtonText = computed(() => (this.isEditMode() ? 'Update Task' : 'Create Task'));
 
   constructor() {
-    // Initialize reactive form
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(200)]],
       description: ['', [Validators.maxLength(1000)]],
@@ -119,6 +118,24 @@ export class TaskNewComponent implements OnInit {
       assigneeId: [''],
       dueDate: [null],
       estimatedPomodoros: [null, [Validators.min(1), Validators.max(50)]],
+    });
+
+    effect(() => {
+      const task = this.taskStore.selectedTask();
+      const isEdit = this.isEditMode();
+      console.log('TaskNewComponent effect triggered - selectedTask:', task, 'isEditMode:', isEdit);
+      
+      if (task && isEdit) {
+        console.log('TaskNewComponent - Calling populateFormFromTask with task:', task.id);
+        this.populateFormFromTask(task);
+      }
+    });
+
+    effect(() => {
+      const error = this.error();
+      if (error) {
+        this.notificationService.notifyError('tasks.errors.general', { error });
+      }
     });
   }
 
@@ -130,38 +147,23 @@ export class TaskNewComponent implements OnInit {
     // Check if we're in edit mode
     this.route.params.subscribe(params => {
       const id = params['id'];
+      console.log('TaskNewComponent route params - id:', id);
       
       if (id && id !== 'new') {
+        console.log('TaskNewComponent - Setting edit mode for id:', id);
         this.isEditMode.set(true);
         this.taskId.set(id);
         
-        // First clear any existing selection
+        console.log('TaskNewComponent - Clearing selection');
         this.taskStore.clearSelection();
         
-        // Load the task
+        console.log('TaskNewComponent - Calling loadTask');
         this.taskStore.loadTask(id);
       } else {
+        console.log('TaskNewComponent - Setting create mode');
         this.isEditMode.set(false);
         this.taskId.set(null);
         this.taskStore.clearSelection();
-      }
-    });
-
-    // Watch for task changes to populate form
-    effect(() => {
-      const task = this.taskStore.selectedTask();
-      const isEdit = this.isEditMode();
-      
-      if (task && isEdit) {
-        this.populateFormFromTask(task);
-      }
-    });
-
-    // Handle errors using effect
-    effect(() => {
-      const error = this.error();
-      if (error) {
-        this.notificationService.notifyError('tasks.errors.general', { error });
       }
     });
   }

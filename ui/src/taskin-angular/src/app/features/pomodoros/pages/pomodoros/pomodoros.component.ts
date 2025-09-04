@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, OnInit, OnDestroy, inject, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewEncapsulation,
+  OnInit,
+  OnDestroy,
+  inject,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,187 +28,174 @@ import { CanComponentDeactivate } from '../../shared/guards/pomodoro-exit.guard'
     MatCardModule,
     MatProgressSpinnerModule,
     FormatTimePipe,
-    SessionTypeDisplayPipe
+    SessionTypeDisplayPipe,
   ],
   templateUrl: './pomodoros.component.html',
   styles: ``,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [PomodoroStore]
+  providers: [PomodoroStore],
 })
 export class PomodorosComponent implements OnInit, OnDestroy, CanComponentDeactivate {
-  private readonly store = inject(PomodoroStore)
+  private readonly store = inject(PomodoroStore);
 
-  // Expose store signals for template
-  readonly timer = this.store.timer
-  readonly settings = this.store.settings
-  readonly todayPomodoros = this.store.todayPomodoros
-  readonly pomodoroStatistics = this.store.pomodoroStatistics
-  readonly timerProgress = this.store.timerProgress
-  readonly formattedTimeRemaining = this.store.formattedTimeRemaining
-  readonly isTimerActive = this.store.isTimerActive
-  readonly loading = this.store.loading
-  readonly error = this.store.error
-  
-  // Circle properties for progress indicator
-  circumference = 2 * Math.PI * 45 // radius = 45
-  
-  // Computed properties
+  readonly timer = this.store.timer;
+  readonly settings = this.store.settings;
+  readonly todayPomodoros = this.store.todayPomodoros;
+  readonly pomodoroStatistics = this.store.pomodoroStatistics;
+  readonly timerProgress = this.store.timerProgress;
+  readonly formattedTimeRemaining = this.store.formattedTimeRemaining;
+  readonly isTimerActive = this.store.isTimerActive;
+  readonly loading = this.store.loading;
+  readonly error = this.store.error;
+
+  circumference = 2 * Math.PI * 45; // radius = 45
+
   readonly completedWorkPomodoros = computed(() => {
-    return this.todayPomodoros().filter(p => 
-      p.status === PomodoroStatus.Completed && p.type === PomodoroType.Work
-    ).length
-  })
+    return this.todayPomodoros().filter(
+      p => p.status === PomodoroStatus.Completed && p.type === PomodoroType.Work
+    ).length;
+  });
 
   readonly inProgressPomodoro = computed(() => {
-    return this.todayPomodoros().find(p => p.status === PomodoroStatus.InProgress) || null
-  })
+    return this.todayPomodoros().find(p => p.status === PomodoroStatus.InProgress) || null;
+  });
 
   readonly currentSessionType = computed(() => {
-    return this.timer().currentType
-  })
+    return this.timer().currentType;
+  });
 
   readonly strokeDashoffset = computed(() => {
-    const progress = this.timerProgress()
-    return this.circumference * (1 - (progress / 100))
-  })
+    const progress = this.timerProgress();
+    return this.circumference * (1 - progress / 100);
+  });
 
   readonly totalFocusTime = computed(() => {
-    const completedWorkPomodoros = this.todayPomodoros().filter(p => 
-      p.status === PomodoroStatus.Completed && p.type === PomodoroType.Work
-    )
-    const totalMinutes = completedWorkPomodoros.reduce((sum, p) => sum + (p.actualDuration || p.plannedDuration || 25), 0)
-    const hours = Math.floor(totalMinutes / 60)
-    const minutes = totalMinutes % 60
-    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
-  })
+    const completedWorkPomodoros = this.todayPomodoros().filter(
+      p => p.status === PomodoroStatus.Completed && p.type === PomodoroType.Work
+    );
+    const totalMinutes = completedWorkPomodoros.reduce(
+      (sum, p) => sum + (p.actualDuration || p.plannedDuration || 25),
+      0
+    );
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+  });
 
   readonly averageSessionLength = computed(() => {
-    const completedPomodoros = this.todayPomodoros().filter(p => p.status === PomodoroStatus.Completed)
-    if (completedPomodoros.length === 0) return '0m'
-    const totalMinutes = completedPomodoros.reduce((sum, p) => sum + (p.actualDuration || p.plannedDuration || 25), 0)
-    const average = Math.round(totalMinutes / completedPomodoros.length)
-    return `${average}m`
-  })
+    const completedPomodoros = this.todayPomodoros().filter(
+      p => p.status === PomodoroStatus.Completed
+    );
+    if (completedPomodoros.length === 0) return '0m';
+    const totalMinutes = completedPomodoros.reduce(
+      (sum, p) => sum + (p.actualDuration || p.plannedDuration || 25),
+      0
+    );
+    const average = Math.round(totalMinutes / completedPomodoros.length);
+    return `${average}m`;
+  });
 
   readonly productivityScore = computed(() => {
-    const completedPomodoros = this.todayPomodoros().filter(p => p.status === PomodoroStatus.Completed)
-    const plannedPomodoros = this.todayPomodoros().length
-    if (plannedPomodoros === 0) return 100
-    return Math.round((completedPomodoros.length / plannedPomodoros) * 100)
-  })
+    const completedPomodoros = this.todayPomodoros().filter(
+      p => p.status === PomodoroStatus.Completed
+    );
+    const plannedPomodoros = this.todayPomodoros().length;
+    if (plannedPomodoros === 0) return 100;
+    return Math.round((completedPomodoros.length / plannedPomodoros) * 100);
+  });
 
   readonly todaySessions = computed(() => {
-    const pomodoros = this.todayPomodoros()
-    const sessions: { type: 'work' | 'break' | 'upcoming' }[] = []
-    
-    // Add completed pomodoros
+    const pomodoros = this.todayPomodoros();
+    const sessions: { type: 'work' | 'break' | 'upcoming' }[] = [];
+
     pomodoros.forEach(p => {
       if (p.status === PomodoroStatus.Completed) {
         sessions.push({
-          type: p.type === PomodoroType.Work ? 'work' : 'break'
-        })
+          type: p.type === PomodoroType.Work ? 'work' : 'break',
+        });
       }
-    })
-    
-    // Add upcoming sessions up to 8 total
-    while (sessions.length < 8) {
-      sessions.push({ type: 'upcoming' })
-    }
-    
-    return sessions
-  })
+    });
 
-  // Expose enums for template
-  readonly PomodoroType = PomodoroType
-  readonly PomodoroStatus = PomodoroStatus
+    while (sessions.length < 8) {
+      sessions.push({ type: 'upcoming' });
+    }
+
+    return sessions;
+  });
+
+  readonly PomodoroType = PomodoroType;
+  readonly PomodoroStatus = PomodoroStatus;
 
   ngOnInit() {
-    // Load initial data using available methods
-    this.store.refreshPomodoros()
+    this.store.refreshPomodoros();
   }
 
   ngOnDestroy() {
-    // Clean up timer interval to prevent memory leaks
-    this.store.cleanupTimer()
+    this.store.cleanupTimer();
   }
 
   toggleTimer(): void {
     if (this.timer().isRunning) {
-      this.store.pauseTimer()
+      this.store.pauseTimer();
     } else if (this.timer().isPaused) {
-      this.store.resumeTimer()
+      this.store.resumeTimer();
     } else {
-      this.store.startTimer()
+      this.store.startTimer();
     }
   }
 
   resetTimer(): void {
-    this.store.resetTimer()
+    this.store.resetTimer();
   }
 
   skipSession(): void {
-    this.store.completeCurrentTimer()
+    this.store.completeCurrentTimer();
   }
 
   adjustWorkTime(delta: number): void {
-    if (this.timer().isRunning) return
-    
-    const currentSettings = this.settings()
-    if (!currentSettings) return
-    
-    const newMinutes = Math.max(1, Math.min(60, currentSettings.workDuration + delta))
+    if (this.timer().isRunning) return;
+
+    const currentSettings = this.settings();
+    if (!currentSettings) return;
+
+    const newMinutes = Math.max(1, Math.min(60, currentSettings.workDuration + delta));
     this.store.updateSettings({
       ...currentSettings,
-      workDuration: newMinutes
-    })
+      workDuration: newMinutes,
+    });
   }
 
   adjustBreakTime(delta: number): void {
-    if (this.timer().isRunning) return
-    
-    const currentSettings = this.settings()
-    if (!currentSettings) return
-    
-    const newMinutes = Math.max(1, Math.min(30, currentSettings.shortBreakDuration + delta))
+    if (this.timer().isRunning) return;
+
+    const currentSettings = this.settings();
+    if (!currentSettings) return;
+
+    const newMinutes = Math.max(1, Math.min(30, currentSettings.shortBreakDuration + delta));
     this.store.updateSettings({
       ...currentSettings,
-      shortBreakDuration: newMinutes
-    })
+      shortBreakDuration: newMinutes,
+    });
   }
 
   startWorkPomodoro(): void {
-    // Create a new work pomodoro and start it
     this.store.createPomodoro({
-      taskId: 'temp-task-id', // This should come from selected task
+      taskId: 'temp-task-id', // TODO: This should come from selected task
       type: PomodoroType.Work,
       plannedDuration: this.settings()?.workDuration || 25,
-      notes: undefined
-    })
+      notes: undefined,
+    });
   }
 
-
   clearError(): void {
-    this.store.clearError()
+    this.store.clearError();
   }
 
   canDeactivate(): boolean {
     const timer = this.timer();
-    
-    // If timer is running or paused, show confirmation
-    if (timer.isRunning || timer.isPaused) {
-      const confirmed = window.confirm(
-        'You have an active pomodoro session. Are you sure you want to leave? Your timer will be reset.'
-      );
-      
-      if (confirmed) {
-        // Stop and clean up timer if user confirms
-        this.store.resetTimer();
-      }
-      
-      return confirmed;
-    }
-    
-    return true;
+    const hasActiveSession = timer.isRunning || timer.isPaused;
+    console.log('PomodorosComponent: canDeactivate called, hasActiveSession:', hasActiveSession);
+    return hasActiveSession;
   }
 }

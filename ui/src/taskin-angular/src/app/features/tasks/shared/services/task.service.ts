@@ -55,6 +55,7 @@ export class TaskService implements ITaskService {
   }
 
   getById(id: string): Observable<Task> {
+    console.log('TaskService.getById called with id:', id, 'URL:', `${this.baseUrl}/${id}`);
     return this.http.get<Task>(`${this.baseUrl}/${id}`)
   }
 

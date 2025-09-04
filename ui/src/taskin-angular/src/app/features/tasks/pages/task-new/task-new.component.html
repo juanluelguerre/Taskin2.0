@@ -1,5 +1,4 @@
 <div class="space-y-6">
-  <!-- Page Header -->
   <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
     <div class="flex items-center space-x-4">
       <button mat-icon-button (click)="onCancel()" class="text-gray-600">
@@ -18,7 +17,6 @@
     </div>
   </div>
 
-  <!-- Error Message -->
   @if (error()) {
     <div class="bg-red-50 border border-red-200 rounded-lg p-4">
       <div class="flex items-center">
@@ -28,20 +26,16 @@
     </div>
   }
 
-  <!-- Loading Spinner -->
   @if (loading()) {
     <div class="flex justify-center items-center py-12">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
   }
 
-  <!-- Form -->
   @if (!loading()) {
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
-        <!-- Main Form -->
         <div class="lg:flex-1">
-          <!-- Basic Information -->
           <mat-card class="border border-gray-200 shadow-sm hover:shadow-md transition-shadow mb-6">
             <mat-card-header>
               <mat-card-title class="text-gray-900">Task Information</mat-card-title>
@@ -49,7 +43,6 @@
 
             <mat-card-content class="p-6">
               <div class="space-y-6">
-                <!-- Task Title -->
                 <div class="form-field-wrapper">
                   <mat-label for="title">Task Title</mat-label>
                   <mat-form-field class="w-full">
@@ -60,7 +53,6 @@
                   </mat-form-field>
                 </div>
 
-                <!-- Description -->
                 <div class="form-field-wrapper">
                   <label>Description</label>
                   <mat-form-field class="w-full">
@@ -73,7 +65,6 @@
                   </mat-form-field>
                 </div>
 
-                <!-- Project -->
                 <div class="form-field-wrapper">
                   <label>Project</label>
                   <mat-form-field class="w-full">
@@ -88,7 +79,6 @@
                   </mat-form-field>
                 </div>
 
-                <!-- Status and Priority Row -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div class="form-field-wrapper">
                     <label>Status</label>
@@ -115,7 +105,6 @@
                   </div>
                 </div>
 
-                <!-- Assignee and Due Date Row -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div class="form-field-wrapper">
                     <label>Assignee</label>
@@ -140,7 +129,6 @@
                   </div>
                 </div>
 
-                <!-- Estimated Pomodoros -->
                 <div class="form-field-wrapper">
                   <label>Estimated Pomodoros</label>
                   <mat-form-field class="w-full">
@@ -162,7 +150,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Tags -->
           <mat-card class="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
             <mat-card-header>
               <mat-card-title class="text-gray-900">Tags</mat-card-title>
@@ -170,7 +157,6 @@
             </mat-card-header>
 
             <mat-card-content class="p-6">
-              <!-- Tags Input -->
               <mat-form-field class="w-full">
                 <mat-label>Add Tags</mat-label>
                 <mat-chip-grid #chipGrid aria-label="Task tags">
@@ -195,9 +181,7 @@
           </mat-card>
         </div>
 
-        <!-- Sidebar -->
         <div class="lg:w-80 space-y-6">
-          <!-- Form Actions -->
           <mat-card class="border border-gray-200 shadow-sm">
             <mat-card-content class="p-6">
               <div class="space-y-4">
@@ -241,7 +225,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Help -->
           <mat-card class="border border-gray-200 shadow-sm">
             <mat-card-header>
               <mat-card-title class="flex items-center text-gray-900">

@@ -221,17 +221,21 @@ export class TaskStore extends signalStore(
     loadTask: rxMethod<string>(
       pipe(
         switchMap(id => {
+          console.log('TaskStore.loadTask called with id:', id);
           patchState(store, { loading: true, error: null });
 
           return taskService.getById(id).pipe(
             tapResponse({
               next: (task: Task) => {
+                console.log('TaskStore.loadTask success - received task:', task);
                 patchState(store, {
                   selectedTask: task,
                   loading: false,
                 });
+                console.log('TaskStore.loadTask - selectedTask updated in store');
               },
               error: (error: any) => {
+                console.error('TaskStore.loadTask error:', error);
                 patchState(store, {
                   loading: false,
                   error: 'Failed to load task',
