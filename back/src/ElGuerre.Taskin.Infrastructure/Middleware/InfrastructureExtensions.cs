@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace ElGuerre.Taskin.Infrastructure.Middleware;
 
@@ -28,11 +29,8 @@ public static class InfrastructureExtensions
     private static IServiceCollection AddDbContext(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<TaskinDbContext>(options =>
-            options.UseInMemoryDatabase("TaskinDb"));
-        //services.AddDbContext<TaskinDbContext>(options =>
-        //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+        // DbContext will be configured via Aspire in Program.cs using builder.AddSqlServerDbContext
+        // This method is kept for registering the ITaskinDbContext interface
         services.AddScoped<ITaskinDbContext>(provider => provider.GetRequiredService<TaskinDbContext>());
 
         return services;

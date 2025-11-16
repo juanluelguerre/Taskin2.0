@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.0.0" />
+    <PackageReference Include="Aspire.StackExchange.Redis" Version="13.0.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.HealthChecks" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0-rc.1.24452.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -23,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ElGuerre.Taskin.Application\ElGuerre.Taskin.Application.csproj" />
     <ProjectReference Include="..\ElGuerre.Taskin.Infrastructure\ElGuerre.Taskin.Infrastructure.csproj" />
+    <ProjectReference Include="..\Taskin2.0.ServiceDefaults\Taskin2.0.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

@@ -17,7 +17,8 @@ public static class DatabaseSeeder
 
         try
         {
-            await context.Database.EnsureCreatedAsync();
+            // Use migrations instead of EnsureCreated for better production practices
+            await context.Database.MigrateAsync();
 
             if (!await context.Projects.AnyAsync())
             {

@@ -1,10 +1,18 @@
 using ElGuerre.Taskin.Api.Extensions;
+using ElGuerre.Taskin.Api.Observability;
 using ElGuerre.Taskin.Infrastructure.EntityFramework;
 using ElGuerre.Taskin.Infrastructure.Middleware;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Aspire ServiceDefaults (OpenTelemetry, Health Checks, Service Discovery)
+builder.AddServiceDefaults();
+
+// Add SQL Server DbContext with Aspire integration
+builder.AddSqlServerDbContext<TaskinDbContext>("taskin-db");
+
+// Configure Serilog (coexists with OpenTelemetry logging)
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
@@ -15,7 +23,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTaskin(builder.Configuration);
 builder.Services.AddProblemDetails(options => { });
-builder.Services.AddHealthChecks();
+
+// Register custom telemetry for business metrics
+builder.Services.AddSingleton<TaskinMetrics>();
+
+// Add custom activity source for distributed tracing
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing => tracing.AddSource(TelemetryConstants.ActivitySourceName))
+    .WithMetrics(metrics => metrics.AddMeter(TelemetryConstants.MeterName));
 
 // Add CORS for Angular frontend
 builder.Services.AddCors(options =>
@@ -52,6 +67,8 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAngularDev");
 app.UseAuthorization();
 app.MapControllers();
-app.MapHealthChecks("/health");
+
+// Map Aspire default endpoints (health checks, Prometheus metrics)
+app.MapDefaultEndpoints();
 
 app.Run();

@@ -20,19 +20,8 @@ public class TaskinDbContext(DbContextOptions<TaskinDbContext> options)
         base.OnModelCreating(modelBuilder);
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-
-#if DEBUG
-        optionsBuilder.LogTo(Console.WriteLine,
-            new[]
-            {
-                DbLoggerCategory.Database.Command.Name
-            },
-            LogLevel.Information);
-#endif
-    }
+    // OnConfiguring removed - DbContext pooling is enabled via Aspire
+    // EF Core logging is automatically captured by OpenTelemetry instrumentation
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
