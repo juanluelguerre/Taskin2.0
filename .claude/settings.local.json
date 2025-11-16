@@ -10,7 +10,22 @@
       "Bash(dotnet ef migrations add:*)",
       "Bash(dotnet tool install:*)",
       "Bash(dotnet tool update:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(git checkout:*)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" pr view 6)",
+      "Bash(dotnet restore:*)",
+      "Bash(del:*)",
+      "Bash(dir:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet list:*)",
+      "Bash(find:*)",
+      "Bash(Select-String -Pattern \"Passed|Failed|Total\")",
+      "Bash(Select-Object -Last 10)",
+      "Bash(test:*)",
+      "Bash(git mv:*)",
+      "Bash(move UNIT_TESTS_STATUS.md docs/)",
+      "Bash(move UNIT_TESTS_STATUS.md docs)"
     ],
     "deny": [],
     "ask": []

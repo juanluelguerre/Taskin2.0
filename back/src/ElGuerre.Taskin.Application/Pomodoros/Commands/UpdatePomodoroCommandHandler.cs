@@ -1,5 +1,6 @@
 ﻿using ElGuerre.Taskin.Application.Data;
 using ElGuerre.Taskin.Application.Exceptions;
+using ElGuerre.Taskin.Domain.Entities;
 using ElGuerre.Taskin.Domain.SeedWork;
 using MediatR;
 using Task = System.Threading.Tasks.Task;
@@ -14,7 +15,7 @@ public class UpdatePomodoroCommandHandler(ITaskinDbContext context, IUnitOfWork 
         var pomodoro = await context.Pomodoros.FindAsync([request.Id], cancellationToken);
         if (pomodoro is null)
         {
-            throw new EntityNotFoundException<Task>(request.Id);
+            throw new EntityNotFoundException<Pomodoro>(request.Id);
         }
 
         pomodoro.StartTime = request.StartTime ?? pomodoro.StartTime;
