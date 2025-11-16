@@ -104,17 +104,14 @@ ElGuerre.Taskin.sln
 
 4. **Apply Database Migrations**
 
-   Navigate to the `ElGuerre.Taskin.Api` directory and run:
+   Navigate to the `back/src/` directory and run:
 
    ```bash
-   # Navigate to the Infrastructure project directory
-   cd ElGuerre.Taskin.Infrastructure
-
    # Add a migration
-   dotnet ef migrations add InitialCreate --startup-project ../ElGuerre.Taskin.Api
+   dotnet ef migrations add InitialCreate --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure
 
    # Update the database
-   dotnet ef database update --startup-project ../ElGuerre.Taskin.Api
+   dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure
    ```
 
    Ensure that the `ElGuerre.Taskin.Api` project is set as the startup project.
@@ -123,10 +120,10 @@ ElGuerre.Taskin.sln
 
 1. **Start the API**
 
-   In the `ElGuerre.Taskin.Api` project directory, run:
+   Navigate to the `back/src/` directory and run:
 
    ```bash
-   dotnet run
+   dotnet run --project ElGuerre.Taskin.Api
    ```
 
    The API will start and listen on `https://localhost:5001` by default.
@@ -163,18 +160,18 @@ ElGuerre.Taskin.sln
 
 ## Database Migrations
 
-To manage database schema changes, use Entity Framework Core migrations.
+To manage database schema changes, use Entity Framework Core migrations. Run these commands from the `back/src/` directory:
 
 ### Adding a Migration
 
 ```bash
-dotnet ef migrations add #MIGRATION_NAME# --startup-project .\ElGuerre.Taskin.Api --project .\ElGuerre.Taskin.Infrastructure -o .\EntityFramework\Migrations
+dotnet ef migrations add MigrationName --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure -o EntityFramework/Migrations
 ```
 
 ### Updating the Database
 
 ```bash
-dotnet ef database update --startup-project .\ElGuerre.Taskin.Api\ElGuerre.Taskin.Api.csproj --project .\ElGuerre.Taskin.Infrastructure\
+dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure
 ```
 
 ## Contributing

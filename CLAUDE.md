@@ -40,13 +40,13 @@ Taskin 2.0 is a full-stack productivity application that implements the Pomodoro
 ```
 taskin2.0/
 ├── back/                          # Backend (ASP.NET Core)
-│   └── src/Taskin.Api/           # Main backend solution
+│   └── src/                      # Main backend solution
 │       ├── ElGuerre.Taskin.Api/          # Web API layer
 │       ├── ElGuerre.Taskin.Application/  # Application layer (CQRS)
 │       ├── ElGuerre.Taskin.Domain/       # Domain entities
 │       └── ElGuerre.Taskin.Infrastructure/ # Data access layer
 └── ui/                           # Frontend (Angular)
-    └── src/taskin-angular/       # Angular application
+    └── src/                      # Angular application
 ```
 
 ## Core Domain Entities
@@ -66,7 +66,7 @@ taskin2.0/
 
 ## Development Commands
 
-Run commands from `/ui/src/taskin-angular/` directory:
+Run commands from `/ui/src/` directory:
 
 ```bash
 # Start development server (http://localhost:4200)
@@ -398,7 +398,7 @@ features/
 
 ## Development Commands
 
-Run commands from `/back/src/Taskin.Api/` directory:
+Run commands from `/back/src/` directory:
 
 ```bash
 # Build solution
@@ -490,7 +490,7 @@ The application uses Entity Framework Core with SQL Server. Connection string is
 Always use Entity Framework migrations:
 
 ```bash
-# From back/src/Taskin.Api/ directory
+# From back/src/ directory
 dotnet ef migrations add MigrationName --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure -o EntityFramework/Migrations
 dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure
 ```
@@ -545,7 +545,7 @@ dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuer
 
 ## Notes
 
-- The Angular application has a comprehensive CLAUDE.md file at `ui/src/taskin-angular/CLAUDE.md` with detailed frontend-specific guidance
+- The Angular application has documentation in `ui/src/AGENTS.md` with detailed frontend-specific guidance
 - Backend uses .NET 9 with nullable reference types enabled
 - Frontend is fully functional with all major features implemented
 - Both applications are ready for production deployment with proper build configurations
