@@ -24,13 +24,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTaskin(builder.Configuration);
 builder.Services.AddProblemDetails(options => { });
 
-// Register custom telemetry for business metrics
-builder.Services.AddSingleton<TaskinMetrics>();
-
 // Add custom activity source for distributed tracing
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracing => tracing.AddSource(TelemetryConstants.ActivitySourceName))
-    .WithMetrics(metrics => metrics.AddMeter(TelemetryConstants.MeterName));
+    .WithMetrics(metrics => metrics.AddMeter(TelemetryConstants.MeterName))
+    .WithMetrics(metrics => metrics.AddMeter("Taskin.Application")); // Add Application metrics meter
 
 // Add CORS for Angular frontend
 builder.Services.AddCors(options =>

@@ -1,5 +1,6 @@
 ﻿using ElGuerre.Taskin.Application.Behaviors;
 using ElGuerre.Taskin.Application.Data;
+using ElGuerre.Taskin.Application.Observability;
 using ElGuerre.Taskin.Application.Projects.Commands;
 using ElGuerre.Taskin.Domain.SeedWork;
 using FluentValidation;
@@ -22,6 +23,15 @@ public static class InfrastructureExtensions
         services.AddDbContext(configuration);
         services.AddCustomMediatR();
         services.AddDomainServices();
+        services.AddApplicationServices();
+
+        return services;
+    }
+
+    private static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    {
+        // Register TaskinMetrics as a singleton for business metrics
+        services.AddSingleton<TaskinMetrics>();
 
         return services;
     }

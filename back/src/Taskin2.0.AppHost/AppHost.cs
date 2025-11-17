@@ -24,6 +24,43 @@ var seq = builder.AddSeq("seq")
     .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
     .WithContainerRuntimeArgs("--label", "com.docker.compose.service=seq");
 
+// Get absolute path to deploy directory
+var deployPath = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", "..", "..", "deploy"));
+
+// Add Prometheus for metrics collection
+var prometheus = builder.AddContainer("prometheus", "prom/prometheus", "v2.45.0")
+    .WithContainerName("taskin-prometheus")
+    .WithVolume("taskin-prometheus-data", "/prometheus")
+    .WithBindMount(Path.Combine(deployPath, "prometheus", "prometheus.yml"), "/etc/prometheus/prometheus.yml")
+    .WithBindMount(Path.Combine(deployPath, "prometheus", "alerts"), "/etc/prometheus/alerts")
+    .WithHttpEndpoint(port: 9090, targetPort: 9090, name: "http")
+    .WithArgs(
+        "--config.file=/etc/prometheus/prometheus.yml",
+        "--storage.tsdb.path=/prometheus",
+        "--storage.tsdb.retention.time=15d",
+        "--storage.tsdb.retention.size=5GB",
+        "--web.console.libraries=/usr/share/prometheus/console_libraries",
+        "--web.console.templates=/usr/share/prometheus/consoles",
+        "--web.enable-lifecycle"
+    )
+    .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
+    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=prometheus");
+
+// Add Grafana for metrics visualization
+var grafana = builder.AddContainer("grafana", "grafana/grafana", "10.0.0")
+    .WithContainerName("taskin-grafana")
+    .WithVolume("taskin-grafana-data", "/var/lib/grafana")
+    .WithBindMount(Path.Combine(deployPath, "grafana", "provisioning"), "/etc/grafana/provisioning")
+    .WithBindMount(Path.Combine(deployPath, "grafana", "dashboards"), "/etc/grafana/dashboards")
+    .WithHttpEndpoint(port: 3000, targetPort: 3000, name: "http")
+    .WithEnvironment("GF_SECURITY_ADMIN_USER", "admin")
+    .WithEnvironment("GF_SECURITY_ADMIN_PASSWORD", "admin")
+    .WithEnvironment("GF_USERS_ALLOW_SIGN_UP", "false")
+    .WithEnvironment("GF_SERVER_ROOT_URL", "http://localhost:3000")
+    .WithEnvironment("PROMETHEUS_URL", "http://prometheus:9090")
+    .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
+    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=grafana");
+
 // Add API project with resource references
 var api = builder.AddProject<Projects.ElGuerre_Taskin_Api>("taskin-api")
     .WithReference(sqlServer)

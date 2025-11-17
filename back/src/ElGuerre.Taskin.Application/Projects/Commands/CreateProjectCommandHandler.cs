@@ -1,11 +1,12 @@
-﻿using ElGuerre.Taskin.Application.Data;
+﻿using ElGuerre.Taskin.Application.Observability;
+using ElGuerre.Taskin.Application.Data;
 using ElGuerre.Taskin.Domain.Entities;
 using ElGuerre.Taskin.Domain.SeedWork;
 using MediatR;
 
 namespace ElGuerre.Taskin.Application.Projects.Commands;
 
-public class CreateProjectCommandHandler(ITaskinDbContext context, IUnitOfWork unitOfWork)
+public class CreateProjectCommandHandler(ITaskinDbContext context, IUnitOfWork unitOfWork, TaskinMetrics metrics)
     : IRequestHandler<CreateProjectCommand, Guid>
 {
     public async Task<Guid> Handle(CreateProjectCommand request,
@@ -23,6 +24,10 @@ public class CreateProjectCommandHandler(ITaskinDbContext context, IUnitOfWork u
 
         context.Projects.Add(project);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Record metrics
+        metrics.RecordProjectCreated();
+        metrics.UpdateActiveProjects(context.Projects.Count(p => p.Status == ProjectStatus.Active));
 
         return project.Id;
     }

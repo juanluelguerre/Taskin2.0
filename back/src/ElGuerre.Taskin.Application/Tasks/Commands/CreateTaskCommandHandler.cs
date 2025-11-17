@@ -1,4 +1,5 @@
-﻿using ElGuerre.Taskin.Application.Data;
+﻿using ElGuerre.Taskin.Application.Observability;
+using ElGuerre.Taskin.Application.Data;
 using ElGuerre.Taskin.Application.Exceptions;
 using ElGuerre.Taskin.Domain.Entities;
 using ElGuerre.Taskin.Domain.SeedWork;
@@ -7,7 +8,7 @@ using DomainTask = ElGuerre.Taskin.Domain.Entities.Task;
 
 namespace ElGuerre.Taskin.Application.Tasks.Commands;
 
-public class CreateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unitOfWork)
+public class CreateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unitOfWork, TaskinMetrics metrics)
     : IRequestHandler<CreateTaskCommand, Guid>
 {
     public async Task<Guid> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -29,6 +30,10 @@ public class CreateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
 
         context.Tasks.Add(task);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Record metrics
+        metrics.RecordTaskCreated();
+        metrics.UpdateActiveTasks(context.Tasks.Count(t => t.Status == Domain.Entities.TaskStatus.Todo || t.Status == Domain.Entities.TaskStatus.Doing));
 
         return task.Id;
     }

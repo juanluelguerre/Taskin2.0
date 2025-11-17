@@ -1,0 +1,71 @@
+# Prometheus Configuration for Taskin 2.0 - Development Environment
+# This configuration is optimized for local development with frequent scraping
+
+global:
+  scrape_interval: 15s      # Scrape targets every 15 seconds
+  evaluation_interval: 15s  # Evaluate rules every 15 seconds
+  scrape_timeout: 10s
+
+  external_labels:
+    environment: 'development'
+    application: 'taskin'
+
+# Alertmanager configuration (optional for development)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# Load alert rules
+rule_files:
+  - '/etc/prometheus/alerts/*.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Taskin API - Scrape OpenTelemetry metrics endpoint
+  - job_name: 'taskin-api'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['taskin-api:8080', 'taskin-api:8443']
+        labels:
+          service: 'taskin-api'
+          layer: 'backend'
+    # Relabel to add instance information
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+):.*'
+        replacement: '${1}'
+
+  # Taskin API Health Check
+  - job_name: 'taskin-api-health'
+    metrics_path: '/health'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['taskin-api:8080']
+        labels:
+          service: 'taskin-api'
+          check_type: 'health'
+
+  # SQL Server Exporter (if added in the future)
+  # - job_name: 'sqlserver'
+  #   static_configs:
+  #     - targets: ['sqlserver-exporter:9399']
+  #       labels:
+  #         service: 'sqlserver'
+
+  # Redis Exporter (if added in the future)
+  # - job_name: 'redis'
+  #   static_configs:
+  #     - targets: ['redis-exporter:9121']
+  #       labels:
+  #         service: 'redis'

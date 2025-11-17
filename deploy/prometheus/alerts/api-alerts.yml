@@ -1,0 +1,228 @@
+# Prometheus Alert Rules for Taskin 2.0 API
+# These rules define alerts for critical application and infrastructure issues
+
+groups:
+  # API Availability Alerts
+  - name: taskin_api_availability
+    interval: 30s
+    rules:
+      # Alert when API is down
+      - alert: TaskinApiDown
+        expr: up{job="taskin-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: api
+          team: backend
+        annotations:
+          summary: "Taskin API is down"
+          description: "Taskin API instance {{ $labels.instance }} has been down for more than 2 minutes."
+          dashboard: "https://grafana/d/taskin-api"
+          runbook: "https://wiki/runbooks/taskin-api-down"
+
+      # Alert when health check fails
+      - alert: TaskinApiHealthCheckFailing
+        expr: up{job="taskin-api-health"} == 0
+        for: 3m
+        labels:
+          severity: warning
+          component: api
+          team: backend
+        annotations:
+          summary: "Taskin API health check failing"
+          description: "Health check endpoint for {{ $labels.instance }} has been failing for 3 minutes."
+
+  # HTTP Error Rate Alerts
+  - name: taskin_api_errors
+    interval: 30s
+    rules:
+      # High rate of 5xx errors (server errors)
+      - alert: HighServerErrorRate
+        expr: |
+          (
+            sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[5m]))
+            /
+            sum(rate(http_server_request_duration_seconds_count[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: api
+          team: backend
+        annotations:
+          summary: "High rate of 5xx errors in Taskin API"
+          description: "More than 5% of requests are returning 5xx errors (current: {{ $value | humanizePercentage }})."
+          impact: "Users may be experiencing service degradation or failures."
+
+      # High rate of 4xx errors (client errors)
+      - alert: HighClientErrorRate
+        expr: |
+          (
+            sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"4.."}[5m]))
+            /
+            sum(rate(http_server_request_duration_seconds_count[5m]))
+          ) > 0.15
+        for: 10m
+        labels:
+          severity: warning
+          component: api
+          team: backend
+        annotations:
+          summary: "High rate of 4xx errors in Taskin API"
+          description: "More than 15% of requests are returning 4xx errors (current: {{ $value | humanizePercentage }})."
+          impact: "May indicate client integration issues or invalid requests."
+
+  # API Performance Alerts
+  - name: taskin_api_performance
+    interval: 30s
+    rules:
+      # High latency (P95)
+      - alert: HighApiLatencyP95
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_server_request_duration_seconds_bucket[5m])) by (le, http_route)
+          ) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+          team: backend
+        annotations:
+          summary: "High API latency (P95) detected"
+          description: "95th percentile latency for {{ $labels.http_route }} is above 1 second (current: {{ $value | humanizeDuration }})."
+          impact: "Users may experience slow response times."
+
+      # Very high latency (P99)
+      - alert: VeryHighApiLatencyP99
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(http_server_request_duration_seconds_bucket[5m])) by (le, http_route)
+          ) > 3.0
+        for: 3m
+        labels:
+          severity: critical
+          component: api
+          team: backend
+        annotations:
+          summary: "Very high API latency (P99) detected"
+          description: "99th percentile latency for {{ $labels.http_route }} is above 3 seconds (current: {{ $value | humanizeDuration }})."
+          impact: "Some users experiencing very slow response times."
+
+  # Business Metrics Alerts
+  - name: taskin_business_metrics
+    interval: 1m
+    rules:
+      # No pomodoros completed in last 24 hours (low user activity)
+      - alert: LowUserActivity
+        expr: |
+          increase(taskin_pomodoros_completed_total[24h]) == 0
+        for: 24h
+        labels:
+          severity: info
+          component: business
+          team: product
+        annotations:
+          summary: "No pomodoros completed in last 24 hours"
+          description: "No pomodoro sessions have been completed in the last 24 hours, indicating low or no user activity."
+          impact: "May indicate users are not actively using the application."
+
+      # High task creation but low completion rate
+      - alert: LowTaskCompletionRate
+        expr: |
+          (
+            sum(increase(taskin_tasks_completed_total[1h]))
+            /
+            sum(increase(taskin_tasks_created_total[1h]))
+          ) < 0.1 and sum(increase(taskin_tasks_created_total[1h])) > 10
+        for: 2h
+        labels:
+          severity: info
+          component: business
+          team: product
+        annotations:
+          summary: "Low task completion rate detected"
+          description: "Task completion rate is below 10% despite {{ $value }} tasks being created in the last hour."
+          impact: "Users may be creating tasks but not completing them effectively."
+
+  # Infrastructure Alerts
+  - name: taskin_infrastructure
+    interval: 30s
+    rules:
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          (
+            process_working_set_bytes / process_virtual_memory_bytes
+          ) > 0.90
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+          team: devops
+        annotations:
+          summary: "High memory usage in Taskin API"
+          description: "Memory usage is above 90% for instance {{ $labels.instance }}."
+          impact: "Application may become unstable or crash."
+
+      # Database query slow
+      - alert: SlowDatabaseQueries
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(db_client_operation_duration_seconds_bucket[5m])) by (le)
+          ) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+          component: database
+          team: backend
+        annotations:
+          summary: "Slow database queries detected"
+          description: "95th percentile of database query duration is above 500ms (current: {{ $value | humanizeDuration }})."
+          impact: "Database performance degradation may affect API response times."
+
+      # Too many active database connections
+      - alert: HighDatabaseConnections
+        expr: db_client_connections_usage > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+          team: backend
+        annotations:
+          summary: "High number of active database connections"
+          description: "Number of active database connections is {{ $value }}, approaching pool limit."
+          impact: "May lead to connection pool exhaustion and request failures."
+
+  # Prometheus Self-Monitoring
+  - name: prometheus_health
+    interval: 1m
+    rules:
+      # Prometheus scrape failures
+      - alert: PrometheusScrapeFailure
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: warning
+          component: monitoring
+          team: devops
+        annotations:
+          summary: "Prometheus cannot scrape target"
+          description: "Prometheus has failed to scrape {{ $labels.job }} on {{ $labels.instance }} for 5 minutes."
+          impact: "Metrics collection is failing for this target."
+
+      # Prometheus running out of storage
+      - alert: PrometheusStorageAlmostFull
+        expr: |
+          (
+            prometheus_tsdb_storage_blocks_bytes /
+            prometheus_tsdb_retention_limit_bytes
+          ) > 0.85
+        for: 30m
+        labels:
+          severity: warning
+          component: monitoring
+          team: devops
+        annotations:
+          summary: "Prometheus storage almost full"
+          description: "Prometheus storage is {{ $value | humanizePercentage }} full."
+          impact: "Prometheus may need to delete old data sooner than expected."

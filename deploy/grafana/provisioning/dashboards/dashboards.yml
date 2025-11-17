@@ -1,0 +1,29 @@
+# Grafana Dashboard Provisioning Configuration
+# Automatically loads all dashboard JSON files from the specified folder
+
+apiVersion: 1
+
+providers:
+  # Taskin Application Dashboards
+  - name: 'Taskin Dashboards'
+    orgId: 1
+    folder: 'Taskin 2.0'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards
+      foldersFromFilesStructure: false
+
+  # System and Infrastructure Dashboards
+  - name: 'Infrastructure Dashboards'
+    orgId: 1
+    folder: 'Infrastructure'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards/infrastructure
+      foldersFromFilesStructure: false

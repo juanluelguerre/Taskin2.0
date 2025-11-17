@@ -1,4 +1,5 @@
-﻿using ElGuerre.Taskin.Application.Data;
+﻿using ElGuerre.Taskin.Application.Observability;
+using ElGuerre.Taskin.Application.Data;
 using ElGuerre.Taskin.Application.Exceptions;
 using ElGuerre.Taskin.Domain.Entities;
 using ElGuerre.Taskin.Domain.SeedWork;
@@ -7,7 +8,7 @@ using Task = ElGuerre.Taskin.Domain.Entities.Task;
 
 namespace ElGuerre.Taskin.Application.Pomodoros.Commands;
 
-public class CreatePomodoroCommandHandler(ITaskinDbContext context, IUnitOfWork unitOfWork)
+public class CreatePomodoroCommandHandler(ITaskinDbContext context, IUnitOfWork unitOfWork, TaskinMetrics metrics)
     : IRequestHandler<CreatePomodoroCommand, Guid>
 {
     public async Task<Guid> Handle(CreatePomodoroCommand request,
@@ -29,6 +30,10 @@ public class CreatePomodoroCommandHandler(ITaskinDbContext context, IUnitOfWork 
 
         context.Pomodoros.Add(pomodoro);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Record metrics - assuming pomodoro is completed when created
+        metrics.RecordPomodoroCompleted();
+        metrics.RecordPomodoroDuration(request.DurationInMinutes);
 
         return pomodoro.Id;
     }

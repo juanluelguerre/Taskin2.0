@@ -1,0 +1,121 @@
+# Prometheus Configuration for Taskin 2.0 - Production Environment
+# This configuration is optimized for production with longer retention and monitoring
+
+global:
+  scrape_interval: 30s      # Scrape targets every 30 seconds (less aggressive)
+  evaluation_interval: 30s  # Evaluate rules every 30 seconds
+  scrape_timeout: 10s
+
+  external_labels:
+    environment: 'production'
+    application: 'taskin'
+    cluster: 'taskin-prod'
+
+# Alertmanager configuration for production alerting
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+      timeout: 10s
+
+# Load alert rules
+rule_files:
+  - '/etc/prometheus/alerts/*.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Taskin API - Main application metrics
+  - job_name: 'taskin-api'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    # Use service discovery in production (example with DNS)
+    static_configs:
+      - targets: ['taskin-api:8080']
+        labels:
+          service: 'taskin-api'
+          layer: 'backend'
+          tier: 'api'
+    # Honor labels from targets
+    honor_labels: true
+    # Add instance metadata
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+):.*'
+        replacement: '${1}'
+      - source_labels: [__address__]
+        target_label: __address__
+        regex: '.*'
+        replacement: '${1}'
+
+  # Taskin API Health Checks
+  - job_name: 'taskin-api-health'
+    metrics_path: '/health'
+    scrape_interval: 60s
+    static_configs:
+      - targets: ['taskin-api:8080']
+        labels:
+          service: 'taskin-api'
+          check_type: 'health'
+
+  # Taskin API Liveness Probe
+  - job_name: 'taskin-api-alive'
+    metrics_path: '/alive'
+    scrape_interval: 60s
+    static_configs:
+      - targets: ['taskin-api:8080']
+        labels:
+          service: 'taskin-api'
+          check_type: 'liveness'
+
+  # Infrastructure monitoring (enable when exporters are added)
+
+  # SQL Server Exporter
+  # - job_name: 'sqlserver'
+  #   static_configs:
+  #     - targets: ['sqlserver-exporter:9399']
+  #       labels:
+  #         service: 'sqlserver'
+  #         tier: 'database'
+
+  # Redis Exporter
+  # - job_name: 'redis'
+  #   static_configs:
+  #     - targets: ['redis-exporter:9121']
+  #       labels:
+  #         service: 'redis'
+  #         tier: 'cache'
+
+  # Node Exporter (system metrics)
+  # - job_name: 'node'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
+  #       labels:
+  #         service: 'node-exporter'
+  #         tier: 'infrastructure'
+
+# Note: Storage retention and path are configured via command-line flags in AppHost.cs
+# --storage.tsdb.path=/prometheus
+# --storage.tsdb.retention.time=30d
+# --storage.tsdb.retention.size=20GB
+
+# Remote write configuration (for long-term storage - optional)
+# remote_write:
+#   - url: "https://long-term-storage-endpoint/api/v1/write"
+#     queue_config:
+#       capacity: 10000
+#       max_shards: 50
+#       min_shards: 1
+#       max_samples_per_send: 5000
+#       batch_send_deadline: 5s
+#       min_backoff: 30ms
+#       max_backoff: 100ms

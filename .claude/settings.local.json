@@ -25,7 +25,10 @@
       "Bash(test:*)",
       "Bash(git mv:*)",
       "Bash(move UNIT_TESTS_STATUS.md docs/)",
-      "Bash(move UNIT_TESTS_STATUS.md docs)"
+      "Bash(move UNIT_TESTS_STATUS.md docs)",
+      "Bash(move infrastructure deploy)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

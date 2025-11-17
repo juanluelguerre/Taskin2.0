@@ -1,0 +1,66 @@
+# Grafana Datasource Provisioning for Prometheus
+# This file automatically configures Prometheus as a datasource in Grafana on startup
+
+apiVersion: 1
+
+# List of datasources to provision
+datasources:
+  # Main Prometheus datasource for Taskin metrics
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    # URL will be set via environment variable or use default
+    url: ${PROMETHEUS_URL:-http://prometheus:9090}
+    isDefault: true
+    editable: true
+    jsonData:
+      # Time interval for querying
+      timeInterval: 15s
+      # Query timeout
+      queryTimeout: 60s
+      # HTTP method for queries (POST is recommended for large queries)
+      httpMethod: POST
+      # Enable exemplars (requires Prometheus 2.26+)
+      exemplarTraceIdDestinations:
+        - name: trace_id
+          datasourceUid: tempo
+      # Custom query parameters
+      customQueryParameters: ''
+      # Prometheus type and version
+      prometheusType: Prometheus
+      prometheusVersion: 2.45.0
+      # Cache level
+      cacheLevel: High
+      # Disable metrics lookup (improves performance)
+      disableMetricsLookup: false
+      # Incremental query (performance improvement)
+      incrementalQuerying: true
+      # Interval factor
+      intervalFactor: 2
+    # Secure JSON data (passwords, tokens, etc.)
+    # secureJsonData:
+    #   httpHeaderValue1: 'Bearer YOUR_TOKEN_HERE'
+    version: 1
+    uid: prometheus-taskin
+
+  # Prometheus datasource for alerting (separate for clarity)
+  - name: Prometheus-Alerts
+    type: prometheus
+    access: proxy
+    url: ${PROMETHEUS_URL:-http://prometheus:9090}
+    isDefault: false
+    editable: true
+    jsonData:
+      timeInterval: 30s
+      queryTimeout: 30s
+      httpMethod: POST
+      manageAlerts: true
+      prometheusType: Prometheus
+      prometheusVersion: 2.45.0
+    version: 1
+    uid: prometheus-alerts
+
+# Delete datasources that are not defined here
+deleteDatasources:
+  - name: Prometheus-Old
+    orgId: 1

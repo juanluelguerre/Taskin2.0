@@ -1,5 +1,3 @@
-@@ -1,27 +1,27 @@
-
 # Taskin 2.0
 
 Standalone Angular application using Angular Material, CDK, TailwindCSS and Transloco.

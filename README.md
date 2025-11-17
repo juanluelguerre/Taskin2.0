@@ -1,4 +1,4 @@
-﻿# Task[in] 2.0 (Backend)
+﻿# Task[in] 2.0
 
 Task[in] 2.0 is a productivity application backend built using ASP.NET Core Web API, following Clean Architecture principles. It provides RESTful APIs for managing projects, tasks, and Pomodoros, utilizing the Pomodoro Technique to enhance productivity.
 
