@@ -7,6 +7,7 @@ This file provides guidance to Claude Code when working with this repository.
 **IMPORTANT**: Always use Context7 MCP for up-to-date library documentation and patterns.
 
 ### Key Context7 Commands
+
 ```bash
 # Angular ecosystem
 Context7: @angular/core signals and dependency injection
@@ -24,6 +25,7 @@ Context7: Azure deployment strategies
 ```
 
 ### Reference Files
+
 - **ANGULAR_PATTERNS_REFERENCE.md**: Architectural patterns
 - **ANGULAR_CLAUDE_GUIDE.md**: Development workflows
 - **ANGULAR_COMPONENT_TEMPLATES.md**: Component templates
@@ -56,6 +58,7 @@ taskin2.0/
 3. **Pomodoro**: Time tracking sessions associated with tasks
 
 ### Entity Relationships:
+
 - `Project` → has many `Task`
 - `Task` → belongs to `Project`, has many `Pomodoro`
 - `Pomodoro` → belongs to `Task`
@@ -117,22 +120,26 @@ function handleApiResponse(data: any): Project[] {
 ### Architecture Patterns
 
 #### Smart vs Dumb Components
+
 - **Smart Components**: Manage state and business logic
 - **Dumb Components**: Pure presentation with inputs/outputs
 
 ```typescript
 // Smart component example
 @Component({
-  selector: 'app-project-container',
-  template: `<app-project-list [projects]="projects()" (projectSelected)="onSelect($event)">`,
-  providers: [ProjectStore]
+  selector: "app-project-container",
+  template: `<app-project-list
+    [projects]="projects()"
+    (projectSelected)="onSelect($event)"
+  ></app-project-list>`,
+  providers: [ProjectStore],
 })
 export class ProjectContainerComponent {
-  private store = inject(ProjectStore)
-  projects = this.store.selectSignal(state => state.projects)
-  
+  private store = inject(ProjectStore);
+  projects = this.store.selectSignal((state) => state.projects);
+
   onSelect(project: Project): void {
-    this.store.selectProject(project)
+    this.store.selectProject(project);
   }
 }
 ```
@@ -147,28 +154,28 @@ export class ProjectContainerComponent {
 
 ```typescript
 @Component({
-  selector: 'app-project-card',
+  selector: "app-project-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.active]': 'isActive()',
-    '(click)': 'handleClick()'
+    "[class.active]": "isActive()",
+    "(click)": "handleClick()",
   },
   template: `
     <div class="project-card">
       @if (project(); as proj) {
-        <img [ngSrc]="proj.image" [alt]="proj.name" width="200" height="100">
-        <h3>{{ proj.name }}</h3>
+      <img [ngSrc]="proj.image" [alt]="proj.name" width="200" height="100" />
+      <h3>{{ proj.name }}</h3>
       }
     </div>
   `,
-  imports: [NgOptimizedImage]
+  imports: [NgOptimizedImage],
 })
 export class ProjectCardComponent {
   project = input.required<Project>();
   cardClick = output<Project>();
-  
-  readonly isActive = computed(() => this.project().status === 'active');
-  
+
+  readonly isActive = computed(() => this.project().status === "active");
+
   handleClick(): void {
     this.cardClick.emit(this.project());
   }
@@ -183,21 +190,14 @@ export class ProjectCardComponent {
 
 ```html
 <div [class.active]="isActive()" [style.opacity]="isDisabled() ? '0.5' : '1'">
-  @if (projects().length > 0) {
-    @for (project of projects(); track project.id) {
-      <app-project-card [project]="project" (cardClick)="selectProject($event)" />
-    } @empty {
-      <p>No projects found</p>
-    }
-  } @else {
-    <app-loading-spinner />
-  }
-  
-  @switch (status()) {
-    @case ('loading') { <app-spinner /> }
-    @case ('error') { <app-error-message /> }
-    @default { <app-project-list /> }
-  }
+  @if (projects().length > 0) { @for (project of projects(); track project.id) {
+  <app-project-card [project]="project" (cardClick)="selectProject($event)" />
+  } @empty {
+  <p>No projects found</p>
+  } } @else {
+  <app-loading-spinner />
+  } @switch (status()) { @case ('loading') { <app-spinner /> } @case ('error') {
+  <app-error-message /> } @default { <app-project-list /> } }
 </div>
 ```
 
@@ -208,28 +208,37 @@ export class ProjectCardComponent {
 ```typescript
 @Injectable()
 export class ProjectStore extends signalStore(
-  { providedIn: 'root' },
+  { providedIn: "root" },
   withState({
     projects: [] as Project[],
     selectedProject: null as Project | null,
     loading: false,
-    error: null as string | null
+    error: null as string | null,
   }),
   withComputed((state) => ({
-    activeProjects: computed(() => state.projects().filter(p => p.status === 'active'))
+    activeProjects: computed(() =>
+      state.projects().filter((p) => p.status === "active")
+    ),
   })),
   withMethods((store, projectService = inject(ProjectService)) => ({
-    loadProjects: rxMethod<void>(pipe(
-      switchMap(() => {
-        patchState(store, { loading: true, error: null })
-        return projectService.getProjects().pipe(
-          tapResponse({
-            next: (projects) => patchState(store, { projects, loading: false }),
-            error: () => patchState(store, { error: 'Failed to load projects', loading: false })
-          })
-        )
-      })
-    ))
+    loadProjects: rxMethod<void>(
+      pipe(
+        switchMap(() => {
+          patchState(store, { loading: true, error: null });
+          return projectService.getProjects().pipe(
+            tapResponse({
+              next: (projects) =>
+                patchState(store, { projects, loading: false }),
+              error: () =>
+                patchState(store, {
+                  error: "Failed to load projects",
+                  loading: false,
+                }),
+            })
+          );
+        })
+      )
+    ),
   }))
 ) {}
 ```
@@ -240,14 +249,14 @@ export class ProjectStore extends signalStore(
 export class ProjectsComponent {
   private readonly projects = signal<Project[]>([]);
   private readonly selectedId = signal<string | null>(null);
-  
+
   readonly selectedProject = computed(() => {
     const id = this.selectedId();
-    return this.projects().find(p => p.id === id) ?? null;
+    return this.projects().find((p) => p.id === id) ?? null;
   });
-  
+
   addProject(project: Project): void {
-    this.projects.update(current => [...current, project]);
+    this.projects.update((current) => [...current, project]);
   }
 }
 ```
@@ -255,15 +264,15 @@ export class ProjectsComponent {
 ### Services
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class ProjectService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/projects';
-  
+  private readonly baseUrl = "/api/projects";
+
   getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(this.baseUrl);
   }
-  
+
   createProject(request: CreateProjectRequest): Observable<Project> {
     return this.http.post<Project>(this.baseUrl, request);
   }
@@ -277,13 +286,13 @@ Use Reactive Forms with signal integration:
 ```typescript
 export class ProjectFormComponent {
   private readonly fb = inject(FormBuilder);
-  
+
   readonly form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3)]],
-    description: [''],
-    status: ['active', Validators.required]
+    name: ["", [Validators.required, Validators.minLength(3)]],
+    description: [""],
+    status: ["active", Validators.required],
   });
-  
+
   onSubmit(): void {
     if (this.form.valid) {
       const formValue = this.form.value as ProjectFormData;
@@ -297,13 +306,13 @@ export class ProjectFormComponent {
 
 ```typescript
 export const authGuard: CanActivateFn = () => {
-  const authService = inject(AuthService)
-  const router = inject(Router)
-  
-  return authService.isAuthenticated().pipe(
-    map(isAuth => isAuth || router.navigate(['/login']))
-  )
-}
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  return authService
+    .isAuthenticated()
+    .pipe(map((isAuth) => isAuth || router.navigate(["/login"])));
+};
 ```
 
 ### Error Handling
@@ -311,12 +320,13 @@ export const authGuard: CanActivateFn = () => {
 ```typescript
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-  private notificationService = inject(NotificationService)
-  
+  private notificationService = inject(NotificationService);
+
   handleError(error: Error): void {
     if (error instanceof HttpErrorResponse) {
-      const message = error.status === 401 ? 'Please log in' : 'An error occurred'
-      this.notificationService.showError(message)
+      const message =
+        error.status === 401 ? "Please log in" : "An error occurred";
+      this.notificationService.showError(message);
     }
   }
 }
@@ -331,10 +341,11 @@ export class GlobalErrorHandler implements ErrorHandler {
 ```typescript
 const routes: Routes = [
   {
-    path: 'projects',
-    loadChildren: () => import('./features/projects/projects.routes').then(m => m.routes)
-  }
-]
+    path: "projects",
+    loadChildren: () =>
+      import("./features/projects/projects.routes").then((m) => m.routes),
+  },
+];
 ```
 
 ### Testing
@@ -357,7 +368,7 @@ npm test
 ### Key Technologies
 
 - **Angular 19**: Standalone components with signal-based inputs/outputs
-- **Angular Material 19**: UI component library  
+- **Angular Material 19**: UI component library
 - **NgRx Signals**: State management
 - **Transloco**: Internationalization (en-US, es-ES, zh-CN, zh-TW)
 - **TailwindCSS**: Utility-first styling
@@ -365,6 +376,7 @@ npm test
 ### Path Aliases
 
 Configured in `tsconfig.json`:
+
 - `@core` → `src/app/core`
 - `@shared` → `src/app/shared`
 - `@theme` → `src/app/theme`
@@ -404,7 +416,7 @@ Run commands from `/back/src/` directory:
 # Build solution
 dotnet build
 
-# Run API server (typically https://localhost:5001)
+# Run API server (typically https://localhost:6001)
 dotnet run --project ElGuerre.Taskin.Api
 
 # Run tests
@@ -450,9 +462,10 @@ Application/
 
 ## API Endpoints
 
-Base URL: `https://localhost:5001/api`
+Base URL: `https://localhost:6001/api`
 
 ### Projects
+
 - `GET /Projects` - List projects
 - `GET /Projects/{id}` - Get project by ID
 - `POST /Projects` - Create project
@@ -460,6 +473,7 @@ Base URL: `https://localhost:5001/api`
 - `DELETE /Projects/{id}` - Delete project
 
 ### Tasks
+
 - `GET /Tasks?projectId={projectId}` - Get tasks by project
 - `GET /Tasks/{id}` - Get task by ID
 - `POST /Tasks` - Create task
@@ -467,6 +481,7 @@ Base URL: `https://localhost:5001/api`
 - `DELETE /Tasks/{id}` - Delete task
 
 ### Pomodoros
+
 - `GET /Pomodoros?taskId={taskId}` - Get pomodoros by task
 - `GET /Pomodoros/{id}` - Get pomodoro by ID
 - `POST /Pomodoros` - Create pomodoro
@@ -529,6 +544,7 @@ dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuer
 ### Adding New Features
 
 #### Frontend:
+
 1. Generate feature module structure in `src/app/features/`
 2. Create pages using standalone components with signal-based inputs
 3. Implement routing in feature routing module
@@ -536,6 +552,7 @@ dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuer
 5. Implement data services for API communication
 
 #### Backend:
+
 1. Create domain entity in `Domain/Entities/`
 2. Add Entity Framework configuration in `Infrastructure/EntityConfigurations/`
 3. Create commands/queries in `Application/{FeatureName}/`
@@ -576,7 +593,6 @@ Context7: Azure Container Apps deployment patterns
 Context7: Azure Bicep infrastructure as code
 ```
 
-
 ## DevOps & Monitoring
 
 - **CI/CD**: GitHub Actions with automated testing and deployment
@@ -593,6 +609,7 @@ Context7: .NET health checks implementation
 ## Development Workflow
 
 ### Context7 Usage
+
 1. **Before new features**: Get latest patterns and best practices
 2. **When debugging**: Get troubleshooting guides and solutions
 3. **During code reviews**: Reference architectural guidance

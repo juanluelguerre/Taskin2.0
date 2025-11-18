@@ -126,11 +126,11 @@ ElGuerre.Taskin.sln
    dotnet run --project ElGuerre.Taskin.Api
    ```
 
-   The API will start and listen on `https://localhost:5001` by default.
+   The API will start and listen on `https://localhost:6001` by default.
 
 2. **Test the API**
 
-   Open a browser and navigate to `https://localhost:5001/swagger` to view the Swagger UI and test the endpoints.
+   Open a browser and navigate to `https://localhost:6001/swagger` to view the Swagger UI and test the endpoints.
 
 ## API Endpoints
 
