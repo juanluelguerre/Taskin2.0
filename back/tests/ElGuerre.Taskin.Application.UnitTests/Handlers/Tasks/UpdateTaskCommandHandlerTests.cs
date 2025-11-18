@@ -27,7 +27,7 @@ public class UpdateTaskCommandHandlerTests
         this.tasksDbSet = tasks.BuildMockDbSet();
 
         this.context.Tasks.Returns(this.tasksDbSet);
-        this.handler = new UpdateTaskCommandHandler(this.context, this.unitOfWork);
+        this.handler = new UpdateTaskCommandHandler(this.context, this.unitOfWork, new ElGuerre.Taskin.Application.Observability.TaskinMetrics());
     }
 
     [Fact]

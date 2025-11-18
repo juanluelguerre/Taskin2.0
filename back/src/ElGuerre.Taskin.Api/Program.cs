@@ -1,8 +1,9 @@
 using ElGuerre.Taskin.Api.Extensions;
 using ElGuerre.Taskin.Api.Observability;
+using ElGuerre.Taskin.Application;
 using ElGuerre.Taskin.Infrastructure.EntityFramework;
 using ElGuerre.Taskin.Infrastructure.Middleware;
-using Serilog;
+using ElGuerre.Taskin.Application.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,11 +13,8 @@ builder.AddServiceDefaults();
 // Add SQL Server DbContext with Aspire integration
 builder.AddSqlServerDbContext<TaskinDbContext>("taskin-db");
 
-// Configure Serilog (coexists with OpenTelemetry logging)
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
-builder.Host.UseSerilog();
+// OpenTelemetry logging configured via ServiceDefaults
+// Logs will automatically export to Aspire Dashboard and Seq
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -29,6 +27,8 @@ builder.Services.AddOpenTelemetry()
     .WithTracing(tracing => tracing.AddSource(TelemetryConstants.ActivitySourceName))
     .WithMetrics(metrics => metrics.AddMeter(TelemetryConstants.MeterName))
     .WithMetrics(metrics => metrics.AddMeter("Taskin.Application")); // Add Application metrics meter
+
+builder.Services.AddApplicationServices();
 
 // Add CORS for Angular frontend
 builder.Services.AddCors(options =>
@@ -60,7 +60,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseSerilogRequestLogging();
+// Request logging handled by OpenTelemetry instrumentation in ServiceDefaults
 app.UseHttpsRedirection();
 app.UseCors("AllowAngularDev");
 app.UseAuthorization();

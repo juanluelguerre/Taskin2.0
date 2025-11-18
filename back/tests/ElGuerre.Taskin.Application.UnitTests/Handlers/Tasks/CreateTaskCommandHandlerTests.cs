@@ -33,7 +33,7 @@ public class CreateTaskCommandHandlerTests
 
         this.context.Tasks.Returns(_tasksDbSet);
         this.context.Projects.Returns(this.projectsDbSet);
-        this.handler = new CreateTaskCommandHandler(this.context, this.unitOfWork);
+        this.handler = new CreateTaskCommandHandler(this.context, this.unitOfWork, new ElGuerre.Taskin.Application.Observability.TaskinMetrics());
     }
 
     [Fact]

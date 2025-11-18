@@ -22,56 +22,58 @@ public class TaskinMetrics
 
     public TaskinMetrics()
     {
+        var meter = _meter;
+
         // Project metrics
-        _projectsCreated = _meter.CreateCounter<long>(
-            "taskin.projects.created",
+        _projectsCreated = meter.CreateCounter<long>(
+            "taskin_projects_created_total",
             unit: "projects",
-            description: "Number of projects created");
+            description: "Total number of projects created");
 
-        _projectsDeleted = _meter.CreateCounter<long>(
-            "taskin.projects.deleted",
+        _projectsDeleted = meter.CreateCounter<long>(
+            "taskin_projects_deleted_total",
             unit: "projects",
-            description: "Number of projects deleted");
+            description: "Total number of projects deleted");
 
-        _activeProjects = _meter.CreateUpDownCounter<long>(
-            "taskin.projects.active",
+        _activeProjects = meter.CreateUpDownCounter<long>(
+            "taskin_projects_active",
             unit: "projects",
             description: "Number of active projects");
 
         // Task metrics
-        _tasksCreated = _meter.CreateCounter<long>(
-            "taskin.tasks.created",
+        _tasksCreated = meter.CreateCounter<long>(
+            "taskin_tasks_created_total",
             unit: "tasks",
-            description: "Number of tasks created");
+            description: "Total number of tasks created");
 
-        _tasksCompleted = _meter.CreateCounter<long>(
-            "taskin.tasks.completed",
+        _tasksCompleted = meter.CreateCounter<long>(
+            "taskin_tasks_completed_total",
             unit: "tasks",
-            description: "Number of tasks completed");
+            description: "Total number of tasks completed");
 
-        _tasksDeleted = _meter.CreateCounter<long>(
-            "taskin.tasks.deleted",
+        _tasksDeleted = meter.CreateCounter<long>(
+            "taskin_tasks_deleted_total",
             unit: "tasks",
-            description: "Number of tasks deleted");
+            description: "Total number of tasks deleted");
 
-        _activeTasks = _meter.CreateUpDownCounter<long>(
-            "taskin.tasks.active",
+        _activeTasks = meter.CreateUpDownCounter<long>(
+            "taskin_tasks_active",
             unit: "tasks",
             description: "Number of active tasks");
 
         // Pomodoro metrics
-        _pomodorosCreated = _meter.CreateCounter<long>(
-            "taskin.pomodoros.created",
+        _pomodorosCreated = meter.CreateCounter<long>(
+            "taskin_pomodoros_created_total",
             unit: "pomodoros",
-            description: "Number of pomodoros created");
+            description: "Total number of pomodoros created");
 
-        _pomodorosCompleted = _meter.CreateCounter<long>(
-            "taskin.pomodoros.completed",
+        _pomodorosCompleted = meter.CreateCounter<long>(
+            "taskin_pomodoros_completed_total",
             unit: "pomodoros",
-            description: "Number of pomodoros completed");
+            description: "Total number of pomodoros completed");
 
-        _pomodoroDuration = _meter.CreateHistogram<double>(
-            "taskin.pomodoros.duration",
+        _pomodoroDuration = meter.CreateHistogram<double>(
+            "taskin_pomodoros_duration_minutes",
             unit: "minutes",
             description: "Duration of pomodoros in minutes");
     }
@@ -79,13 +81,15 @@ public class TaskinMetrics
     // Project operations
     public void RecordProjectCreated() => _projectsCreated.Add(1);
     public void RecordProjectDeleted() => _projectsDeleted.Add(1);
-    public void UpdateActiveProjects(int count) => _activeProjects.Add(count - _activeProjects.GetType().GetHashCode()); // Simple update
+    public void IncrementActiveProjects() => _activeProjects.Add(1);
+    public void DecrementActiveProjects() => _activeProjects.Add(-1);
 
     // Task operations
     public void RecordTaskCreated() => _tasksCreated.Add(1);
     public void RecordTaskCompleted() => _tasksCompleted.Add(1);
     public void RecordTaskDeleted() => _tasksDeleted.Add(1);
-    public void UpdateActiveTasks(int count) => _activeTasks.Add(count - _activeTasks.GetType().GetHashCode()); // Simple update
+    public void IncrementActiveTasks() => _activeTasks.Add(1);
+    public void DecrementActiveTasks() => _activeTasks.Add(-1);
 
     // Pomodoro operations
     public void RecordPomodoroCreated() => _pomodorosCreated.Add(1);

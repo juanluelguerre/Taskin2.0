@@ -1,6 +1,10 @@
 <Project Sdk="Aspire.AppHost.Sdk/13.0.0">
 
   <ItemGroup>
+    <None Remove="nul" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ElGuerre.Taskin.Api\ElGuerre.Taskin.Api.csproj" />
   </ItemGroup>
 

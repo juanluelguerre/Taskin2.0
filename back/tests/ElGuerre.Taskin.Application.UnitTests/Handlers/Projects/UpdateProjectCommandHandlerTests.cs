@@ -27,7 +27,7 @@ public class UpdateProjectCommandHandlerTests
         this.projectsDbSet = projects.BuildMockDbSet();
 
         this.context.Projects.Returns(this.projectsDbSet);
-        this.handler = new UpdateProjectCommandHandler(this.context, this.unitOfWork);
+        this.handler = new UpdateProjectCommandHandler(this.context, this.unitOfWork, new ElGuerre.Taskin.Application.Observability.TaskinMetrics());
     }
 
     [Fact]

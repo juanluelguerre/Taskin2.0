@@ -28,7 +28,7 @@ public class UpdatePomodoroCommandHandlerTests
         _pomodorosDbSet = pomodoros.BuildMockDbSet();
 
         _context.Pomodoros.Returns(_pomodorosDbSet);
-        _handler = new UpdatePomodoroCommandHandler(_context, _unitOfWork);
+        _handler = new UpdatePomodoroCommandHandler(_context, _unitOfWork, new ElGuerre.Taskin.Application.Observability.TaskinMetrics());
     }
 
     [Fact]

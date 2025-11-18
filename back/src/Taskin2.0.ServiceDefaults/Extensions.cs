@@ -58,7 +58,9 @@ public static class Extensions
             {
                 metrics.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddRuntimeInstrumentation();
+                    .AddRuntimeInstrumentation()
+                    .AddMeter("Taskin.Api")
+                    .AddMeter("Taskin.Application");
             })
             .WithTracing(tracing =>
             {
@@ -91,6 +93,10 @@ public static class Extensions
 
     private static TBuilder AddOpenTelemetryExporters<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
+        // OTLP Exporter - Primary telemetry export method
+        // When OTEL_EXPORTER_OTLP_ENDPOINT is configured, all telemetry (metrics, traces, logs)
+        // is sent to the OpenTelemetry Collector, which then handles distribution to
+        // Prometheus (metrics), Tempo (traces), and Loki (logs)
         var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
 
         if (useOtlpExporter)
@@ -101,7 +107,10 @@ public static class Extensions
         // Seq integration is configured via connection string from AppHost
         // No additional exporter configuration needed here as Aspire.Seq handles it
 
-        // Prometheus exporter for metrics scraping
+        // Prometheus Direct Exporter (Legacy - disabled when using OTel Collector)
+        // This allows Prometheus to scrape metrics directly from the application.
+        // When using OTel Collector architecture, set Prometheus:Enabled=false
+        // and let the collector handle Prometheus export instead.
         var usePrometheusExporter = builder.Configuration.GetValue<bool>("Prometheus:Enabled", false);
         if (usePrometheusExporter)
         {
@@ -144,7 +153,9 @@ public static class Extensions
             });
         }
 
-        // Map Prometheus metrics endpoint if enabled
+        // Map Prometheus metrics endpoint if enabled (disabled when using OTel Collector)
+        // When using OTel Collector architecture, the application sends telemetry via OTLP
+        // and the collector exposes the /metrics endpoint for Prometheus to scrape
         var usePrometheusExporter = app.Configuration.GetValue<bool>("Prometheus:Enabled", false);
         if (usePrometheusExporter)
         {

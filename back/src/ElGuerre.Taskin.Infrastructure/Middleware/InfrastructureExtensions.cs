@@ -1,6 +1,5 @@
 ﻿using ElGuerre.Taskin.Application.Behaviors;
 using ElGuerre.Taskin.Application.Data;
-using ElGuerre.Taskin.Application.Observability;
 using ElGuerre.Taskin.Application.Projects.Commands;
 using ElGuerre.Taskin.Domain.SeedWork;
 using FluentValidation;
@@ -30,8 +29,8 @@ public static class InfrastructureExtensions
 
     private static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        // Register TaskinMetrics as a singleton for business metrics
-        services.AddSingleton<TaskinMetrics>();
+        // TaskinMetrics is registered in Application layer DependencyInjection.cs
+        // No additional application services needed here at the moment
 
         return services;
     }

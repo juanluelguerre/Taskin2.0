@@ -24,8 +24,59 @@ var seq = builder.AddSeq("seq")
     .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
     .WithContainerRuntimeArgs("--label", "com.docker.compose.service=seq");
 
-// Get absolute path to deploy directory
-var deployPath = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", "..", "..", "deploy"));
+// ============================================================================
+// PRODUCTION OBSERVABILITY STACK - COMMENTED OUT FOR DEVELOPMENT
+// ============================================================================
+// For development, Aspire Dashboard provides all observability features:
+// - Traces, Logs, Metrics are automatically collected
+// - No need for OTel Collector, Prometheus, Grafana, Tempo, Loki
+//
+// UNCOMMENT THIS SECTION FOR PRODUCTION DEPLOYMENT
+// ============================================================================
+/*
+// Get absolute path to deploy directory (moved to back/deploy)
+var deployPath = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", "..", "deploy"));
+
+// Add Tempo for distributed tracing
+var tempo = builder.AddContainer("tempo", "grafana/tempo", "latest")
+    .WithContainerName("taskin-tempo")
+    .WithVolume("taskin-tempo-data", "/var/tempo")
+    .WithBindMount(Path.Combine(deployPath, "tempo", "tempo.yaml"), "/etc/tempo/tempo.yaml")
+    .WithHttpEndpoint(port: 3200, targetPort: 3200, name: "http")
+    .WithEndpoint(port: 4317, targetPort: 4317, name: "otlp-grpc", scheme: "http")
+    .WithEndpoint(port: 4318, targetPort: 4318, name: "otlp-http", scheme: "http")
+    .WithArgs("-config.file=/etc/tempo/tempo.yaml")
+    .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
+    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=tempo");
+
+// Add Loki for log aggregation
+var loki = builder.AddContainer("loki", "grafana/loki", "latest")
+    .WithContainerName("taskin-loki")
+    .WithVolume("taskin-loki-data", "/loki")
+    .WithBindMount(Path.Combine(deployPath, "loki", "local-config.yaml"), "/etc/loki/local-config.yaml")
+    .WithHttpEndpoint(port: 3100, targetPort: 3100, name: "http")
+    .WithArgs("-config.file=/etc/loki/local-config.yaml")
+    .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
+    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=loki");
+
+// Add OpenTelemetry Collector
+var otelCollector = builder.AddContainer("otel-collector", "otel/opentelemetry-collector-contrib", "latest")
+    .WithContainerName("taskin-otel-collector")
+    .WithBindMount(Path.Combine(deployPath, "otel-collector", "config.yaml"), "/etc/otelcol-contrib/config.yaml")
+    .WithHttpEndpoint(port: 4317, targetPort: 4317, name: "otlp-grpc")
+    .WithHttpEndpoint(port: 4318, targetPort: 4318, name: "otlp-http")
+    .WithHttpEndpoint(port: 8889, targetPort: 8889, name: "prometheus")
+    .WithHttpEndpoint(port: 8888, targetPort: 8888, name: "metrics")
+    // Pass Aspire Dashboard OTLP endpoint to forward telemetry back to Aspire
+    // Note: Using host.docker.internal since OTel Collector runs in Docker
+    .WithEnvironment("ASPIRE_DASHBOARD_OTLP_ENDPOINT",
+        builder.Configuration["ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL"] ?? "http://host.docker.internal:18889")
+    .WithArgs("--config=/etc/otelcol-contrib/config.yaml")
+    .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
+    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=otel-collector")
+    // Important: OTel Collector needs to talk to Tempo and Loki
+    .WaitFor(tempo)
+    .WaitFor(loki);
 
 // Add Prometheus for metrics collection
 var prometheus = builder.AddContainer("prometheus", "prom/prometheus", "v2.45.0")
@@ -44,7 +95,9 @@ var prometheus = builder.AddContainer("prometheus", "prom/prometheus", "v2.45.0"
         "--web.enable-lifecycle"
     )
     .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
-    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=prometheus");
+    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=prometheus")
+    // Prometheus scrapes OTel Collector
+    .WaitFor(otelCollector);
 
 // Add Grafana for metrics visualization
 var grafana = builder.AddContainer("grafana", "grafana/grafana", "10.0.0")
@@ -60,6 +113,8 @@ var grafana = builder.AddContainer("grafana", "grafana/grafana", "10.0.0")
     .WithEnvironment("GF_SERVER_ROOT_URL", "http://localhost:3000")
     // Data sources URLs
     .WithEnvironment("PROMETHEUS_URL", "http://prometheus:9090")
+    .WithEnvironment("TEMPO_URL", "http://tempo:3200")
+    .WithEnvironment("LOKI_URL", "http://loki:3100")
     .WithEnvironment("SEQ_URL", "http://seq:5341")
     // Enable features for better navigation
     .WithEnvironment("GF_FEATURE_TOGGLES_ENABLE", "tempoSearch,correlations,exploreMetrics")
@@ -70,13 +125,34 @@ var grafana = builder.AddContainer("grafana", "grafana/grafana", "10.0.0")
     // Default home dashboard
     .WithEnvironment("GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH", "/etc/grafana/dashboards/taskin-overview.json")
     .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
-    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=grafana");
+    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=grafana")
+    // Grafana depends on all datasources
+    .WaitFor(prometheus)
+    .WaitFor(tempo)
+    .WaitFor(loki);
+*/
 
-// Add API project with resource references
+// ============================================================================
+// APPLICATION SERVICES
+// ============================================================================
+
+// Add API project - DEVELOPMENT MODE (Aspire Dashboard only)
+// Aspire automatically configures OpenTelemetry to export to its dashboard
+// No need to manually configure OTEL_EXPORTER_OTLP_ENDPOINT
 var api = builder.AddProject<Projects.ElGuerre_Taskin_Api>("taskin-api")
     .WithReference(sqlServer)
     .WithReference(redis)
-    .WithReference(seq)
-    .WithEnvironment("Prometheus:Enabled", "true");
+    .WithReference(seq);
+    // ✅ Aspire will automatically:
+    //    - Configure OTLP endpoint to its own dashboard
+    //    - Collect traces, logs, and metrics
+    //    - Display everything in the Aspire Dashboard UI
+
+// FOR PRODUCTION: Uncomment the production observability stack above and add:
+// .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4318")
+// .WithEnvironment("OTEL_SERVICE_NAME", "taskin-api")
+// .WithEnvironment("OTEL_RESOURCE_ATTRIBUTES", "service.namespace=taskin,deployment.environment=development")
+// .WithEnvironment("Prometheus:Enabled", "false")
+// .WaitFor(otelCollector);
 
 builder.Build().Run();

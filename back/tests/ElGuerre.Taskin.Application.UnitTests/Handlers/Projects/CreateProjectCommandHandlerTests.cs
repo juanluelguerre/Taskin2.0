@@ -25,7 +25,8 @@ public class CreateProjectCommandHandlerTests
         this.projectsDbSet = projects.BuildMockDbSet();
 
         context.Projects.Returns(this.projectsDbSet);
-        this.handler = new CreateProjectCommandHandler(context, this.unitOfWork);
+        this.handler = new CreateProjectCommandHandler(
+            context, this.unitOfWork, new Observability.TaskinMetrics());
     }
 
     [Fact]

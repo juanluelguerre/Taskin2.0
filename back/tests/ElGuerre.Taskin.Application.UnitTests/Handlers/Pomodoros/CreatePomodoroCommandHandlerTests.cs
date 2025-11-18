@@ -14,16 +14,16 @@ namespace ElGuerre.Taskin.Application.UnitTests.Handlers.Pomodoros;
 /// </summary>
 public class CreatePomodoroCommandHandlerTests
 {
-    private readonly ITaskinDbContext _context;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ITaskinDbContext context;
+    private readonly IUnitOfWork unitOfWork;
     private readonly CreatePomodoroCommandHandler _handler;
-    private DbSet<Pomodoro> _pomodorosDbSet;
+    private readonly DbSet<Pomodoro> _pomodorosDbSet;
     private DbSet<DomainTask> _tasksDbSet;
 
     public CreatePomodoroCommandHandlerTests()
     {
-        _context = Substitute.For<ITaskinDbContext>();
-        _unitOfWork = Substitute.For<IUnitOfWork>();
+        context = Substitute.For<ITaskinDbContext>();
+        unitOfWork = Substitute.For<IUnitOfWork>();
 
         var pomodoros = new List<Pomodoro>();
         _pomodorosDbSet = pomodoros.BuildMockDbSet();
@@ -31,9 +31,9 @@ public class CreatePomodoroCommandHandlerTests
         var tasks = new List<DomainTask>();
         _tasksDbSet = tasks.BuildMockDbSet();
 
-        _context.Pomodoros.Returns(_pomodorosDbSet);
-        _context.Tasks.Returns(_tasksDbSet);
-        _handler = new CreatePomodoroCommandHandler(_context, _unitOfWork);
+        context.Pomodoros.Returns(_pomodorosDbSet);
+        context.Tasks.Returns(_tasksDbSet);
+        _handler = new CreatePomodoroCommandHandler(context, unitOfWork, new ElGuerre.Taskin.Application.Observability.TaskinMetrics());
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class CreatePomodoroCommandHandlerTests
         var tasks = new List<DomainTask> { task };
         _tasksDbSet = tasks.BuildMockDbSet();
         _tasksDbSet.FindAsync(Arg.Any<object[]>(), Arg.Any<CancellationToken>()).Returns(task);
-        _context.Tasks.Returns(_tasksDbSet);
+        context.Tasks.Returns(_tasksDbSet);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -70,7 +70,7 @@ public class CreatePomodoroCommandHandlerTests
             p.StartTime == command.StartTime &&
             p.DurationInMinutes == command.DurationInMinutes &&
             p.Task == task));
-        await _unitOfWork.Received(1).SaveChangesAsync(CancellationToken.None);
+        await unitOfWork.Received(1).SaveChangesAsync(CancellationToken.None);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class CreatePomodoroCommandHandlerTests
 
         var tasks = new List<DomainTask>();
         _tasksDbSet = tasks.BuildMockDbSet();
-        _context.Tasks.Returns(_tasksDbSet);
+        context.Tasks.Returns(_tasksDbSet);
 
         // Act
         Func<SystemTask> act = async () => await _handler.Handle(command, CancellationToken.None);
@@ -95,7 +95,7 @@ public class CreatePomodoroCommandHandlerTests
         // Assert
         await act.Should().ThrowAsync<EntityNotFoundException<DomainTask>>();
         _pomodorosDbSet.DidNotReceive().Add(Arg.Any<Pomodoro>());
-        await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public class CreatePomodoroCommandHandlerTests
         var tasks = new List<DomainTask> { task };
         _tasksDbSet = tasks.BuildMockDbSet();
         _tasksDbSet.FindAsync(Arg.Any<object[]>(), Arg.Any<CancellationToken>()).Returns(task);
-        _context.Tasks.Returns(_tasksDbSet);
+        context.Tasks.Returns(_tasksDbSet);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -139,7 +139,7 @@ public class CreatePomodoroCommandHandlerTests
         var tasks = new List<DomainTask> { task };
         _tasksDbSet = tasks.BuildMockDbSet();
         _tasksDbSet.FindAsync(Arg.Any<object[]>(), Arg.Any<CancellationToken>()).Returns(task);
-        _context.Tasks.Returns(_tasksDbSet);
+        context.Tasks.Returns(_tasksDbSet);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -166,12 +166,12 @@ public class CreatePomodoroCommandHandlerTests
         var tasks = new List<DomainTask> { task };
         _tasksDbSet = tasks.BuildMockDbSet();
         _tasksDbSet.FindAsync(Arg.Any<object[]>(), Arg.Any<CancellationToken>()).Returns(task);
-        _context.Tasks.Returns(_tasksDbSet);
+        context.Tasks.Returns(_tasksDbSet);
 
         // Act
         await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }
