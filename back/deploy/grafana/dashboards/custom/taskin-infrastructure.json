@@ -38,7 +38,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -112,7 +112,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "process_working_set_bytes{job=\"taskin-api\"}",
@@ -123,7 +123,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "process_private_memory_bytes{job=\"taskin-api\"}",
@@ -135,7 +135,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "process_virtual_memory_bytes{job=\"taskin-api\"}",
@@ -151,7 +151,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -225,7 +225,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "dotnet_gc_heap_size_bytes{job=\"taskin-api\"}",
@@ -240,7 +240,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -314,7 +314,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "rate(dotnet_gc_collections_count{job=\"taskin-api\"}[5m])",
@@ -329,7 +329,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -403,7 +403,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "process_num_threads{job=\"taskin-api\"}",
@@ -414,7 +414,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "dotnet_threadpool_num_threads{job=\"taskin-api\"}",
@@ -430,7 +430,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -482,7 +482,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "rate(process_cpu_seconds_total{job=\"taskin-api\"}[5m]) * 100",
@@ -510,7 +510,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -588,7 +588,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.95, sum(rate(db_client_operation_duration_seconds_bucket{job=\"taskin-api\"}[5m])) by (le))",
@@ -599,7 +599,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.99, sum(rate(db_client_operation_duration_seconds_bucket{job=\"taskin-api\"}[5m])) by (le))",
@@ -615,7 +615,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -689,7 +689,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "rate(db_client_operation_duration_seconds_count{job=\"taskin-api\"}[5m])",
@@ -704,7 +704,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -759,7 +759,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "db_client_connections_usage{job=\"taskin-api\"}",
@@ -774,7 +774,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -820,7 +820,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "sum(increase(db_client_operation_duration_seconds_count{job=\"taskin-api\"}[24h]))",
@@ -835,7 +835,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -889,7 +889,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "sum(rate(db_client_operation_duration_seconds_sum{job=\"taskin-api\"}[5m])) / sum(rate(db_client_operation_duration_seconds_count{job=\"taskin-api\"}[5m]))",
@@ -917,7 +917,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -982,7 +982,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "up{job=\"taskin-api\"}",
@@ -997,7 +997,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1043,7 +1043,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "time() - process_start_time_seconds{job=\"taskin-api\"}",
@@ -1058,7 +1058,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-taskin"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1132,7 +1132,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-taskin"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "dotnet_assembly_count{job=\"taskin-api\"}",

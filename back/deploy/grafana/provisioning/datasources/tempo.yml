@@ -1,0 +1,40 @@
+# Grafana Datasource Provisioning for Tempo
+apiVersion: 1
+
+datasources:
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: ${TEMPO_URL:-http://tempo:3200}
+    isDefault: false
+    editable: true
+    jsonData:
+      httpMethod: GET
+      # Service graph configuration
+      serviceMap:
+        datasourceUid: prometheus
+      # Node graph for trace visualization
+      nodeGraph:
+        enabled: true
+      # Search configuration
+      search:
+        hide: false
+      # Trace to logs correlation
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: '-1m'
+        spanEndTimeShift: '1m'
+        tags: ['job', 'instance', 'service_name']
+        filterByTraceID: true
+        filterBySpanID: false
+      # Trace to metrics correlation
+      tracesToMetrics:
+        datasourceUid: prometheus
+        spanStartTimeShift: '-1m'
+        spanEndTimeShift: '1m'
+        tags: [{ key: 'service.name', value: 'service' }]
+      # Loki search integration
+      lokiSearch:
+        datasourceUid: loki
+    version: 1

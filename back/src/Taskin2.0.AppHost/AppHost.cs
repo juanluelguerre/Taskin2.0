@@ -53,11 +53,22 @@ var grafana = builder.AddContainer("grafana", "grafana/grafana", "10.0.0")
     .WithBindMount(Path.Combine(deployPath, "grafana", "provisioning"), "/etc/grafana/provisioning")
     .WithBindMount(Path.Combine(deployPath, "grafana", "dashboards"), "/etc/grafana/dashboards")
     .WithHttpEndpoint(port: 3000, targetPort: 3000, name: "http")
+    // Security settings
     .WithEnvironment("GF_SECURITY_ADMIN_USER", "admin")
     .WithEnvironment("GF_SECURITY_ADMIN_PASSWORD", "admin")
     .WithEnvironment("GF_USERS_ALLOW_SIGN_UP", "false")
     .WithEnvironment("GF_SERVER_ROOT_URL", "http://localhost:3000")
+    // Data sources URLs
     .WithEnvironment("PROMETHEUS_URL", "http://prometheus:9090")
+    .WithEnvironment("SEQ_URL", "http://seq:5341")
+    // Enable features for better navigation
+    .WithEnvironment("GF_FEATURE_TOGGLES_ENABLE", "tempoSearch,correlations,exploreMetrics")
+    .WithEnvironment("GF_EXPLORE_ENABLED", "true")
+    // Analytics and unified alerting
+    .WithEnvironment("GF_ANALYTICS_REPORTING_ENABLED", "false")
+    .WithEnvironment("GF_UNIFIED_ALERTING_ENABLED", "true")
+    // Default home dashboard
+    .WithEnvironment("GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH", "/etc/grafana/dashboards/taskin-overview.json")
     .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
     .WithContainerRuntimeArgs("--label", "com.docker.compose.service=grafana");
 

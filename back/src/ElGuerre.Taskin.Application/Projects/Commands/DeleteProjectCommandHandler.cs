@@ -19,11 +19,16 @@ public class DeleteProjectCommandHandler(ITaskinDbContext context, IUnitOfWork u
             throw new EntityNotFoundException<Project>(request.Id);
         }
 
+        var wasActive = project.Status == ProjectStatus.Active;
+
         context.Projects.Remove(project);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         // Record metrics
         metrics.RecordProjectDeleted();
-        metrics.UpdateActiveProjects(context.Projects.Count(p => p.Status == ProjectStatus.Active));
+        if (wasActive)
+        {
+            metrics.DecrementActiveProjects();
+        }
     }
 }

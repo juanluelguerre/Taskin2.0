@@ -1,0 +1,53 @@
+# Grafana Dashboard Provisioning Configuration
+# Automatically loads all dashboard JSON files from the specified folders
+
+apiVersion: 1
+
+providers:
+  # Main Overview Dashboard (Home)
+  - name: 'Taskin Overview'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards
+      foldersFromFilesStructure: false
+
+  # ASP.NET Core Backend Dashboards
+  - name: 'ASP.NET Core Dashboards'
+    orgId: 1
+    folder: 'Backend - ASP.NET Core'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards/aspnetcore
+      foldersFromFilesStructure: false
+
+  # Frontend Angular Dashboards
+  - name: 'Frontend Dashboards'
+    orgId: 1
+    folder: 'Frontend - Angular'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards/frontend
+      foldersFromFilesStructure: false
+
+  # Custom Taskin Business Dashboards
+  - name: 'Taskin Business Dashboards'
+    orgId: 1
+    folder: 'Business Metrics'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards/custom
+      foldersFromFilesStructure: false

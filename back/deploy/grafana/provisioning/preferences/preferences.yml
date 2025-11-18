@@ -1,0 +1,11 @@
+# Grafana Preferences Provisioning
+# Sets the default home dashboard for the organization
+
+apiVersion: 1
+
+# Organization preferences
+preferences:
+  # Set the Taskin Overview dashboard as the home dashboard
+  homeDashboardUID: taskin-overview
+  theme: dark
+  timezone: browser

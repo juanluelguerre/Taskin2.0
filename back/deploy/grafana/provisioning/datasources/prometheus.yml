@@ -20,10 +20,26 @@ datasources:
       queryTimeout: 60s
       # HTTP method for queries (POST is recommended for large queries)
       httpMethod: POST
-      # Enable exemplars (requires Prometheus 2.26+)
+      # Enable exemplars (requires Prometheus 2.26+) for trace correlation
       exemplarTraceIdDestinations:
         - name: trace_id
           datasourceUid: tempo
+        - name: traceID
+          datasourceUid: tempo
+      # Data links for correlation between metrics, logs, and traces
+      dataLinks:
+        - title: 'View logs in Loki'
+          url: 'http://localhost:3000/explore?left=["now-1h","now","loki",{"expr":"{service_name=\"taskin-api\"}"}]'
+          targetBlank: true
+        - title: 'View traces in Tempo'
+          url: 'http://localhost:3000/explore?left=["now-1h","now","tempo",{"query":"$${__value.expr}"}]'
+          targetBlank: true
+        - title: 'View logs in Seq'
+          url: '${SEQ_URL:-http://localhost:5341}/#/events?filter=@Timestamp>=${__from:date:iso}&@Timestamp<=${__to:date:iso}'
+          targetBlank: true
+        - title: 'View in Prometheus'
+          url: '${PROMETHEUS_URL:-http://localhost:9090}/graph?g0.expr=${__value.expr}&g0.tab=0&g0.range_input=${__range_s}s'
+          targetBlank: true
       # Custom query parameters
       customQueryParameters: ''
       # Prometheus type and version
@@ -41,7 +57,7 @@ datasources:
     # secureJsonData:
     #   httpHeaderValue1: 'Bearer YOUR_TOKEN_HERE'
     version: 1
-    uid: prometheus-taskin
+    uid: prometheus
 
   # Prometheus datasource for alerting (separate for clarity)
   - name: Prometheus-Alerts

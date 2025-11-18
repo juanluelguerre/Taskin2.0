@@ -33,7 +33,10 @@ public class CreateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
 
         // Record metrics
         metrics.RecordTaskCreated();
-        metrics.UpdateActiveTasks(context.Tasks.Count(t => t.Status == Domain.Entities.TaskStatus.Todo || t.Status == Domain.Entities.TaskStatus.Doing));
+        if (task.Status == Domain.Entities.TaskStatus.Todo || task.Status == Domain.Entities.TaskStatus.Doing)
+        {
+            metrics.IncrementActiveTasks();
+        }
 
         return task.Id;
     }

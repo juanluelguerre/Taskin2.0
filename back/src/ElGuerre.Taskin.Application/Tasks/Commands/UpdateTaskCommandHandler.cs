@@ -24,9 +24,13 @@ public class UpdateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
         }
 
         var previousStatus = task.Status;
+        var wasActive = previousStatus == Domain.Entities.TaskStatus.Todo || previousStatus == Domain.Entities.TaskStatus.Doing;
+
         task.Description = request.Description;
         task.Status = request.Status != default ? request.Status : task.Status;
         task.Deadline = request.Deadline ?? task.Deadline;
+
+        var isActive = task.Status == Domain.Entities.TaskStatus.Todo || task.Status == Domain.Entities.TaskStatus.Doing;
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -35,6 +39,15 @@ public class UpdateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
         {
             metrics.RecordTaskCompleted();
         }
-        metrics.UpdateActiveTasks(context.Tasks.Count(t => t.Status == Domain.Entities.TaskStatus.Todo || t.Status == Domain.Entities.TaskStatus.Doing));
+
+        // Update active tasks counter based on status change
+        if (!wasActive && isActive)
+        {
+            metrics.IncrementActiveTasks();
+        }
+        else if (wasActive && !isActive)
+        {
+            metrics.DecrementActiveTasks();
+        }
     }
 }

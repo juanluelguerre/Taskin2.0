@@ -27,7 +27,10 @@ public class CreateProjectCommandHandler(ITaskinDbContext context, IUnitOfWork u
 
         // Record metrics
         metrics.RecordProjectCreated();
-        metrics.UpdateActiveProjects(context.Projects.Count(p => p.Status == ProjectStatus.Active));
+        if (project.Status == ProjectStatus.Active)
+        {
+            metrics.IncrementActiveProjects();
+        }
 
         return project.Id;
     }

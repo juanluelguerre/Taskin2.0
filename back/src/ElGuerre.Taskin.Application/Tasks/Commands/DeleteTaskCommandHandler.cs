@@ -20,11 +20,16 @@ public class DeleteTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
             throw new Exception("Task not found");
         }
 
+        var wasActive = task.Status == Domain.Entities.TaskStatus.Todo || task.Status == Domain.Entities.TaskStatus.Doing;
+
         context.Tasks.Remove(task);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         // Record metrics
         metrics.RecordTaskDeleted();
-        metrics.UpdateActiveTasks(context.Tasks.Count(t => t.Status == Domain.Entities.TaskStatus.Todo || t.Status == Domain.Entities.TaskStatus.Doing));
+        if (wasActive)
+        {
+            metrics.DecrementActiveTasks();
+        }
     }
 }
