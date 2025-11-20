@@ -1,4 +1,5 @@
 using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.Configuration;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -53,19 +54,19 @@ if (enableProductionStack)
     Console.WriteLine($"[Taskin AppHost] Deploy path: {absoluteDeployPath}");
 
     // Add Tempo for distributed tracing
-    tempo = builder.AddContainer("tempo", "grafana/tempo", "latest")
+    tempo = builder.AddContainer("tempo", "grafana/tempo", "2.3.1")
         .WithContainerName("taskin-tempo")
         .WithVolume("taskin-tempo-data", "/var/tempo")
         .WithBindMount(Path.Combine(absoluteDeployPath, "tempo", "tempo.yaml"), "/etc/tempo/tempo.yaml")
         .WithHttpEndpoint(port: 3200, targetPort: 3200, name: "http")
-        .WithEndpoint(port: 4317, targetPort: 4317, name: "otlp-grpc", scheme: "http")
-        .WithEndpoint(port: 4318, targetPort: 4318, name: "otlp-http", scheme: "http")
+        .WithEndpoint(port: 4317, targetPort: 4317, name: "otlp-grpc")
+        .WithEndpoint(port: 4318, targetPort: 4318, name: "otlp-http")
         .WithArgs("-config.file=/etc/tempo/tempo.yaml")
         .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
         .WithContainerRuntimeArgs("--label", "com.docker.compose.service=tempo");
 
-    // Add Loki for log aggregation
-    loki = builder.AddContainer("loki", "grafana/loki", "latest")
+    // Add Loki for log aggregation (3.0+ has native OTLP support)
+    loki = builder.AddContainer("loki", "grafana/loki", "3.0.0")
         .WithContainerName("taskin-loki")
         .WithVolume("taskin-loki-data", "/loki")
         .WithBindMount(Path.Combine(absoluteDeployPath, "loki", "local-config.yaml"), "/etc/loki/local-config.yaml")
@@ -75,7 +76,7 @@ if (enableProductionStack)
         .WithContainerRuntimeArgs("--label", "com.docker.compose.service=loki");
 
     // Add OpenTelemetry Collector
-    otelCollector = builder.AddContainer("otel-collector", "otel/opentelemetry-collector-contrib", "latest")
+    otelCollector = builder.AddContainer("otel-collector", "otel/opentelemetry-collector-contrib", "0.139.0")
         .WithContainerName("taskin-otel-collector")
         .WithBindMount(Path.Combine(absoluteDeployPath, "otel-collector", "config.yaml"), "/etc/otelcol-contrib/config.yaml")
         .WithHttpEndpoint(port: 4317, targetPort: 4317, name: "otlp-grpc")
@@ -115,7 +116,7 @@ if (enableProductionStack)
         .WaitFor(otelCollector);
 
     // Add Grafana for metrics visualization
-    grafana = builder.AddContainer("grafana", "grafana/grafana", "10.0.0")
+    grafana = builder.AddContainer("grafana", "grafana/grafana", "10.3.3")
         .WithContainerName("taskin-grafana")
         .WithVolume("taskin-grafana-data", "/var/lib/grafana")
         .WithBindMount(Path.Combine(absoluteDeployPath, "grafana", "provisioning"), "/etc/grafana/provisioning")
@@ -163,8 +164,14 @@ var apiBuilder = builder.AddProject<Projects.ElGuerre_Taskin_Api>("taskin-api", 
 if (enableProductionStack && otelCollector != null)
 {
     Console.WriteLine($"[Taskin AppHost] API configured for production observability (OTel Collector)");
+
+    // Get the OTel Collector HTTP endpoint and create a reference expression
+    // This will resolve to the actual localhost:PORT at runtime
+    var otlpEndpoint = otelCollector.GetEndpoint("otlp-http");
+    var otlpEndpointUrl = ReferenceExpression.Create($"{otlpEndpoint}");
+
     apiBuilder
-        .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4318")
+        .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", otlpEndpointUrl)
         .WithEnvironment("OTEL_SERVICE_NAME", "taskin-api")
         .WithEnvironment("OTEL_RESOURCE_ATTRIBUTES", "service.namespace=taskin,deployment.environment=development")
         .WithEnvironment("Prometheus:Enabled", "false")

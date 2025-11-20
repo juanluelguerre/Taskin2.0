@@ -6,7 +6,7 @@ datasources:
     type: tempo
     uid: tempo
     access: proxy
-    url: ${TEMPO_URL:-http://tempo:3200}
+    url: http://tempo:3200
     isDefault: false
     editable: true
     jsonData:
