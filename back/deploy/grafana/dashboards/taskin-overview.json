@@ -30,7 +30,7 @@
       "title": "ASP.NET Core Dashboard",
       "tooltip": "View detailed ASP.NET Core metrics",
       "type": "link",
-      "url": "/d/aspnet-core"
+      "url": "/d/KdDACDp4z"
     },
     {
       "asDropdown": false,
@@ -815,7 +815,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "## Taskin 2.0 - Observability Dashboard\n\n### Quick Navigation\n\n#### Backend Monitoring\n- [ASP.NET Core Dashboard](/d/aspnet-core) - Detailed ASP.NET Core metrics\n- [ASP.NET Core Endpoints](/d/aspnet-core-endpoint) - Endpoint-specific performance\n- [.NET Runtime Metrics](/d/dotnet-runtime) - Runtime, GC, and threading\n- [OpenTelemetry APM](/d/opentelemetry-apm) - Application performance monitoring\n\n#### Business Metrics\n- [Business Metrics](/d/taskin-business-metrics) - Projects, Tasks, Pomodoros\n- [API Performance](/d/taskin-api-performance) - HTTP performance and latency\n- [Infrastructure](/d/taskin-infrastructure) - System-level metrics\n\n#### Frontend Monitoring\n- [Frontend Monitoring](/d/faro-frontend) - Angular RUM and Web Vitals\n\n#### External Tools\n- [Prometheus](http://localhost:9090) - Metrics explorer and alerts\n- [Seq Logs](http://localhost:5341) - Structured logging\n- [Aspire Dashboard](http://localhost:15000) - .NET Aspire orchestration\n\n### Key Metrics at a Glance\n\nUse the panels above to monitor:\n- **System Health**: API success rate, latency, request rate\n- **Business KPIs**: Active projects, tasks, and pomodoro sessions\n- **Infrastructure**: Memory usage, GC performance, thread count\n\n### Getting Help\n\nFor more information, see [PROMETHEUS_GRAFANA_SETUP.md](../docs/PROMETHEUS_GRAFANA_SETUP.md)",
+        "content": "## Taskin 2.0 - Observability Dashboard\n\n### Quick Navigation\n\n#### Backend Monitoring\n- [ASP.NET Core Dashboard](/d/KdDACDp4z) - Detailed ASP.NET Core metrics\n- [ASP.NET Core Endpoints](/d/NagEsjE4z) - Endpoint-specific performance\n- [.NET Runtime Metrics](/d/dehk88hf0ef40a) - Runtime, GC, and threading\n- [OpenTelemetry APM](/d/opentelemetry-apm) - Application performance monitoring\n\n#### Business Metrics\n- [Business Metrics](/d/taskin-business-metrics) - Projects, Tasks, Pomodoros\n- [API Performance](/d/taskin-api-performance) - HTTP performance and latency\n- [Infrastructure](/d/taskin-infrastructure) - System-level metrics\n\n#### Frontend Monitoring\n- [Frontend Monitoring](/d/CiroMopVz) - Angular RUM and Web Vitals\n\n#### External Tools\n- [Prometheus](http://localhost:9090) - Metrics explorer and alerts\n- [Seq Logs](http://localhost:5341) - Structured logging\n- [Aspire Dashboard](http://localhost:15000) - .NET Aspire orchestration\n\n### Key Metrics at a Glance\n\nUse the panels above to monitor:\n- **System Health**: API success rate, latency, request rate\n- **Business KPIs**: Active projects, tasks, and pomodoro sessions\n- **Infrastructure**: Memory usage, GC performance, thread count\n\n### Getting Help\n\nFor more information, see [PROMETHEUS_GRAFANA_SETUP.md](../docs/PROMETHEUS_GRAFANA_SETUP.md)",
         "mode": "markdown"
       },
       "pluginVersion": "10.0.0",

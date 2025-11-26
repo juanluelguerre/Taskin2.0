@@ -7,6 +7,14 @@ export const environment = {
   baseUrl: '',
   useHash: false,
   apiUrl: 'https://localhost:6001',
+  faro: {
+    url: 'http://localhost:3100/loki/api/v1/push',
+    app: {
+      name: 'Taskin-UI',
+      version: '1.0.0',
+      environment: 'development'
+    }
+  }
 };
 
 /*

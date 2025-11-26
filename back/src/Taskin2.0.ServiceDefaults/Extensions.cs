@@ -47,6 +47,10 @@ public static class Extensions
 
     public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
+        // Add Seq endpoint if configured (configured automatically via Aspire.Seq when using .WithReference(seq) in AppHost)
+        // This ensures logs are sent to Seq in addition to OpenTelemetry exporters
+        builder.AddSeqEndpoint("seq");
+
         builder.Logging.AddOpenTelemetry(logging =>
         {
             logging.IncludeFormattedMessage = true;

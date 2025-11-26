@@ -37,7 +37,8 @@ var seq = builder.AddSeq("seq")
     .WithContainerName("taskin-seq")
     .WithDataVolume("taskin-seq-data")
     .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
-    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=seq");
+    .WithContainerRuntimeArgs("--label", "com.docker.compose.service=seq")
+    .WithContainerRuntimeArgs("-p", "5341:80");
 
 // ============================================================================
 // PRODUCTION OBSERVABILITY STACK (Conditional)

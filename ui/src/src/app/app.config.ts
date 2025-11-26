@@ -16,6 +16,7 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { loadingInterceptor } from './core/components/loading-bar/loading.interceptor';
 import { provideIcons } from './core/icons/icons.provider';
 import { provideTransloco } from '@jsverse/transloco';
+import { provideFaro } from './core/observability/faro.provider';
 
 // registerLocaleData(localeEs);
 // registerLocaleData(localeEn);
@@ -50,5 +51,6 @@ export const appConfig: ApplicationConfig = {
       connectInZone: true,
     }),
     provideIcons(),
+    ...provideFaro(),
   ],
 };

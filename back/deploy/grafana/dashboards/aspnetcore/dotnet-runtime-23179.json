@@ -57,7 +57,44 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Overview Dashboard",
+      "tooltip": "Back to Taskin Overview",
+      "type": "link",
+      "url": "/d/taskin-overview"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "ASP.NET Core Dashboard",
+      "tooltip": "View detailed ASP.NET Core metrics",
+      "type": "link",
+      "url": "/d/aspnet-core"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "ASP.NET Core Endpoints",
+      "tooltip": "View endpoint-specific performance",
+      "type": "link",
+      "url": "/d/aspnet-core-endpoint"
+    }
+  ],
   "panels": [
     {
       "collapsed": true,
@@ -1574,7 +1611,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Dotnet Runtime Metrics",
-  "uid": "dehk88hf0ef40a",
+  "uid": "dotnet-runtime",
   "version": 48,
   "weekStart": "",
   "gnetId": 23179

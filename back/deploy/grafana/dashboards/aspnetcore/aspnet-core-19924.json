@@ -70,7 +70,44 @@
   "gnetId": 19924,
   "graphTooltip": 0,
   "id": null,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Overview Dashboard",
+      "tooltip": "Back to Taskin Overview",
+      "type": "link",
+      "url": "/d/taskin-overview"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "ASP.NET Core Endpoints",
+      "tooltip": "View endpoint-specific performance",
+      "type": "link",
+      "url": "/d/aspnet-core-endpoint"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": ".NET Runtime Metrics",
+      "tooltip": "View runtime, GC, and threading metrics",
+      "type": "link",
+      "url": "/d/dotnet-runtime"
+    }
+  ],
   "liveNow": false,
   "panels": [
     {
@@ -1351,7 +1388,7 @@
   },
   "timezone": "",
   "title": "ASP.NET Core",
-  "uid": "KdDACDp4z",
+  "uid": "aspnet-core",
   "version": 2,
   "weekStart": ""
 }

@@ -73,14 +73,38 @@
     {
       "asDropdown": false,
       "icon": "dashboard",
-      "includeVars": false,
+      "includeVars": true,
       "keepTime": true,
       "tags": [],
       "targetBlank": false,
-      "title": " ASP.NET Core",
-      "tooltip": "",
+      "title": "Overview Dashboard",
+      "tooltip": "Back to Taskin Overview",
       "type": "link",
-      "url": "/d/KdDACDp4z/asp-net-core-metrics"
+      "url": "/d/taskin-overview"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "ASP.NET Core Dashboard",
+      "tooltip": "View detailed ASP.NET Core metrics",
+      "type": "link",
+      "url": "/d/aspnet-core"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": ".NET Runtime Metrics",
+      "tooltip": "View runtime, GC, and threading metrics",
+      "type": "link",
+      "url": "/d/dotnet-runtime"
     }
   ],
   "liveNow": false,
@@ -946,7 +970,7 @@
   },
   "timezone": "",
   "title": "ASP.NET Core Endpoint",
-  "uid": "NagEsjE4z",
+  "uid": "aspnet-core-endpoint",
   "version": 2,
   "weekStart": "",
   "gnetId": 19925

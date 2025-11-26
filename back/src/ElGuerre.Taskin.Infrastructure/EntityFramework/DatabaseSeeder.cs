@@ -1,3 +1,4 @@
+using ElGuerre.Taskin.Application.Observability;
 using ElGuerre.Taskin.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ public static class DatabaseSeeder
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<TaskinDbContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<TaskinDbContext>>();
+        var metrics = scope.ServiceProvider.GetRequiredService<TaskinMetrics>();
 
         try
         {
@@ -22,7 +24,7 @@ public static class DatabaseSeeder
 
             if (!await context.Projects.AnyAsync())
             {
-                await SeedProjectsAsync(context);
+                await SeedProjectsAsync(context, metrics);
                 logger.LogInformation("Database seeded successfully with initial projects data");
             }
         }
@@ -33,7 +35,7 @@ public static class DatabaseSeeder
         }
     }
 
-    private static async Task SeedProjectsAsync(TaskinDbContext context)
+    private static async Task SeedProjectsAsync(TaskinDbContext context, TaskinMetrics metrics)
     {
         Project project1 = new Project
         {
@@ -119,14 +121,24 @@ public static class DatabaseSeeder
         await context.Projects.AddRangeAsync(projects);
         await context.SaveChangesAsync();
 
+        // Emit metrics for seeded projects
+        foreach (Project project in projects)
+        {
+            metrics.RecordProjectCreated();
+            if (project.Status == ProjectStatus.Active)
+            {
+                metrics.IncrementActiveProjects();
+            }
+        }
+
         // Add comprehensive tasks data for the projects
-        await SeedTasksAsync(context, projects);
+        await SeedTasksAsync(context, projects, metrics);
         
         // Add some pomodoros for completed tasks
-        await SeedPomodorosAsync(context);
+        await SeedPomodorosAsync(context, metrics);
     }
 
-    private static async Task SeedTasksAsync(TaskinDbContext context, List<Project> projects)
+    private static async Task SeedTasksAsync(TaskinDbContext context, List<Project> projects, TaskinMetrics metrics)
     {
         List<Domain.Entities.Task> tasks = [];
 
@@ -343,9 +355,23 @@ public static class DatabaseSeeder
 
         await context.Tasks.AddRangeAsync(tasks);
         await context.SaveChangesAsync();
+
+        // Emit metrics for seeded tasks
+        foreach (Domain.Entities.Task task in tasks)
+        {
+            metrics.RecordTaskCreated();
+            if (task.Status == TaskStatus.Todo || task.Status == TaskStatus.Doing)
+            {
+                metrics.IncrementActiveTasks();
+            }
+            else if (task.Status == TaskStatus.Done)
+            {
+                metrics.RecordTaskCompleted();
+            }
+        }
     }
     
-    private static async Task SeedPomodorosAsync(TaskinDbContext context)
+    private static async Task SeedPomodorosAsync(TaskinDbContext context, TaskinMetrics metrics)
     {
         // Add pomodoros for completed and in-progress tasks
         var doneTasks = await context.Tasks
@@ -402,5 +428,13 @@ public static class DatabaseSeeder
 
         await context.Pomodoros.AddRangeAsync(pomodoros);
         await context.SaveChangesAsync();
+
+        // Emit metrics for seeded pomodoros
+        foreach (var pomodoro in pomodoros)
+        {
+            metrics.RecordPomodoroCreated();
+            metrics.RecordPomodoroCompleted();
+            metrics.RecordPomodoroDuration(pomodoro.DurationInMinutes);
+        }
     }
 }
