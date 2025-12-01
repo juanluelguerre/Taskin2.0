@@ -4,7 +4,8 @@ export const environment = {
   useHash: false,
   apiUrl: 'https://your-production-api-url.com',
   faro: {
-    url: 'https://your-loki-endpoint/loki/api/v1/push',
+    // In production, use Grafana Cloud or your Alloy endpoint
+    url: 'https://your-alloy-endpoint/collect',
     app: {
       name: 'Taskin-UI',
       version: '1.0.0',

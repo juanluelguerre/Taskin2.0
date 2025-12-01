@@ -9,9 +9,12 @@ const string projectName = "taskin";
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
-var enableProductionStack = builder.Configuration.GetValue<bool>("Observability:EnableProductionStack");
-var deployPath = builder.Configuration.GetValue<string>("Observability:DeployPath") ?? "../deploy";
-var absoluteDeployPath = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", deployPath));
+var enableProductionStack =
+    builder.Configuration.GetValue<bool>("Observability:EnableProductionStack");
+var deployPath =
+    builder.Configuration.GetValue<string>("Observability:DeployPath") ?? "../deploy";
+var absoluteDeployPath =
+    Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", deployPath));
 
 // ============================================================================
 // CORE INFRASTRUCTURE (Always enabled)
@@ -75,6 +78,17 @@ if (enableProductionStack)
         .WithArgs("-config.file=/etc/loki/local-config.yaml")
         .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
         .WithContainerRuntimeArgs("--label", "com.docker.compose.service=loki");
+
+    // Add Grafana Alloy for Faro (Frontend Observability)
+    // Alloy acts as a proxy between the browser and Loki, handling CORS
+    var alloy = builder.AddContainer("alloy", "grafana/alloy", "latest")
+        .WithContainerName("taskin-alloy")
+        .WithBindMount(Path.Combine(absoluteDeployPath, "alloy", "alloy-config.alloy"), "/etc/alloy/config.alloy")
+        .WithHttpEndpoint(port: 12345, targetPort: 12345, name: "faro-receiver")
+        .WithHttpEndpoint(port: 12347, targetPort: 12347, name: "http")
+        .WithArgs("run", "--server.http.listen-addr=0.0.0.0:12347", "--storage.path=/var/lib/alloy/data", "/etc/alloy/config.alloy")
+        .WithContainerRuntimeArgs("--label", $"com.docker.compose.project={projectName}")
+        .WithContainerRuntimeArgs("--label", "com.docker.compose.service=alloy");
 
     // Add OpenTelemetry Collector
     otelCollector = builder.AddContainer("otel-collector", "otel/opentelemetry-collector-contrib", "0.139.0")
@@ -160,7 +174,10 @@ else
 var apiBuilder = builder.AddProject<Projects.ElGuerre_Taskin_Api>("taskin-api", launchProfileName: "https")
     .WithReference(sqlServer)
     .WithReference(redis)
-    .WithReference(seq);
+    .WithReference(seq)
+    .WaitFor(sqlServer)
+    .WaitFor(redis)
+    .WaitFor(seq);
 
 if (enableProductionStack && otelCollector != null)
 {

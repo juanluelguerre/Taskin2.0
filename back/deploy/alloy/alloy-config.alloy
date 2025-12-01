@@ -1,0 +1,48 @@
+// Grafana Alloy configuration for Faro (Frontend Observability)
+// This configuration receives Faro data from the browser and forwards it to Loki
+
+// HTTP server to receive Faro data with CORS support
+faro.receiver "default" {
+  // Listen on all interfaces, port 12345
+  server {
+    listen_address = "0.0.0.0"
+    listen_port    = 12345
+
+    // CORS configuration for browser requests
+    cors_allowed_origins = ["http://localhost:4200", "http://localhost:5000"]
+  }
+
+  // Extra labels to add to all logs
+  extra_log_labels = {
+    cluster = "taskin-local",
+  }
+
+  // Forward logs to Loki
+  output {
+    logs = [loki.write.default.receiver]
+  }
+}
+
+// Loki write endpoint
+loki.write "default" {
+  endpoint {
+    url = "http://taskin-loki:3100/loki/api/v1/push"
+
+    // Optional: Add basic auth if needed
+    // basic_auth {
+    //   username = "loki"
+    //   password = "password"
+    // }
+  }
+
+  // External labels for all logs
+  external_labels = {
+    source = "faro",
+  }
+}
+
+// Logging configuration
+logging {
+  level  = "info"
+  format = "logfmt"
+}

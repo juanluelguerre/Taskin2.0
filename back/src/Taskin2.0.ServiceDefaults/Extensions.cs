@@ -49,7 +49,11 @@ public static class Extensions
     {
         // Add Seq endpoint if configured (configured automatically via Aspire.Seq when using .WithReference(seq) in AppHost)
         // This ensures logs are sent to Seq in addition to OpenTelemetry exporters
-        builder.AddSeqEndpoint("seq");
+        var seqConnectionString = builder.Configuration.GetConnectionString("seq");
+        if (!string.IsNullOrWhiteSpace(seqConnectionString))
+        {
+            builder.AddSeqEndpoint("seq");
+        }
 
         builder.Logging.AddOpenTelemetry(logging =>
         {

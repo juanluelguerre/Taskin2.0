@@ -352,3 +352,4 @@ back/src/Taskin.Api/.idea
 back/src/.DS_Store
 .DS_Store
 back/src/.idea
+.claude/settings.local.json
