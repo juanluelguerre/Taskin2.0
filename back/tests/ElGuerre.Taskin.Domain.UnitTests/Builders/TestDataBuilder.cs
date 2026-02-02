@@ -22,10 +22,12 @@ public static class TestDataBuilder
     private static readonly Faker<Domain.Entities.Task> TaskFaker = new Faker<Domain.Entities.Task>()
         .CustomInstantiator(f => new Domain.Entities.Task
         {
-            Description = f.Lorem.Sentence(), // Required property
+            Title = f.Lorem.Sentence(3), // Required property
             Project = null! // Required navigation property - null in unit tests
         })
+        .RuleFor(t => t.Description, f => f.Lorem.Sentence())
         .RuleFor(t => t.Status, f => f.PickRandom<ElGuerre.Taskin.Domain.Entities.TaskStatus>())
+        .RuleFor(t => t.Priority, f => f.PickRandom<ElGuerre.Taskin.Domain.Entities.TaskPriority>())
         .RuleFor(t => t.Deadline, f => f.Date.Future())
         .RuleFor(t => t.ProjectId, f => Guid.NewGuid());
 

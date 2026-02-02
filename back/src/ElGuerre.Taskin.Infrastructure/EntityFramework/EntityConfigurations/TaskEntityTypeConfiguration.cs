@@ -12,15 +12,43 @@ internal class TaskEntityTypeConfiguration : IEntityTypeConfiguration<Task>
 
         builder.HasKey(t => t.Id);
 
-        builder.Property(t => t.Description)
+        builder.Property(t => t.Title)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasMaxLength(200);
+
+        builder.Property(t => t.Description)
+            .HasMaxLength(1000);
 
         builder.Property(t => t.Status)
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.Property(t => t.Priority)
+            .IsRequired()
+            .HasMaxLength(50)
+            .HasDefaultValue(ElGuerre.Taskin.Domain.Entities.TaskPriority.Medium);
+
         builder.Property(t => t.Deadline);
+
+        builder.Property(t => t.Tags)
+            .HasMaxLength(500);
+
+        builder.Property(t => t.AssigneeId)
+            .HasMaxLength(100);
+
+        builder.Property(t => t.AssigneeName)
+            .HasMaxLength(200);
+
+        builder.Property(t => t.EstimatedPomodoros)
+            .HasDefaultValue(0);
+
+        builder.Property(t => t.CompletedPomodoros)
+            .HasDefaultValue(0);
+
+        builder.Property(t => t.IsCompleted)
+            .HasDefaultValue(false);
+
+        builder.Property(t => t.CompletedAt);
 
         builder.HasOne(t => t.Project)
             .WithMany(p => p.Tasks)

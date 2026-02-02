@@ -37,7 +37,7 @@ public class UpdateTaskCommandHandlerTests
         var taskId = Guid.NewGuid();
         var existingTask = new DomainTask
         {
-            Description = "Old Description",
+            Title = "Old Title",
             Status = DomainTaskStatus.Todo,
             Project = new Project { Name = "Test Project" }
         };
@@ -45,7 +45,7 @@ public class UpdateTaskCommandHandlerTests
         var command = new UpdateTaskCommand
         {
             Id = taskId,
-            Description = "New Description",
+            Title = "New Title",
             Status = DomainTaskStatus.Doing,
             Deadline = DateTime.UtcNow.AddDays(5)
         };
@@ -60,7 +60,7 @@ public class UpdateTaskCommandHandlerTests
         await this.handler.Handle(command, CancellationToken.None);
 
         // Assert
-        existingTask.Description.Should().Be("New Description");
+        existingTask.Title.Should().Be("New Title");
         existingTask.Status.Should().Be(DomainTaskStatus.Doing);
         existingTask.Deadline.Should().Be(command.Deadline);
         await this.unitOfWork.Received(1).SaveChangesAsync(CancellationToken.None);
@@ -74,7 +74,7 @@ public class UpdateTaskCommandHandlerTests
         var command = new UpdateTaskCommand
         {
             Id = taskId,
-            Description = "Test Task",
+            Title = "Test Task",
             Status = DomainTaskStatus.Todo
         };
 
@@ -100,7 +100,7 @@ public class UpdateTaskCommandHandlerTests
         var taskId = Guid.NewGuid();
         var existingTask = new DomainTask
         {
-            Description = "Test",
+            Title = "Test",
             Status = DomainTaskStatus.Doing,
             Project = new Project { Name = "Test" }
         };
@@ -108,7 +108,7 @@ public class UpdateTaskCommandHandlerTests
         var command = new UpdateTaskCommand
         {
             Id = taskId,
-            Description = "Updated Description",
+            Title = "Updated Title",
             Status = default // TaskStatus.Todo is default (0)
         };
 
@@ -133,7 +133,7 @@ public class UpdateTaskCommandHandlerTests
         var existingDeadline = DateTime.UtcNow.AddDays(10);
         var existingTask = new DomainTask
         {
-            Description = "Test",
+            Title = "Test",
             Status = DomainTaskStatus.Todo,
             Deadline = existingDeadline,
             Project = new Project { Name = "Test" }
@@ -142,7 +142,7 @@ public class UpdateTaskCommandHandlerTests
         var command = new UpdateTaskCommand
         {
             Id = taskId,
-            Description = "Updated Description",
+            Title = "Updated Title",
             Status = DomainTaskStatus.Doing,
             Deadline = null
         };
@@ -165,11 +165,11 @@ public class UpdateTaskCommandHandlerTests
     {
         // Arrange
         var taskId = Guid.NewGuid();
-        var existingTask = new DomainTask { Description = "Test", Status = DomainTaskStatus.Todo, Project = new Project { Name = "Test" } };
+        var existingTask = new DomainTask { Title = "Test", Status = DomainTaskStatus.Todo, Project = new Project { Name = "Test" } };
         var command = new UpdateTaskCommand
         {
             Id = taskId,
-            Description = "Updated",
+            Title = "Updated",
             Status = DomainTaskStatus.Todo
         };
 

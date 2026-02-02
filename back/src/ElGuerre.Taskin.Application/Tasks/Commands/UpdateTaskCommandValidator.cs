@@ -10,15 +10,23 @@ public class UpdateTaskCommandValidator : AbstractValidator<UpdateTaskCommand>
             .NotEmpty()
             .WithMessage("Id is required");
 
-        RuleFor(x => x.Description)
+        RuleFor(x => x.Title)
             .NotEmpty()
-            .WithMessage("Description is required")
-            .MaximumLength(500)
-            .WithMessage("Description cannot exceed 500 characters");
+            .WithMessage("Title is required")
+            .MaximumLength(200)
+            .WithMessage("Title cannot exceed 200 characters");
+
+        RuleFor(x => x.Description)
+            .MaximumLength(1000)
+            .WithMessage("Description cannot exceed 1000 characters");
 
         RuleFor(x => x.Status)
             .IsInEnum()
             .WithMessage("Status must be a valid TaskStatus");
+
+        RuleFor(x => x.Priority)
+            .IsInEnum()
+            .WithMessage("Priority must be a valid TaskPriority");
 
         When(x => x.Deadline.HasValue, () =>
         {

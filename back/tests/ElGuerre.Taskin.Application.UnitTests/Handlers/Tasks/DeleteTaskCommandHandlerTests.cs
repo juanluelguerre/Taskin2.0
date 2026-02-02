@@ -37,7 +37,7 @@ public class DeleteTaskCommandHandlerTests
         var taskId = Guid.NewGuid();
         var existingTask = new DomainTask
         {
-            Description = "Task to Delete",
+            Title = "Task to Delete",
             Status = DomainTaskStatus.Todo,
             Project = new Project { Name = "Test" }
         };
@@ -86,7 +86,7 @@ public class DeleteTaskCommandHandlerTests
     {
         // Arrange
         var taskId = Guid.NewGuid();
-        var existingTask = new DomainTask { Description = "Test", Status = DomainTaskStatus.Todo, Project = new Project { Name = "Test" } };
+        var existingTask = new DomainTask { Title = "Test", Status = DomainTaskStatus.Todo, Project = new Project { Name = "Test" } };
         var command = new DeleteTaskCommand { Id = taskId };
 
         var tasks = new List<DomainTask> { existingTask };
@@ -111,7 +111,7 @@ public class DeleteTaskCommandHandlerTests
         var taskId = Guid.NewGuid();
         var existingTask = new DomainTask
         {
-            Description = "Test", Status = DomainTaskStatus.Todo,
+            Title = "Test", Status = DomainTaskStatus.Todo,
             Project = new Project { Name = "Test" }
         };
         var command = new DeleteTaskCommand { Id = taskId };

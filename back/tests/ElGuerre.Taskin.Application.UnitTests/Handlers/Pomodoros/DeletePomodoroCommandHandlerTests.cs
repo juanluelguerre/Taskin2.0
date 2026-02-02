@@ -40,7 +40,7 @@ public class DeletePomodoroCommandHandlerTests
         {
             StartTime = DateTime.UtcNow,
             DurationInMinutes = 25,
-            Task = new DomainTask { Description = "Test", Project = new Project { Name = "Test" } }
+            Task = new DomainTask { Title = "Test", Project = new Project { Name = "Test" } }
         };
 
         var command = new DeletePomodoroCommand { Id = pomodoroId };
@@ -87,7 +87,7 @@ public class DeletePomodoroCommandHandlerTests
         {
             StartTime = DateTime.UtcNow,
             DurationInMinutes = 25,
-            Task = new DomainTask { Description = "Test", Project = new Project { Name = "Test" } }
+            Task = new DomainTask { Title = "Test", Project = new Project { Name = "Test" } }
         };
         var command = new DeletePomodoroCommand { Id = pomodoroId };
 
@@ -114,7 +114,7 @@ public class DeletePomodoroCommandHandlerTests
         {
             StartTime = DateTime.UtcNow,
             DurationInMinutes = 25,
-            Task = new DomainTask { Description = "Test", Project = new Project { Name = "Test" } }
+            Task = new DomainTask { Title = "Test", Project = new Project { Name = "Test" } }
         };
         var command = new DeletePomodoroCommand { Id = pomodoroId };
 

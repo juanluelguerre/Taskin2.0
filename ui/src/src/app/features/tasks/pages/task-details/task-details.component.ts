@@ -20,7 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
-import { TaskStatus, TaskStore } from '../../shared';
+import { TaskPriority, TaskStatus, TaskStore } from '../../shared';
 
 @Component({
   selector: 'app-task-details',
@@ -97,8 +97,40 @@ export class TaskDetailsComponent implements OnInit {
     return `${Math.abs(days)} days overdue`;
   });
 
+  readonly statusColor = computed(() => {
+    const currentTask = this.task();
+    if (!currentTask) return 'text-gray-600 bg-gray-100';
+    switch (currentTask.status) {
+      case TaskStatus.Todo: return 'text-gray-600 bg-gray-100';
+      case TaskStatus.Doing: return 'text-blue-600 bg-blue-100';
+      case TaskStatus.Done: return 'text-green-600 bg-green-100';
+      case TaskStatus.Cancelled: return 'text-red-600 bg-red-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
+  });
+
+  readonly priorityColor = computed(() => {
+    const currentTask = this.task();
+    if (!currentTask) return 'text-gray-600 bg-gray-100';
+    switch (currentTask.priority) {
+      case TaskPriority.Low: return 'text-gray-600 bg-gray-100';
+      case TaskPriority.Medium: return 'text-yellow-600 bg-yellow-100';
+      case TaskPriority.High: return 'text-orange-600 bg-orange-100';
+      case TaskPriority.Critical: return 'text-red-600 bg-red-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
+  });
+
   // Enum reference for template
   readonly TaskStatus = TaskStatus;
+
+  // React to errors - must be in injection context
+  private readonly errorEffect = effect(() => {
+    const error = this.error();
+    if (error) {
+      this.notificationService.notifyError('tasks.errors.loadFailed');
+    }
+  });
 
   ngOnInit(): void {
     // Get task ID from route
@@ -107,14 +139,6 @@ export class TaskDetailsComponent implements OnInit {
       if (id) {
         this.taskId.set(id);
         this.taskStore.loadTask(id);
-      }
-    });
-
-    // Handle errors using effect
-    effect(() => {
-      const error = this.error();
-      if (error) {
-        this.notificationService.notifyError('tasks.errors.loadFailed');
       }
     });
   }

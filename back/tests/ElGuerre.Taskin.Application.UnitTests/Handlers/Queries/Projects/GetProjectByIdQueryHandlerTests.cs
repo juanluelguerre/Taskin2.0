@@ -40,13 +40,13 @@ public class GetProjectByIdQueryHandlerTests
         };
         project.Tasks.Add(new DomainTask
         {
-            Description = "Task 1",
+            Title = "Task 1",
             Status = DomainTaskStatus.Done,
             Project = project
         });
         project.Tasks.Add(new DomainTask
         {
-            Description = "Task 2",
+            Title = "Task 2",
             Status = DomainTaskStatus.Todo,
             Project = project
         });
@@ -100,13 +100,13 @@ public class GetProjectByIdQueryHandlerTests
         };
         project.Tasks.Add(new DomainTask
         {
-            Description = "Task 1",
+            Title = "Task 1",
             Status = DomainTaskStatus.Done,
             Project = project
         });
         project.Tasks.Add(new DomainTask
         {
-            Description = "Task 2",
+            Title = "Task 2",
             Status = DomainTaskStatus.Doing,
             Project = project
         });
@@ -122,7 +122,7 @@ public class GetProjectByIdQueryHandlerTests
 
         // Assert
         result.Tasks.Should().HaveCount(2);
-        result.Tasks.Should().Contain(t => t.Title == "Task 1" && t.Status == "done");
-        result.Tasks.Should().Contain(t => t.Title == "Task 2" && t.Status == "doing");
+        result.Tasks.Should().Contain(t => t.Title == "Task 1" && t.Status == "Done");
+        result.Tasks.Should().Contain(t => t.Title == "Task 2" && t.Status == "Doing");
     }
 }

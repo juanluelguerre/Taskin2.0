@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { 
-  Task, 
+import { environment } from '@env/environment'
+import {
+  Task,
   TaskStatus,
-  CreateTaskRequest, 
-  UpdateTaskRequest, 
-  TaskListResponse, 
+  CreateTaskRequest,
+  UpdateTaskRequest,
+  TaskListResponse,
   TaskStats,
   TaskSearchRequest,
   TaskFilters
@@ -41,7 +42,7 @@ export interface ITaskService extends IRepository<Task, CreateTaskRequest, Updat
 })
 export class TaskService implements ITaskService {
   private readonly http = inject(HttpClient)
-  private readonly baseUrl = '/api/tasks'
+  private readonly baseUrl = `${environment.apiUrl}/api/Tasks`
 
   getAll(params?: { page?: number; size?: number; projectId?: string }): Observable<TaskListResponse> {
     let httpParams = new HttpParams()
@@ -140,7 +141,7 @@ export class TaskRepository {
     return this.taskService.search({
       query: '',
       filters: {
-        status: TaskStatus.InProgress
+        status: TaskStatus.Doing
       },
       sortBy: 'updatedAt',
       sortDirection: 'desc',

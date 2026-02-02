@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, OnDestroy, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { PomodoroService, PomodoroDto } from '../../services/pomodoro.service';
 
 interface Session {
   type: 'work' | 'break' | 'upcoming';
@@ -24,42 +25,68 @@ interface Session {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PomodorosComponent implements OnDestroy {
+export class PomodorosComponent implements OnInit, OnDestroy {
+  private readonly pomodoroService = inject(PomodoroService);
+
   currentSession = signal<'work' | 'break'>('work');
   workMinutes = signal(25);
   breakMinutes = signal(5);
-  timeLeft = signal(25 * 60); // 25 minutes in seconds
+  timeLeft = signal(25 * 60);
   isRunning = signal(false);
-  completedPomodoros = signal(6);
-  
+  completedPomodoros = signal(0);
+
   // Timer properties
   private timerInterval: any;
   private totalTime = signal(25 * 60);
-  
+
   // Circle properties for progress indicator
-  circumference = 2 * Math.PI * 45; // radius = 45
-  
+  circumference = 2 * Math.PI * 45;
+
   // Session tracking
-  todaySessions = signal<Session[]>([
-    { type: 'work', duration: 25, completed: true },
-    { type: 'break', duration: 5, completed: true },
-    { type: 'work', duration: 25, completed: true },
-    { type: 'break', duration: 5, completed: true },
-    { type: 'work', duration: 25, completed: true },
-    { type: 'break', duration: 5, completed: true },
-    { type: 'work', duration: 25, completed: false },
-    { type: 'upcoming', duration: 5, completed: false },
-  ]);
+  todaySessions = signal<Session[]>([]);
 
   // Statistics
-  totalFocusTime = signal('2h 30m');
-  averageSessionLength = signal('24m');
-  productivityScore = signal(87);
+  totalFocusTime = computed(() => {
+    const minutes = this.completedPomodoros() * this.workMinutes();
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  });
+
+  averageSessionLength = signal('25m');
+  productivityScore = signal(0);
+
+  ngOnInit(): void {
+    this.loadTodaySessions();
+  }
 
   ngOnDestroy() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
+  }
+
+  private loadTodaySessions(): void {
+    this.pomodoroService.getToday().subscribe({
+      next: (pomodoros: PomodoroDto[]) => {
+        const sessions: Session[] = pomodoros.map(p => ({
+          type: 'work' as const,
+          duration: p.durationInMinutes,
+          completed: true
+        }));
+        this.todaySessions.set(sessions);
+        this.completedPomodoros.set(pomodoros.length);
+
+        if (pomodoros.length > 0) {
+          const avgLen = Math.round(pomodoros.reduce((sum, p) => sum + p.durationInMinutes, 0) / pomodoros.length);
+          this.averageSessionLength.set(`${avgLen}m`);
+          this.productivityScore.set(Math.min(100, Math.round((pomodoros.length / 8) * 100)));
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load today sessions:', err);
+      }
+    });
   }
 
   get strokeDashoffset(): number {
@@ -103,9 +130,19 @@ export class PomodorosComponent implements OnDestroy {
 
   private completeSession(): void {
     this.pauseTimer();
-    
+
     if (this.currentSession() === 'work') {
       this.completedPomodoros.update(count => count + 1);
+
+      // Add to today's sessions
+      this.todaySessions.update(sessions => [
+        ...sessions,
+        { type: 'work', duration: this.workMinutes(), completed: true }
+      ]);
+
+      // Save to backend (no taskId needed for standalone pomodoro - the backend will need to handle this)
+      // For now, we track locally. Backend integration requires selecting a task first.
+
       this.currentSession.set('break');
       this.timeLeft.set(this.breakMinutes() * 60);
       this.totalTime.set(this.breakMinutes() * 60);
@@ -114,8 +151,7 @@ export class PomodorosComponent implements OnDestroy {
       this.timeLeft.set(this.workMinutes() * 60);
       this.totalTime.set(this.workMinutes() * 60);
     }
-    
-    // Show notification or play sound here
+
     this.playNotificationSound();
   }
 
@@ -133,10 +169,10 @@ export class PomodorosComponent implements OnDestroy {
 
   adjustWorkTime(delta: number): void {
     if (this.isRunning()) return;
-    
+
     const newMinutes = Math.max(1, Math.min(60, this.workMinutes() + delta));
     this.workMinutes.set(newMinutes);
-    
+
     if (this.currentSession() === 'work') {
       this.timeLeft.set(newMinutes * 60);
       this.totalTime.set(newMinutes * 60);
@@ -145,10 +181,10 @@ export class PomodorosComponent implements OnDestroy {
 
   adjustBreakTime(delta: number): void {
     if (this.isRunning()) return;
-    
+
     const newMinutes = Math.max(1, Math.min(30, this.breakMinutes() + delta));
     this.breakMinutes.set(newMinutes);
-    
+
     if (this.currentSession() === 'break') {
       this.timeLeft.set(newMinutes * 60);
       this.totalTime.set(newMinutes * 60);
@@ -156,22 +192,21 @@ export class PomodorosComponent implements OnDestroy {
   }
 
   private playNotificationSound(): void {
-    // Create a simple notification sound
     if ('AudioContext' in window || 'webkitAudioContext' in window) {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
+
       oscillator.frequency.value = 800;
       oscillator.type = 'sine';
-      
+
       gainNode.gain.setValueAtTime(0, audioContext.currentTime);
       gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      
+
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
     }

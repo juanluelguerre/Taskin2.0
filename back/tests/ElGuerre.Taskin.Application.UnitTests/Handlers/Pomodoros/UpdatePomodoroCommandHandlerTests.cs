@@ -40,7 +40,7 @@ public class UpdatePomodoroCommandHandlerTests
         {
             StartTime = DateTime.UtcNow.AddHours(-1),
             DurationInMinutes = 25,
-            Task = new DomainTask { Description = "Test", Project = new Project { Name = "Test" } }
+            Task = new DomainTask { Title = "Test", Project = new Project { Name = "Test" } }
         };
 
         var newStartTime = DateTime.UtcNow;
@@ -99,7 +99,7 @@ public class UpdatePomodoroCommandHandlerTests
         {
             StartTime = existingStartTime,
             DurationInMinutes = 25,
-            Task = new DomainTask { Description = "Test", Project = new Project { Name = "Test" } }
+            Task = new DomainTask { Title = "Test", Project = new Project { Name = "Test" } }
         };
 
         var command = new UpdatePomodoroCommand
@@ -131,7 +131,7 @@ public class UpdatePomodoroCommandHandlerTests
         {
             StartTime = DateTime.UtcNow.AddHours(-1),
             DurationInMinutes = 25,
-            Task = new DomainTask { Description = "Test", Project = new Project { Name = "Test" } }
+            Task = new DomainTask { Title = "Test", Project = new Project { Name = "Test" } }
         };
 
         var newStartTime = DateTime.UtcNow;
@@ -165,7 +165,7 @@ public class UpdatePomodoroCommandHandlerTests
         {
             StartTime = existingStartTime,
             DurationInMinutes = 25,
-            Task = new DomainTask { Description = "Test", Project = new Project { Name = "Test" } }
+            Task = new DomainTask { Title = "Test", Project = new Project { Name = "Test" } }
         };
 
         var command = new UpdatePomodoroCommand
@@ -197,7 +197,7 @@ public class UpdatePomodoroCommandHandlerTests
         {
             StartTime = DateTime.UtcNow,
             DurationInMinutes = 25,
-            Task = new DomainTask { Description = "Test", Project = new Project { Name = "Test" } }
+            Task = new DomainTask { Title = "Test", Project = new Project { Name = "Test" } }
         };
         var command = new UpdatePomodoroCommand
         {

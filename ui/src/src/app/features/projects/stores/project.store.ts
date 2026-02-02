@@ -271,13 +271,27 @@ export class ProjectStore extends signalStore(
         debounceTime(300),
         distinctUntilChanged(),
         switchMap((term) => {
-          patchState(store, { searchTerm: term, currentPage: 1 })
-          // Trigger load with new search term
-          return projectService.getProjects({ 
-            search: term, 
+          patchState(store, { searchTerm: term, currentPage: 1, loading: true, error: null })
+
+          return projectService.getProjects({
+            search: term,
             status: store.statusFilter() || undefined
           }).pipe(
-            map(response => ({ data: response.data, totalCount: response.total }))
+            tapResponse({
+              next: (response: CollectionResponse<ProjectListDto>) => {
+                patchState(store, {
+                  projects: response.data,
+                  totalCount: response.total,
+                  loading: false
+                })
+              },
+              error: (error: any) => {
+                patchState(store, {
+                  loading: false,
+                  error: 'Failed to search projects'
+                })
+              }
+            })
           )
         })
       )

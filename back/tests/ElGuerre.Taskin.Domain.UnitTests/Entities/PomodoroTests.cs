@@ -100,7 +100,7 @@ public class PomodoroTests
         pomodoro.TaskId.Should().NotBeEmpty();
         pomodoro.StartTime.Should().NotBe(default(DateTime));
         pomodoro.DurationInMinutes.Should().BeGreaterThan(0);
-        pomodoro.DurationInMinutes.Should().BeLessOrEqualTo(480);
+        pomodoro.DurationInMinutes.Should().BeLessThanOrEqualTo(480);
     }
 
     [Fact]

@@ -43,7 +43,7 @@ public class CreatePomodoroCommandHandlerTests
         var taskId = Guid.NewGuid();
         var task = new DomainTask
         {
-            Description = "Test Task",
+            Title = "Test Task",
             Status = DomainTaskStatus.Doing,
             Project = new Project { Name = "Test" }
         };
@@ -103,7 +103,7 @@ public class CreatePomodoroCommandHandlerTests
     {
         // Arrange
         var taskId = Guid.NewGuid();
-        var task = new DomainTask { Description = "Test Task", Status = DomainTaskStatus.Doing, Project = new Project { Name = "Test" } };
+        var task = new DomainTask { Title = "Test Task", Status = DomainTaskStatus.Doing, Project = new Project { Name = "Test" } };
         var command = new CreatePomodoroCommand
         {
             TaskId = taskId,
@@ -128,7 +128,7 @@ public class CreatePomodoroCommandHandlerTests
     {
         // Arrange
         var taskId = Guid.NewGuid();
-        var task = new DomainTask { Description = "Test Task", Status = DomainTaskStatus.Doing, Project = new Project { Name = "Test" } };
+        var task = new DomainTask { Title = "Test Task", Status = DomainTaskStatus.Doing, Project = new Project { Name = "Test" } };
         var command = new CreatePomodoroCommand
         {
             TaskId = taskId,
@@ -155,7 +155,7 @@ public class CreatePomodoroCommandHandlerTests
     {
         // Arrange
         var taskId = Guid.NewGuid();
-        var task = new DomainTask { Description = "Test Task", Status = DomainTaskStatus.Doing, Project = new Project { Name = "Test" } };
+        var task = new DomainTask { Title = "Test Task", Status = DomainTaskStatus.Doing, Project = new Project { Name = "Test" } };
         var command = new CreatePomodoroCommand
         {
             TaskId = taskId,

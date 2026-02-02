@@ -26,9 +26,17 @@ public class UpdateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
         var previousStatus = task.Status;
         var wasActive = previousStatus == Domain.Entities.TaskStatus.Todo || previousStatus == Domain.Entities.TaskStatus.Doing;
 
+        task.Title = request.Title;
         task.Description = request.Description;
         task.Status = request.Status != default ? request.Status : task.Status;
+        task.Priority = request.Priority != default ? request.Priority : task.Priority;
         task.Deadline = request.Deadline ?? task.Deadline;
+        task.Tags = request.Tags ?? task.Tags;
+        task.AssigneeId = request.AssigneeId ?? task.AssigneeId;
+        task.AssigneeName = request.AssigneeName ?? task.AssigneeName;
+        task.EstimatedPomodoros = request.EstimatedPomodoros > 0 ? request.EstimatedPomodoros : task.EstimatedPomodoros;
+        task.IsCompleted = request.IsCompleted;
+        task.CompletedAt = request.CompletedAt ?? task.CompletedAt;
 
         var isActive = task.Status == Domain.Entities.TaskStatus.Todo || task.Status == Domain.Entities.TaskStatus.Doing;
 

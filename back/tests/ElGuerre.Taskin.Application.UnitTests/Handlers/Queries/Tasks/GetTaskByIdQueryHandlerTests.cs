@@ -1,5 +1,6 @@
 using ElGuerre.Taskin.Application.Data;
 using ElGuerre.Taskin.Application.Exceptions;
+using ElGuerre.Taskin.Application.Tasks.DTOs;
 using ElGuerre.Taskin.Application.Tasks.Queries;
 using ElGuerre.Taskin.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ public class GetTaskByIdQueryHandlerTests
         var project = new Project { Name = "Test Project" };
         var task = new DomainTask
         {
-            Description = "Test Task",
+            Title = "Test Task",
             Status = DomainTaskStatus.Doing,
             Project = project
         };
@@ -58,8 +59,8 @@ public class GetTaskByIdQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Id.Should().Be(task.Id);
-        result.Description.Should().Be("Test Task");
-        result.Status.Should().Be(DomainTaskStatus.Doing);
+        result.Title.Should().Be("Test Task");
+        result.Status.Should().Be("Doing");
     }
 
     [Fact]
@@ -87,7 +88,7 @@ public class GetTaskByIdQueryHandlerTests
         var project = new Project { Name = "Test Project" };
         var task = new DomainTask
         {
-            Description = "Test Task",
+            Title = "Test Task",
             Status = DomainTaskStatus.Todo,
             Project = project
         };

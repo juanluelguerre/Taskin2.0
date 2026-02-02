@@ -22,7 +22,7 @@ public class UpdateTaskCommandValidatorTests
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = "Valid task description",
+            Title = "Valid task title",
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Doing
         };
 
@@ -42,7 +42,7 @@ public class UpdateTaskCommandValidatorTests
         var command = new UpdateTaskCommand
         {
             Id = Guid.Empty,
-            Description = "Valid description",
+            Title = "Valid title",
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
 
@@ -61,7 +61,7 @@ public class UpdateTaskCommandValidatorTests
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = "Valid description",
+            Title = "Valid title",
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
 
@@ -74,16 +74,16 @@ public class UpdateTaskCommandValidatorTests
 
     #endregion
 
-    #region Description Validation
+    #region Title Validation
 
     [Fact]
-    public void Validate_WithEmptyDescription_ShouldHaveValidationError()
+    public void Validate_WithEmptyTitle_ShouldHaveValidationError()
     {
         // Arrange
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = string.Empty,
+            Title = string.Empty,
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
 
@@ -91,18 +91,18 @@ public class UpdateTaskCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Description)
-            .WithErrorMessage("Description is required");
+        result.ShouldHaveValidationErrorFor(x => x.Title)
+            .WithErrorMessage("Title is required");
     }
 
     [Fact]
-    public void Validate_WithNullDescription_ShouldHaveValidationError()
+    public void Validate_WithNullTitle_ShouldHaveValidationError()
     {
         // Arrange
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = null!,
+            Title = null!,
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
 
@@ -110,19 +110,19 @@ public class UpdateTaskCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Description)
-            .WithErrorMessage("Description is required");
+        result.ShouldHaveValidationErrorFor(x => x.Title)
+            .WithErrorMessage("Title is required");
     }
 
     [Fact]
-    public void Validate_WithDescriptionExceeding500Characters_ShouldHaveValidationError()
+    public void Validate_WithTitleExceeding200Characters_ShouldHaveValidationError()
     {
         // Arrange
-        var longDescription = new string('A', 501);
+        var longTitle = new string('A', 201);
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = longDescription,
+            Title = longTitle,
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
 
@@ -130,19 +130,19 @@ public class UpdateTaskCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Description)
-            .WithErrorMessage("Description cannot exceed 500 characters");
+        result.ShouldHaveValidationErrorFor(x => x.Title)
+            .WithErrorMessage("Title cannot exceed 200 characters");
     }
 
     [Fact]
-    public void Validate_WithDescriptionExactly500Characters_ShouldNotHaveValidationError()
+    public void Validate_WithTitleExactly200Characters_ShouldNotHaveValidationError()
     {
         // Arrange
-        var exactDescription = new string('A', 500);
+        var exactTitle = new string('A', 200);
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = exactDescription,
+            Title = exactTitle,
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
 
@@ -150,7 +150,7 @@ public class UpdateTaskCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.Description);
+        result.ShouldNotHaveValidationErrorFor(x => x.Title);
     }
 
     #endregion
@@ -167,7 +167,7 @@ public class UpdateTaskCommandValidatorTests
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = "Valid description",
+            Title = "Valid title",
             Status = status
         };
 
@@ -185,7 +185,7 @@ public class UpdateTaskCommandValidatorTests
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = "Valid description",
+            Title = "Valid title",
             Status = (ElGuerre.Taskin.Domain.Entities.TaskStatus)999 // Invalid enum value
         };
 
@@ -208,7 +208,7 @@ public class UpdateTaskCommandValidatorTests
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = "Valid description",
+            Title = "Valid title",
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo,
             Deadline = null
         };
@@ -227,7 +227,7 @@ public class UpdateTaskCommandValidatorTests
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = "Valid description",
+            Title = "Valid title",
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo,
             Deadline = DateTime.UtcNow.AddDays(7)
         };
@@ -246,7 +246,7 @@ public class UpdateTaskCommandValidatorTests
         var command = new UpdateTaskCommand
         {
             Id = Guid.NewGuid(),
-            Description = "Valid description",
+            Title = "Valid title",
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo,
             Deadline = new DateTime(2020, 1, 1) // Clearly in the past
         };

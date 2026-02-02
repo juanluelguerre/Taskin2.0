@@ -13,7 +13,7 @@ public class TaskTests
     public void NewTask_ShouldHaveEmptyPomodorosCollection()
     {
         // Arrange & Act
-        var task = new Domain.Entities.Task { Description = "Test", Project = null! };
+        var task = new Domain.Entities.Task { Title = "Test", Project = null! };
 
         // Assert
         task.Pomodoros.Should().NotBeNull();
@@ -24,7 +24,7 @@ public class TaskTests
     public void NewTask_ShouldHaveDefaultStatus()
     {
         // Arrange & Act
-        var task = new Domain.Entities.Task { Description = "Test", Project = null! };
+        var task = new Domain.Entities.Task { Title = "Test", Project = null! };
 
         // Assert
         task.Status.Should().Be(default(ElGuerre.Taskin.Domain.Entities.TaskStatus));
@@ -34,6 +34,7 @@ public class TaskTests
     public void Task_ShouldAllowSettingAllProperties()
     {
         // Arrange
+        var title = "Test Task Title";
         var description = "Test Task Description";
         var projectId = Guid.NewGuid();
         var status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Doing;
@@ -42,6 +43,7 @@ public class TaskTests
         // Act
         var task = new Domain.Entities.Task
         {
+            Title = title,
             Description = description,
             Project = null!,
             ProjectId = projectId,
@@ -50,6 +52,7 @@ public class TaskTests
         };
 
         // Assert
+        task.Title.Should().Be(title);
         task.Description.Should().Be(description);
         task.ProjectId.Should().Be(projectId);
         task.Status.Should().Be(status);
@@ -60,7 +63,7 @@ public class TaskTests
     public void Task_ShouldInheritFromTrackedEntity()
     {
         // Arrange & Act
-        var task = new Domain.Entities.Task { Description = "Test", Project = null! };
+        var task = new Domain.Entities.Task { Title = "Test", Project = null! };
 
         // Assert
         task.Should().BeAssignableTo<TrackedEntity>("Task should inherit from TrackedEntity for audit tracking");
@@ -73,7 +76,7 @@ public class TaskTests
     public void Task_ShouldSupportAllStatusValues(ElGuerre.Taskin.Domain.Entities.TaskStatus status)
     {
         // Arrange & Act
-        var task = new Domain.Entities.Task { Description = "Test", Project = null!, Status = status };
+        var task = new Domain.Entities.Task { Title = "Test", Project = null!, Status = status };
 
         // Assert
         task.Status.Should().Be(status);
@@ -88,7 +91,7 @@ public class TaskTests
         // Act
         var task = new Domain.Entities.Task
         {
-            Description = "Test",
+            Title = "Test",
             Project = null!,
             ProjectId = projectId
         };
@@ -106,7 +109,7 @@ public class TaskTests
 
         // Assert
         task.Should().NotBeNull();
-        task.Description.Should().NotBeNullOrWhiteSpace();
+        task.Title.Should().NotBeNullOrWhiteSpace();
         task.ProjectId.Should().NotBeEmpty();
     }
 
@@ -114,18 +117,18 @@ public class TaskTests
     public void TestDataBuilder_ShouldAllowTaskCustomization()
     {
         // Arrange
-        var customDescription = "Custom Task Description";
+        var customTitle = "Custom Task Title";
         var customProjectId = Guid.NewGuid();
 
         // Act
         var task = TestDataBuilder.CreateTask(t =>
         {
-            t.Description = customDescription;
+            t.Title = customTitle;
             t.ProjectId = customProjectId;
         });
 
         // Assert
-        task.Description.Should().Be(customDescription);
+        task.Title.Should().Be(customTitle);
         task.ProjectId.Should().Be(customProjectId);
     }
 
@@ -140,7 +143,7 @@ public class TaskTests
 
         // Assert
         tasks.Should().HaveCount(count);
-        tasks.Should().OnlyHaveUniqueItems(t => t.Description);
+        tasks.Should().OnlyHaveUniqueItems(t => t.Title);
     }
 
     [Fact]
@@ -152,7 +155,7 @@ public class TaskTests
         // Act
         var task = new Domain.Entities.Task
         {
-            Description = "Test",
+            Title = "Test",
             Project = null!,
             Deadline = deadline
         };

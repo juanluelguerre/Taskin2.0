@@ -143,25 +143,30 @@
     </div>
     <div class="p-6">
       <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-        <div
-          *ngFor="let session of todaySessions(); let i = index"
-          class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium"
-          [class.bg-blue-100]="session.type === 'work'"
-          [class.text-blue-800]="session.type === 'work'"
-          [class.bg-green-100]="session.type === 'break'"
-          [class.text-green-800]="session.type === 'break'"
-          [class.bg-gray-100]="session.type === 'upcoming'"
-          [class.text-gray-500]="session.type === 'upcoming'"
-          [title]="
-            session.type === 'work'
-              ? 'Work session completed'
-              : session.type === 'break'
-              ? 'Break completed'
-              : 'Upcoming session'
-          "
-        >
-          {{ i + 1 }}
-        </div>
+        @for (session of todaySessions(); track $index; let i = $index) {
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium"
+            [class.bg-blue-100]="session.type === 'work'"
+            [class.text-blue-800]="session.type === 'work'"
+            [class.bg-green-100]="session.type === 'break'"
+            [class.text-green-800]="session.type === 'break'"
+            [class.bg-gray-100]="session.type === 'upcoming'"
+            [class.text-gray-500]="session.type === 'upcoming'"
+            [title]="
+              session.type === 'work'
+                ? 'Work session completed'
+                : session.type === 'break'
+                ? 'Break completed'
+                : 'Upcoming session'
+            "
+          >
+            {{ i + 1 }}
+          </div>
+        } @empty {
+          <div class="col-span-full text-center text-gray-500 text-sm py-4">
+            No sessions yet. Start a pomodoro to begin tracking.
+          </div>
+        }
       </div>
       <div class="mt-4 text-sm text-gray-600">
         <div class="flex items-center space-x-4">

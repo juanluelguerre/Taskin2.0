@@ -1,9 +1,9 @@
-﻿using MediatR;
-using Task = ElGuerre.Taskin.Domain.Entities.Task;
+using ElGuerre.Taskin.Application.Tasks.DTOs;
+using MediatR;
 
 namespace ElGuerre.Taskin.Application.Tasks.Queries;
 
-public class GetTaskByIdQuery : IRequest<Task>
+public class GetTaskByIdQuery : IRequest<TaskDetailsDto>
 {
     public Guid Id { get; set; }
 }

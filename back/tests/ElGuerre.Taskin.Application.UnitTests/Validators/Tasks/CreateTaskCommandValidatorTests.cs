@@ -22,7 +22,7 @@ public class CreateTaskCommandValidatorTests
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = "Valid task description",
+            Title = "Valid task description",
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
@@ -34,15 +34,15 @@ public class CreateTaskCommandValidatorTests
         result.ShouldNotHaveAnyValidationErrors();
     }
 
-    #region Description Validation
+    #region Title Validation
 
     [Fact]
-    public void Validate_WithEmptyDescription_ShouldHaveValidationError()
+    public void Validate_WithEmptyTitle_ShouldHaveValidationError()
     {
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = string.Empty,
+            Title = string.Empty,
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
@@ -51,17 +51,17 @@ public class CreateTaskCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Description)
-            .WithErrorMessage("Description is required");
+        result.ShouldHaveValidationErrorFor(x => x.Title)
+            .WithErrorMessage("Title is required");
     }
 
     [Fact]
-    public void Validate_WithNullDescription_ShouldHaveValidationError()
+    public void Validate_WithNullTitle_ShouldHaveValidationError()
     {
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = null!,
+            Title = null!,
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
@@ -70,18 +70,18 @@ public class CreateTaskCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Description)
-            .WithErrorMessage("Description is required");
+        result.ShouldHaveValidationErrorFor(x => x.Title)
+            .WithErrorMessage("Title is required");
     }
 
     [Fact]
-    public void Validate_WithDescriptionExceeding500Characters_ShouldHaveValidationError()
+    public void Validate_WithTitleExceeding200Characters_ShouldHaveValidationError()
     {
         // Arrange
-        var longDescription = new string('A', 501);
+        var longTitle = new string('A', 201);
         var command = new CreateTaskCommand
         {
-            Description = longDescription,
+            Title = longTitle,
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
@@ -90,18 +90,18 @@ public class CreateTaskCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Description)
-            .WithErrorMessage("Description cannot exceed 500 characters");
+        result.ShouldHaveValidationErrorFor(x => x.Title)
+            .WithErrorMessage("Title cannot exceed 200 characters");
     }
 
     [Fact]
-    public void Validate_WithDescriptionExactly500Characters_ShouldNotHaveValidationError()
+    public void Validate_WithTitleExactly200Characters_ShouldNotHaveValidationError()
     {
         // Arrange
-        var exactDescription = new string('A', 500);
+        var exactTitle = new string('A', 200);
         var command = new CreateTaskCommand
         {
-            Description = exactDescription,
+            Title = exactTitle,
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
@@ -110,7 +110,7 @@ public class CreateTaskCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.Description);
+        result.ShouldNotHaveValidationErrorFor(x => x.Title);
     }
 
     #endregion
@@ -123,7 +123,7 @@ public class CreateTaskCommandValidatorTests
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = "Valid description",
+            Title = "Valid description",
             ProjectId = Guid.Empty,
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
@@ -142,7 +142,7 @@ public class CreateTaskCommandValidatorTests
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = "Valid description",
+            Title = "Valid description",
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo
         };
@@ -167,7 +167,7 @@ public class CreateTaskCommandValidatorTests
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = "Valid description",
+            Title = "Valid description",
             ProjectId = Guid.NewGuid(),
             Status = status
         };
@@ -185,7 +185,7 @@ public class CreateTaskCommandValidatorTests
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = "Valid description",
+            Title = "Valid description",
             ProjectId = Guid.NewGuid(),
             Status = (ElGuerre.Taskin.Domain.Entities.TaskStatus)999 // Invalid enum value
         };
@@ -208,7 +208,7 @@ public class CreateTaskCommandValidatorTests
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = "Valid description",
+            Title = "Valid description",
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo,
             Deadline = null
@@ -227,7 +227,7 @@ public class CreateTaskCommandValidatorTests
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = "Valid description",
+            Title = "Valid description",
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo,
             Deadline = DateTime.UtcNow.AddDays(7)
@@ -246,7 +246,7 @@ public class CreateTaskCommandValidatorTests
         // Arrange
         var command = new CreateTaskCommand
         {
-            Description = "Valid description",
+            Title = "Valid description",
             ProjectId = Guid.NewGuid(),
             Status = ElGuerre.Taskin.Domain.Entities.TaskStatus.Todo,
             Deadline = new DateTime(2020, 1, 1) // Clearly in the past

@@ -93,6 +93,14 @@ export class ProjectNewComponent implements OnInit {
     });
   }
 
+  // Watch for project changes to populate form - must be in injection context
+  private readonly projectEffect = effect(() => {
+    const project = this.project();
+    if (project && this.isEditMode()) {
+      this.populateForm(project);
+    }
+  });
+
   ngOnInit() {
     // Check if we're in edit mode
     const projectId = this.route.snapshot.params['id'];
@@ -100,14 +108,6 @@ export class ProjectNewComponent implements OnInit {
       this.isEditMode.set(true);
       this.projectId.set(projectId);
       this.projectStore.loadProject(projectId);
-
-      // Watch for project changes to populate form
-      effect(() => {
-        const project = this.project();
-        if (project) {
-          this.populateForm(project);
-        }
-      });
     }
   }
 

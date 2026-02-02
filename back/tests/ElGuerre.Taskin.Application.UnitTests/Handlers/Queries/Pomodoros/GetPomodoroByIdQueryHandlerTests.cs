@@ -35,7 +35,7 @@ public class GetPomodoroByIdQueryHandlerTests
         var project = new Project { Name = "Test Project" };
         var task = new DomainTask
         {
-            Description = "Test Task",
+            Title = "Test Task",
             Status = DomainTaskStatus.Doing,
             Project = project
         };
@@ -86,7 +86,7 @@ public class GetPomodoroByIdQueryHandlerTests
         var project = new Project { Name = "Test Project" };
         var task = new DomainTask
         {
-            Description = "Test Task",
+            Title = "Test Task",
             Status = DomainTaskStatus.Todo,
             Project = project
         };

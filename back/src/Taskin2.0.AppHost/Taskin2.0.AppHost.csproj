@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.0.0">
+<Project Sdk="Aspire.AppHost.Sdk/13.1.0">
 
   <ItemGroup>
     <None Remove="nul" />
@@ -9,9 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.Redis" Version="13.0.1" />
-    <PackageReference Include="Aspire.Hosting.Seq" Version="13.0.1" />
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.0.1" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.Seq" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.1.0" />
   </ItemGroup>
 
   <PropertyGroup>

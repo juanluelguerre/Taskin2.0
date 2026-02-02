@@ -45,7 +45,7 @@ public class CreateTaskCommandHandlerTests
 
         var command = new CreateTaskCommand
         {
-            Description = "Test Task",
+            Title = "Test Task",
             ProjectId = projectId,
             Status = DomainTaskStatus.Todo,
             Deadline = DateTime.UtcNow.AddDays(7)
@@ -63,7 +63,7 @@ public class CreateTaskCommandHandlerTests
         // Assert
         result.Should().NotBe(Guid.Empty);
         _tasksDbSet.Received(1).Add(Arg.Is<DomainTask>(t =>
-            t.Description == command.Description &&
+            t.Title == command.Title &&
             t.ProjectId == command.ProjectId &&
             t.Status == command.Status &&
             t.Deadline == command.Deadline &&
@@ -78,7 +78,7 @@ public class CreateTaskCommandHandlerTests
         var projectId = Guid.NewGuid();
         var command = new CreateTaskCommand
         {
-            Description = "Test Task",
+            Title = "Test Task",
             ProjectId = projectId,
             Status = DomainTaskStatus.Todo
         };
@@ -105,7 +105,7 @@ public class CreateTaskCommandHandlerTests
         var project = new Project { Name = "Test Project" };
         var command = new CreateTaskCommand
         {
-            Description = "Test Task",
+            Title = "Test Task",
             ProjectId = projectId,
             Status = DomainTaskStatus.Todo
         };
@@ -131,7 +131,7 @@ public class CreateTaskCommandHandlerTests
         var project = new Project { Name = "Test Project" };
         var command = new CreateTaskCommand
         {
-            Description = "Minimal Task",
+            Title = "Minimal Task",
             ProjectId = projectId,
             Status = DomainTaskStatus.Todo
         };
@@ -148,7 +148,7 @@ public class CreateTaskCommandHandlerTests
         // Assert
         result.Should().NotBe(Guid.Empty);
         _tasksDbSet.Received(1).Add(Arg.Is<DomainTask>(t =>
-            t.Description == command.Description &&
+            t.Title == command.Title &&
             t.ProjectId == command.ProjectId &&
             t.Deadline == null));
     }
@@ -161,7 +161,7 @@ public class CreateTaskCommandHandlerTests
         var project = new Project { Name = "Test Project" };
         var command = new CreateTaskCommand
         {
-            Description = "Test Task",
+            Title = "Test Task",
             ProjectId = projectId,
             Status = DomainTaskStatus.Todo
         };

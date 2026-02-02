@@ -6,11 +6,15 @@ public class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
 {
     public CreateTaskCommandValidator()
     {
-        RuleFor(x => x.Description)
+        RuleFor(x => x.Title)
             .NotEmpty()
-            .WithMessage("Description is required")
-            .MaximumLength(500)
-            .WithMessage("Description cannot exceed 500 characters");
+            .WithMessage("Title is required")
+            .MaximumLength(200)
+            .WithMessage("Title cannot exceed 200 characters");
+
+        RuleFor(x => x.Description)
+            .MaximumLength(1000)
+            .WithMessage("Description cannot exceed 1000 characters");
 
         RuleFor(x => x.ProjectId)
             .NotEmpty()
@@ -20,9 +24,13 @@ public class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
             .IsInEnum()
             .WithMessage("Status must be a valid TaskStatus");
 
+        RuleFor(x => x.Priority)
+            .IsInEnum()
+            .WithMessage("Priority must be a valid TaskPriority");
+
         When(x => x.Deadline.HasValue, () =>
         {
-            RuleFor(x => x.Deadline.Value)
+            RuleFor(x => x.Deadline!.Value)
                 .GreaterThan(DateTime.UtcNow)
                 .WithMessage("Deadline must be in the future");
         });

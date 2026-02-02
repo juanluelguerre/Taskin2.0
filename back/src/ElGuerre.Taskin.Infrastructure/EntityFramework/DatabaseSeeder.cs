@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 using TaskStatus = ElGuerre.Taskin.Domain.Entities.TaskStatus;
+using TaskPriority = ElGuerre.Taskin.Domain.Entities.TaskPriority;
 
 namespace ElGuerre.Taskin.Infrastructure.EntityFramework;
 
@@ -148,43 +149,71 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Setup project structure",
                 Description = "Setup project structure and initialize React app with TypeScript, ESLint, and modern tooling configuration",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
                 Status = TaskStatus.Done,
-                Deadline = DateTime.UtcNow.AddDays(-10)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(-10),
+                Tags = "setup,tooling,typescript",
+                AssigneeName = "Juan Luis",
+                EstimatedPomodoros = 4,
+                CompletedPomodoros = 4,
+                IsCompleted = true,
+                CompletedAt = DateTime.UtcNow.AddDays(-11)
             },
             new Domain.Entities.Task
             {
+                Title = "Design product catalog pages",
                 Description = "Design responsive product catalog pages with filtering, search, and pagination functionality",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
                 Status = TaskStatus.Doing,
-                Deadline = DateTime.UtcNow.AddDays(5)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(5),
+                Tags = "frontend,ui,catalog",
+                AssigneeName = "Juan Luis",
+                EstimatedPomodoros = 8,
+                CompletedPomodoros = 3
             },
             new Domain.Entities.Task
             {
+                Title = "Integrate Stripe payment gateway",
                 Description = "Integrate Stripe payment gateway with secure checkout flow and webhook handling",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(15)
+                Priority = TaskPriority.Critical,
+                Deadline = DateTime.UtcNow.AddDays(15),
+                Tags = "payment,stripe,backend",
+                AssigneeName = "Developer 2",
+                EstimatedPomodoros = 12
             },
             new Domain.Entities.Task
             {
+                Title = "Implement JWT authentication",
                 Description = "Implement user authentication with JWT tokens and refresh mechanism",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(8)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(8),
+                Tags = "auth,security,backend",
+                AssigneeName = "Developer 2",
+                EstimatedPomodoros = 6
             },
             new Domain.Entities.Task
             {
+                Title = "Create shopping cart functionality",
                 Description = "Create shopping cart functionality with persistent storage and real-time updates",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(12)
+                Priority = TaskPriority.Medium,
+                Deadline = DateTime.UtcNow.AddDays(12),
+                Tags = "frontend,cart,state",
+                EstimatedPomodoros = 10
             }
         ]);
 
@@ -194,43 +223,75 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Conduct user research",
                 Description = "Conduct comprehensive user research and stakeholder interviews to understand pain points",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
                 Status = TaskStatus.Done,
-                Deadline = DateTime.UtcNow.AddDays(-20)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(-20),
+                Tags = "research,ux,interviews",
+                AssigneeName = "Sarah Wilson",
+                EstimatedPomodoros = 6,
+                CompletedPomodoros = 6,
+                IsCompleted = true,
+                CompletedAt = DateTime.UtcNow.AddDays(-21)
             },
             new Domain.Entities.Task
             {
+                Title = "Create wireframes and user flows",
                 Description = "Create detailed wireframes and user journey flows for all major app sections",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
                 Status = TaskStatus.Done,
-                Deadline = DateTime.UtcNow.AddDays(-15)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(-15),
+                Tags = "wireframes,ux,design",
+                AssigneeName = "Sarah Wilson",
+                EstimatedPomodoros = 8,
+                CompletedPomodoros = 8,
+                IsCompleted = true,
+                CompletedAt = DateTime.UtcNow.AddDays(-16)
             },
             new Domain.Entities.Task
             {
+                Title = "Establish design system",
                 Description = "Establish comprehensive design system with components, colors, and typography guidelines",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
                 Status = TaskStatus.Doing,
-                Deadline = DateTime.UtcNow.AddDays(3)
+                Priority = TaskPriority.Critical,
+                Deadline = DateTime.UtcNow.AddDays(3),
+                Tags = "design-system,ui,components",
+                AssigneeName = "Sarah Wilson",
+                EstimatedPomodoros = 10,
+                CompletedPomodoros = 5
             },
             new Domain.Entities.Task
             {
+                Title = "Build interactive prototype",
                 Description = "Build interactive prototype with animations and micro-interactions for user testing",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(10)
+                Priority = TaskPriority.Medium,
+                Deadline = DateTime.UtcNow.AddDays(10),
+                Tags = "prototype,animations,testing",
+                AssigneeName = "Mike Johnson",
+                EstimatedPomodoros = 8
             },
             new Domain.Entities.Task
             {
+                Title = "Conduct usability testing",
                 Description = "Conduct usability testing sessions and iterate based on user feedback",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(18)
+                Priority = TaskPriority.Medium,
+                Deadline = DateTime.UtcNow.AddDays(18),
+                Tags = "testing,ux,feedback",
+                AssigneeName = "Sarah Wilson",
+                EstimatedPomodoros = 4
             }
         ]);
 
@@ -240,27 +301,51 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Document REST API endpoints",
                 Description = "Document all REST API endpoints with request/response examples and error codes",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
                 Status = TaskStatus.Done,
-                Deadline = DateTime.UtcNow.AddDays(-8)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(-8),
+                Tags = "documentation,api,rest",
+                AssigneeName = "Technical Writer",
+                EstimatedPomodoros = 6,
+                CompletedPomodoros = 6,
+                IsCompleted = true,
+                CompletedAt = DateTime.UtcNow.AddDays(-9)
             },
             new Domain.Entities.Task
             {
+                Title = "Create authentication flow guide",
                 Description = "Create comprehensive authentication flow guide with JWT implementation details",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
                 Status = TaskStatus.Done,
-                Deadline = DateTime.UtcNow.AddDays(-6)
+                Priority = TaskPriority.Medium,
+                Deadline = DateTime.UtcNow.AddDays(-6),
+                Tags = "documentation,auth,jwt",
+                AssigneeName = "Technical Writer",
+                EstimatedPomodoros = 4,
+                CompletedPomodoros = 4,
+                IsCompleted = true,
+                CompletedAt = DateTime.UtcNow.AddDays(-7)
             },
             new Domain.Entities.Task
             {
+                Title = "Add code examples",
                 Description = "Add practical code examples in multiple programming languages (Python, JavaScript, cURL)",
                 ProjectId = apiProject.Id,
                 Project = apiProject,
                 Status = TaskStatus.Done,
-                Deadline = DateTime.UtcNow.AddDays(-3)
+                Priority = TaskPriority.Low,
+                Deadline = DateTime.UtcNow.AddDays(-3),
+                Tags = "documentation,examples,code",
+                AssigneeName = "Technical Writer",
+                EstimatedPomodoros = 3,
+                CompletedPomodoros = 3,
+                IsCompleted = true,
+                CompletedAt = DateTime.UtcNow.AddDays(-4)
             }
         ]);
 
@@ -270,19 +355,28 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Design landing page",
                 Description = "Design conversion-optimized landing page with clear value proposition and CTAs",
                 ProjectId = marketingProject.Id,
                 Project = marketingProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(25)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(25),
+                Tags = "design,landing-page,conversion",
+                AssigneeName = "Mike Johnson",
+                EstimatedPomodoros = 6
             },
             new Domain.Entities.Task
             {
+                Title = "Implement SEO best practices",
                 Description = "Implement SEO best practices and schema markup for better search visibility",
                 ProjectId = marketingProject.Id,
                 Project = marketingProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(30)
+                Priority = TaskPriority.Medium,
+                Deadline = DateTime.UtcNow.AddDays(30),
+                Tags = "seo,markup,performance",
+                EstimatedPomodoros = 4
             }
         ]);
 
@@ -292,27 +386,41 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Design interactive charts",
                 Description = "Design interactive charts and KPI widgets with real-time data visualization",
                 ProjectId = analyticsProject.Id,
                 Project = analyticsProject,
                 Status = TaskStatus.Doing,
-                Deadline = DateTime.UtcNow.AddDays(20)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(20),
+                Tags = "charts,kpi,visualization",
+                AssigneeName = "Juan Luis",
+                EstimatedPomodoros = 10,
+                CompletedPomodoros = 4
             },
             new Domain.Entities.Task
             {
+                Title = "Implement report generation",
                 Description = "Implement automated report generation with PDF export and email scheduling",
                 ProjectId = analyticsProject.Id,
                 Project = analyticsProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(35)
+                Priority = TaskPriority.Medium,
+                Deadline = DateTime.UtcNow.AddDays(35),
+                Tags = "reports,pdf,automation",
+                EstimatedPomodoros = 8
             },
             new Domain.Entities.Task
             {
+                Title = "Set up data pipelines",
                 Description = "Set up data pipelines and ETL processes for business intelligence metrics",
                 ProjectId = analyticsProject.Id,
                 Project = analyticsProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(40)
+                Priority = TaskPriority.Low,
+                Deadline = DateTime.UtcNow.AddDays(40),
+                Tags = "data,etl,pipelines",
+                EstimatedPomodoros = 12
             }
         ]);
 
@@ -322,27 +430,42 @@ public static class DatabaseSeeder
         [
             new Domain.Entities.Task
             {
+                Title = "Conduct penetration testing",
                 Description = "Conduct penetration testing on web application and API endpoints",
                 ProjectId = securityProject.Id,
                 Project = securityProject,
                 Status = TaskStatus.Doing,
-                Deadline = DateTime.UtcNow.AddDays(7)
+                Priority = TaskPriority.Critical,
+                Deadline = DateTime.UtcNow.AddDays(7),
+                Tags = "security,pentest,api",
+                AssigneeName = "Security Expert",
+                EstimatedPomodoros = 8,
+                CompletedPomodoros = 2
             },
             new Domain.Entities.Task
             {
+                Title = "Review code for vulnerabilities",
                 Description = "Review code for security vulnerabilities and implement OWASP recommendations",
                 ProjectId = securityProject.Id,
                 Project = securityProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(14)
+                Priority = TaskPriority.Critical,
+                Deadline = DateTime.UtcNow.AddDays(14),
+                Tags = "security,code-review,owasp",
+                AssigneeName = "Security Expert",
+                EstimatedPomodoros = 6
             },
             new Domain.Entities.Task
             {
+                Title = "Set up security scanning",
                 Description = "Set up automated security scanning and monitoring systems",
                 ProjectId = securityProject.Id,
                 Project = securityProject,
                 Status = TaskStatus.Todo,
-                Deadline = DateTime.UtcNow.AddDays(18)
+                Priority = TaskPriority.High,
+                Deadline = DateTime.UtcNow.AddDays(18),
+                Tags = "security,automation,monitoring",
+                EstimatedPomodoros = 4
             }
         ]);
 

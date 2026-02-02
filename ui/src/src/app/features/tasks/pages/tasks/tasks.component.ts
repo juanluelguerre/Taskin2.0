@@ -94,23 +94,23 @@ export class TasksComponent implements OnInit {
   readonly showingToIndex = computed(() => Math.min(this.currentPage() * 25, this.tasks().length));
 
   readonly cancelledTasksCount = computed(
-    () => this.tasks().filter(t => t.status === 'cancelled').length
+    () => this.tasks().filter(t => t.status === TaskStatus.Cancelled).length
   );
 
   // Enum references for template use
   readonly TaskStatus = TaskStatus;
 
+  // React to errors using effect - must be in injection context (class field initializer)
+  private readonly errorEffect = effect(() => {
+    const error = this.error();
+    if (error) {
+      this.notificationService.notifyError('tasks.errors.general', { error });
+    }
+  });
+
   ngOnInit(): void {
     // Load initial data
-    this.taskStore.refreshTasks();
-
-    // React to errors using effect
-    effect(() => {
-      const error = this.error();
-      if (error) {
-        this.notificationService.notifyError('tasks.errors.general', { error });
-      }
-    });
+    this.taskStore.loadTasks();
   }
 
   // Event handlers for task actions
@@ -203,7 +203,7 @@ export class TasksComponent implements OnInit {
 
   // Utility methods
   onRefresh(): void {
-    this.taskStore.refreshTasks();
+    this.taskStore.loadTasks();
   }
 
   onDismissError(): void {

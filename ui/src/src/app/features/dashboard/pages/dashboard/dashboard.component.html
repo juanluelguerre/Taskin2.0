@@ -90,22 +90,28 @@
         <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
       </div>
       <div class="p-6">
-        <div class="space-y-4">
-          <div *ngFor="let activity of recentActivities()" class="flex items-start space-x-3">
-            <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <mat-icon class="text-blue-600 text-sm">{{ activity.icon }}</mat-icon>
+        @if (recentActivities().length > 0) {
+          <div class="space-y-4">
+            @for (activity of recentActivities(); track activity.title) {
+              <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <mat-icon class="text-blue-600 text-sm">{{ activity.icon }}</mat-icon>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm text-gray-900">{{ activity.title }}</p>
+                  <p class="text-xs text-gray-500">{{ activity.time }}</p>
+                </div>
               </div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm text-gray-900">{{ activity.title }}</p>
-              <p class="text-xs text-gray-500">{{ activity.time }}</p>
-            </div>
+            }
           </div>
-        </div>
-        <div class="mt-4 pt-4 border-t border-gray-200">
-          <button mat-button color="primary" class="w-full">View All Activity</button>
-        </div>
+        } @else {
+          <div class="text-center py-6 text-gray-500">
+            <mat-icon class="text-gray-300 mb-2" style="font-size: 32px; width: 32px; height: 32px;">history</mat-icon>
+            <p class="text-sm">No recent activity yet. Start working on tasks to see your activity here.</p>
+          </div>
+        }
       </div>
     </div>
 

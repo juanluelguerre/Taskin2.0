@@ -150,10 +150,10 @@ public class GetProjectsQueryHandlerTests
     {
         // Arrange
         var project = new Project { Name = "Test Project" };
-        project.Tasks.Add(new DomainTask { Description = "Task 1", Status = DomainTaskStatus.Done, Project = project });
-        project.Tasks.Add(new DomainTask { Description = "Task 2", Status = DomainTaskStatus.Done, Project = project });
-        project.Tasks.Add(new DomainTask { Description = "Task 3", Status = DomainTaskStatus.Todo, Project = project });
-        project.Tasks.Add(new DomainTask { Description = "Task 4", Status = DomainTaskStatus.Doing, Project = project });
+        project.Tasks.Add(new DomainTask { Title = "Task 1", Status = DomainTaskStatus.Done, Project = project });
+        project.Tasks.Add(new DomainTask { Title = "Task 2", Status = DomainTaskStatus.Done, Project = project });
+        project.Tasks.Add(new DomainTask { Title = "Task 3", Status = DomainTaskStatus.Todo, Project = project });
+        project.Tasks.Add(new DomainTask { Title = "Task 4", Status = DomainTaskStatus.Doing, Project = project });
 
         var projects = new List<Project> { project };
         this.projectsDbSet = projects.BuildMockDbSet();

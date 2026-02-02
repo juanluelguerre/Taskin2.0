@@ -6,16 +6,16 @@ export const environment = {
   production: false,
   baseUrl: '',
   useHash: false,
-  apiUrl: 'https://localhost:5001',
+  apiUrl: 'https://localhost:6001',
   faro: {
     // Use Grafana Alloy as proxy (handles CORS and forwards to Loki)
     url: 'http://localhost:12345/collect',
     app: {
       name: 'Taskin-UI',
       version: '1.0.0',
-      environment: 'development'
-    }
-  }
+      environment: 'development',
+    },
+  },
 };
 
 /*

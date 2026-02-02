@@ -166,9 +166,9 @@ export class TaskStore extends signalStore(
       const now = new Date()
       
       const total = currentTasks.length
-      const pending = currentTasks.filter(t => t.status === TaskStatus.Pending).length
-      const inProgress = currentTasks.filter(t => t.status === TaskStatus.InProgress).length
-      const completed = currentTasks.filter(t => t.status === TaskStatus.Completed).length
+      const pending = currentTasks.filter(t => t.status === TaskStatus.Todo).length
+      const inProgress = currentTasks.filter(t => t.status === TaskStatus.Doing).length
+      const completed = currentTasks.filter(t => t.status === TaskStatus.Done).length
       const overdue = currentTasks.filter(t => 
         t.dueDate && new Date(t.dueDate) < now && !t.isCompleted
       ).length
@@ -188,9 +188,9 @@ export class TaskStore extends signalStore(
     tasksByStatus: computed(() => {
       const filtered = store.tasks()
       return {
-        pending: filtered.filter((t: Task) => t.status === TaskStatus.Pending),
-        inProgress: filtered.filter((t: Task) => t.status === TaskStatus.InProgress),
-        completed: filtered.filter((t: Task) => t.status === TaskStatus.Completed),
+        pending: filtered.filter((t: Task) => t.status === TaskStatus.Todo),
+        inProgress: filtered.filter((t: Task) => t.status === TaskStatus.Doing),
+        completed: filtered.filter((t: Task) => t.status === TaskStatus.Done),
         cancelled: filtered.filter((t: Task) => t.status === TaskStatus.Cancelled)
       }
     }),
@@ -508,120 +508,41 @@ export class TaskStore extends signalStore(
     clearSelection: () => patchState(store, { selectedTask: null }),
 
     refreshTasks: () => {
-      // For now, let's load mock data until backend is ready
-      patchState(store, { loading: true })
-      
-      // Mock data
-      const mockTasks: Task[] = [
-        {
-          id: '1',
-          title: 'Implement task management UI',
-          description: 'Create the Angular components for task management using Signal Store architecture',
-          status: TaskStatus.InProgress,
-          priority: TaskPriority.High,
-          projectId: '1',
-          projectName: 'Taskin 2.0',
-          assigneeId: '1',
-          assigneeName: 'Juan Luis',
-          dueDate: new Date('2024-01-15'),
-          estimatedPomodoros: 8,
-          completedPomodoros: 3,
-          tags: ['angular', 'ui', 'frontend'],
-          isCompleted: false,
-          createdAt: new Date('2024-01-01'),
-          updatedAt: new Date('2024-01-10')
-        },
-        {
-          id: '2',
-          title: 'Setup database migrations',
-          description: 'Create EF migrations for task and project entities',
-          status: TaskStatus.Completed,
-          priority: TaskPriority.Medium,
-          projectId: '1',
-          projectName: 'Taskin 2.0',
-          assigneeId: '2',
-          assigneeName: 'Developer 2',
-          dueDate: new Date('2024-01-10'),
-          estimatedPomodoros: 4,
-          completedPomodoros: 4,
-          tags: ['backend', 'database'],
-          isCompleted: true,
-          completedAt: new Date('2024-01-09'),
-          createdAt: new Date('2023-12-28'),
-          updatedAt: new Date('2024-01-09')
-        },
-        {
-          id: '3',
-          title: 'API documentation',
-          description: 'Complete OpenAPI documentation for all endpoints',
-          status: TaskStatus.Pending,
-          priority: TaskPriority.Low,
-          projectId: '2',
-          projectName: 'API Documentation',
-          assigneeId: '3',
-          assigneeName: 'Technical Writer',
-          dueDate: new Date('2024-01-20'),
-          estimatedPomodoros: 6,
-          completedPomodoros: 0,
-          tags: ['documentation', 'api'],
-          isCompleted: false,
-          createdAt: new Date('2024-01-02'),
-          updatedAt: new Date('2024-01-02')
-        },
-        {
-          id: '4',
-          title: 'Mobile app redesign',
-          description: 'Update mobile app UI to match new design system',
-          status: TaskStatus.InProgress,
-          priority: TaskPriority.Critical,
-          projectId: '3',
-          projectName: 'Mobile App Redesign',
-          dueDate: new Date('2024-01-05'), // Overdue
-          estimatedPomodoros: 12,
-          completedPomodoros: 2,
-          tags: ['mobile', 'ui', 'design'],
-          isCompleted: false,
-          createdAt: new Date('2023-12-15'),
-          updatedAt: new Date('2024-01-08')
-        },
-        {
-          id: '5',
-          title: 'E-commerce integration',
-          description: 'Integrate payment gateway and shopping cart functionality',
-          status: TaskStatus.Cancelled,
-          priority: TaskPriority.Medium,
-          projectId: '4',
-          projectName: 'E-commerce Platform',
-          assigneeId: '1',
-          assigneeName: 'Juan Luis',
-          estimatedPomodoros: 15,
-          completedPomodoros: 1,
-          tags: ['ecommerce', 'payment', 'backend'],
-          isCompleted: false,
-          createdAt: new Date('2023-12-20'),
-          updatedAt: new Date('2024-01-05')
-        }
-      ]
+      // Delegate to real API loadTasks method
+      patchState(store, { loading: true, error: null })
 
-      const mockStats: TaskStats = {
-        totalTasks: mockTasks.length,
-        pendingTasks: mockTasks.filter(t => t.status === TaskStatus.Pending).length,
-        inProgressTasks: mockTasks.filter(t => t.status === TaskStatus.InProgress).length,
-        completedTasks: mockTasks.filter(t => t.status === TaskStatus.Completed).length,
-        overdueTasks: mockTasks.filter(t => t.dueDate && new Date(t.dueDate) < new Date() && !t.isCompleted).length,
-        tasksCompletedThisWeek: 2,
-        averageCompletionTime: 3.5,
-        productivityScore: 85
+      const params = {
+        page: store.currentPage(),
+        size: store.pageSize(),
+        projectId: store.filters().projectId
       }
 
-      setTimeout(() => {
-        patchState(store, {
-          tasks: mockTasks,
-          stats: mockStats,
-          totalCount: mockTasks.length,
-          loading: false
-        })
-      }, 500) // Simulate API delay
+      taskService.getAll(params).subscribe({
+        next: (response: TaskListResponse) => {
+          patchState(store, {
+            tasks: response.items,
+            totalCount: response.totalCount,
+            loading: false
+          })
+        },
+        error: (error: any) => {
+          patchState(store, {
+            loading: false,
+            error: 'Failed to load tasks'
+          })
+          console.error('Load tasks error:', error)
+        }
+      })
+
+      // Also load stats
+      taskService.getTaskStats().subscribe({
+        next: (stats: TaskStats) => {
+          patchState(store, { stats })
+        },
+        error: (error: any) => {
+          console.error('Load task stats error:', error)
+        }
+      })
     },
 
     // Bulk operations
@@ -636,8 +557,8 @@ export class TaskStore extends signalStore(
                 // Update local state
                 patchState(store, {
                   tasks: store.tasks().map(task => 
-                    taskIds.includes(task.id) 
-                      ? { ...task, status, isCompleted: status === TaskStatus.Completed }
+                    taskIds.includes(task.id)
+                      ? { ...task, status, isCompleted: status === TaskStatus.Done }
                       : task
                   ),
                   saving: false
@@ -659,17 +580,17 @@ export class TaskStore extends signalStore(
 ) {}
 
 // Helper functions
-function getStatusColor(status: TaskStatus): string {
+function getStatusColor(status: TaskStatus | string): string {
   switch (status) {
-    case TaskStatus.Pending: return 'text-gray-600 bg-gray-100'
-    case TaskStatus.InProgress: return 'text-blue-600 bg-blue-100'
-    case TaskStatus.Completed: return 'text-green-600 bg-green-100'
+    case TaskStatus.Todo: return 'text-gray-600 bg-gray-100'
+    case TaskStatus.Doing: return 'text-blue-600 bg-blue-100'
+    case TaskStatus.Done: return 'text-green-600 bg-green-100'
     case TaskStatus.Cancelled: return 'text-red-600 bg-red-100'
     default: return 'text-gray-600 bg-gray-100'
   }
 }
 
-function getPriorityColor(priority: TaskPriority): string {
+function getPriorityColor(priority: TaskPriority | string): string {
   switch (priority) {
     case TaskPriority.Low: return 'text-gray-600 bg-gray-100'
     case TaskPriority.Medium: return 'text-yellow-600 bg-yellow-100'

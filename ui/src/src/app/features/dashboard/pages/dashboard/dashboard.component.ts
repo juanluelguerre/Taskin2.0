@@ -1,18 +1,10 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-
-interface DashboardStats {
-  activeProjects: number;
-  pendingTasks: number;
-  completedToday: number;
-  pomodorosToday: number;
-  weeklyProgress: number;
-  focusHours: number;
-}
+import { DashboardService, DashboardStats } from '../../services/dashboard.service';
 
 interface RecentActivity {
   icon: string;
@@ -35,43 +27,30 @@ interface RecentActivity {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  private readonly dashboardService = inject(DashboardService);
+
   userName = 'JuanLu';
 
   stats = signal<DashboardStats>({
-    activeProjects: 8,
-    pendingTasks: 24,
-    completedToday: 12,
-    pomodorosToday: 6,
-    weeklyProgress: 75,
-    focusHours: 28
+    activeProjects: 0,
+    pendingTasks: 0,
+    completedToday: 0,
+    pomodorosToday: 0,
+    weeklyProgress: 0,
+    focusHours: 0
   });
 
-  recentActivities = signal<RecentActivity[]>([
-    {
-      icon: 'check_circle',
-      title: 'Completed "API Integration" task',
-      time: '2 minutes ago'
-    },
-    {
-      icon: 'folder',
-      title: 'Created new project "Mobile App"',
-      time: '15 minutes ago'
-    },
-    {
-      icon: 'timer',
-      title: 'Finished 25-minute focus session',
-      time: '30 minutes ago'
-    },
-    {
-      icon: 'task_alt',
-      title: 'Added 3 new tasks to "Website Redesign"',
-      time: '1 hour ago'
-    },
-    {
-      icon: 'schedule',
-      title: 'Updated project deadline',
-      time: '2 hours ago'
-    }
-  ]);
+  recentActivities = signal<RecentActivity[]>([]);
+
+  ngOnInit(): void {
+    this.dashboardService.getStats().subscribe({
+      next: (data) => {
+        this.stats.set(data);
+      },
+      error: (err) => {
+        console.error('Failed to load dashboard stats:', err);
+      }
+    });
+  }
 }

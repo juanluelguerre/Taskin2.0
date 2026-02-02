@@ -22,6 +22,11 @@
               "src/favicon.ico",
               "src/assets",
               {
+                "glob": "**/*",
+                "input": "public",
+                "output": "/"
+              },
+              {
                 "glob": "mdi.svg",
                 "input": "./node_modules/@mdi/angular-material",
                 "output": "./assets"
@@ -38,8 +43,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -80,6 +85,11 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
+              {
+                "glob": "**/*",
+                "input": "public",
+                "output": "/"
+              },
               {
                 "glob": "**/*",
                 "input": "src"

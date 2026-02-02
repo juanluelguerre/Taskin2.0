@@ -23,9 +23,9 @@ public class GetProjectByIdQueryHandler(ITaskinDbContext context)
 
         var taskSummaries = project.Tasks.Select(t => new TaskSummaryDto(
             t.Id,
-            t.Description ?? "",
-            t.Status.ToString().ToLower(),
-            "medium" // Priority not implemented yet
+            t.Title,
+            t.Status.ToString(),
+            t.Priority.ToString()
         )).ToList();
 
         var completedTasks = project.Tasks.Count(t => t.Status == Domain.Entities.TaskStatus.Done);

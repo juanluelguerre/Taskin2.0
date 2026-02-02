@@ -36,6 +36,15 @@ public class PomodorosController(IMediator mediator) : ControllerBase
         return Ok(pomodoros);
     }
 
+    // GET: api/Pomodoros/today
+    [HttpGet("today")]
+    public async Task<ActionResult<IEnumerable<PomodoroEntity>>> GetTodayPomodoros()
+    {
+        var query = new GetTodayPomodorosQuery();
+        var pomodoros = await mediator.Send(query);
+        return Ok(pomodoros);
+    }
+
     // POST: api/Pomodoros
     [HttpPost]
     public async Task<ActionResult<Guid>> CreatePomodoro([FromBody] CreatePomodoroCommand command)

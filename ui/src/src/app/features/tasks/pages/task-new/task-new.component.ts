@@ -21,6 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
@@ -49,6 +50,7 @@ import {
     MatNativeDateModule,
     MatChipsModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatAutocompleteModule,
   ],
   templateUrl: './task-new.component.html',
@@ -68,7 +70,7 @@ export class TaskNewComponent implements OnInit {
 
   // Form and state
   readonly form: FormGroup;
-  private readonly isEditMode = signal<boolean>(false);
+  readonly isEditMode = signal<boolean>(false);
   private readonly taskId = signal<string | null>(null);
 
   // Store selectors
@@ -89,9 +91,9 @@ export class TaskNewComponent implements OnInit {
   ];
 
   readonly statusOptions = [
-    { value: TaskStatus.Pending, label: 'Pending' },
-    { value: TaskStatus.InProgress, label: 'In Progress' },
-    { value: TaskStatus.Completed, label: 'Completed' },
+    { value: TaskStatus.Todo, label: 'To Do' },
+    { value: TaskStatus.Doing, label: 'In Progress' },
+    { value: TaskStatus.Done, label: 'Done' },
     { value: TaskStatus.Cancelled, label: 'Cancelled' },
   ];
 
@@ -119,7 +121,7 @@ export class TaskNewComponent implements OnInit {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(200)]],
       description: ['', [Validators.maxLength(1000)]],
-      status: [TaskStatus.Pending, [Validators.required]],
+      status: [TaskStatus.Todo, [Validators.required]],
       priority: [TaskPriority.Medium, [Validators.required]],
       projectId: ['', [Validators.required]],
       assigneeId: [''],
@@ -127,6 +129,22 @@ export class TaskNewComponent implements OnInit {
       estimatedPomodoros: [null, [Validators.min(1), Validators.max(50)]],
     });
   }
+
+  // Watch for task changes to populate form - must be in injection context
+  private readonly taskEffect = effect(() => {
+    const task = this.taskStore.selectedTask();
+    if (task && this.isEditMode()) {
+      this.populateFormFromTask(task);
+    }
+  });
+
+  // Handle errors using effect - must be in injection context
+  private readonly errorEffect = effect(() => {
+    const error = this.error();
+    if (error) {
+      this.notificationService.notifyError('tasks.errors.general', { error });
+    }
+  });
 
   ngOnInit(): void {
     // Check if we're in edit mode
@@ -136,22 +154,6 @@ export class TaskNewComponent implements OnInit {
         this.isEditMode.set(true);
         this.taskId.set(id);
         this.taskStore.loadTask(id);
-
-        // Watch for task changes to populate form
-        effect(() => {
-          const task = this.taskStore.selectedTask();
-          if (task) {
-            this.populateFormFromTask(task);
-          }
-        });
-      }
-    });
-
-    // Handle errors using effect
-    effect(() => {
-      const error = this.error();
-      if (error) {
-        this.notificationService.notifyError('tasks.errors.general', { error });
       }
     });
   }
@@ -247,8 +249,8 @@ export class TaskNewComponent implements OnInit {
           assigneeId: formValue.assigneeId || undefined,
           dueDate: formValue.dueDate || undefined,
           estimatedPomodoros: formValue.estimatedPomodoros || undefined,
-          isCompleted: formValue.status === TaskStatus.Completed,
-          completedAt: formValue.status === TaskStatus.Completed ? new Date() : undefined,
+          isCompleted: formValue.status === TaskStatus.Done,
+          completedAt: formValue.status === TaskStatus.Done ? new Date() : undefined,
         };
 
         this.taskStore.updateTask({ id: this.taskId()!, request: updateRequest });
@@ -316,7 +318,7 @@ export class TaskNewComponent implements OnInit {
 
         // Reset to default values
         this.form.patchValue({
-          status: TaskStatus.Pending,
+          status: TaskStatus.Todo,
           priority: TaskPriority.Medium,
         });
 

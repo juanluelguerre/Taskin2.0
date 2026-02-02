@@ -17,9 +17,9 @@ export class StatusDisplayPipe implements PipeTransform {
       }
     } else { // task
       switch (normalizedStatus) {
-        case 'inprogress': return 'In Progress';
-        case 'pending': return 'Pending';
-        case 'completed': return 'Completed';
+        case 'todo': return 'To Do';
+        case 'doing': return 'In Progress';
+        case 'done': return 'Done';
         case 'cancelled': return 'Cancelled';
         default: return this.capitalize(status);
       }

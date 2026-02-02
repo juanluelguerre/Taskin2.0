@@ -9,17 +9,17 @@ export interface BaseEntity {
 
 // Enums
 export enum TaskStatus {
-  Pending = 'pending',
-  InProgress = 'in-progress',
-  Completed = 'completed',
-  Cancelled = 'cancelled',
+  Todo = 'Todo',
+  Doing = 'Doing',
+  Done = 'Done',
+  Cancelled = 'Cancelled',
 }
 
 export enum TaskPriority {
-  Low = 'low',
-  Medium = 'medium',
-  High = 'high',
-  Critical = 'critical',
+  Low = 'Low',
+  Medium = 'Medium',
+  High = 'High',
+  Critical = 'Critical',
 }
 
 // Main entity

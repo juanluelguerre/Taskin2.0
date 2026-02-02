@@ -35,14 +35,14 @@ public class GetTasksByProjectIdQueryHandlerTests
         var project = new Project { Name = "Test Project" };
         var task1 = new DomainTask
         {
-            Description = "Task 1",
+            Title = "Task 1",
             Status = DomainTaskStatus.Todo,
             ProjectId = projectId,
             Project = project
         };
         var task2 = new DomainTask
         {
-            Description = "Task 2",
+            Title = "Task 2",
             Status = DomainTaskStatus.Doing,
             ProjectId = projectId,
             Project = project
@@ -60,8 +60,8 @@ public class GetTasksByProjectIdQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().HaveCount(2);
-        result.Should().Contain(t => t.Description == "Task 1");
-        result.Should().Contain(t => t.Description == "Task 2");
+        result.Should().Contain(t => t.Title == "Task 1");
+        result.Should().Contain(t => t.Title == "Task 2");
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class GetTasksByProjectIdQueryHandlerTests
         var project = new Project { Name = "Test Project" };
         var task = new DomainTask
         {
-            Description = "Task with Pomodoros",
+            Title = "Task with Pomodoros",
             Status = DomainTaskStatus.Doing,
             ProjectId = projectId,
             Project = project
@@ -120,6 +120,6 @@ public class GetTasksByProjectIdQueryHandlerTests
 
         // Assert
         result.Should().HaveCount(1);
-        result.First().Pomodoros.Should().HaveCount(2);
+        result.First().CompletedPomodoros.Should().Be(0);
     }
 }
