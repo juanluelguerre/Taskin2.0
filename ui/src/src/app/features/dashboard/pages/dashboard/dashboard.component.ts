@@ -4,13 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { DashboardService, DashboardStats } from '../../services/dashboard.service';
-
-interface RecentActivity {
-  icon: string;
-  title: string;
-  time: string;
-}
+import { DashboardService, DashboardStats, RecentActivity } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,6 +44,15 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load dashboard stats:', err);
+      }
+    });
+
+    this.dashboardService.getRecentActivity(10).subscribe({
+      next: (activities) => {
+        this.recentActivities.set(activities);
+      },
+      error: (err) => {
+        console.error('Failed to load recent activity:', err);
       }
     });
   }

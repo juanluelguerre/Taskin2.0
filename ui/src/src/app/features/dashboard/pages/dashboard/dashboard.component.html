@@ -7,7 +7,7 @@
         <p class="mt-1 text-sm text-gray-600">Welcome back, {{ userName }}! Here's your productivity overview.</p>
       </div>
       <div class="mt-4 sm:mt-0">
-        <button mat-raised-button color="primary" class="flex items-center">
+        <button mat-raised-button color="primary" class="flex items-center" routerLink="/tasks/new">
           <mat-icon class="mr-2">add</mat-icon>
           Quick Add Task
         </button>
@@ -92,7 +92,7 @@
       <div class="p-6">
         @if (recentActivities().length > 0) {
           <div class="space-y-4">
-            @for (activity of recentActivities(); track activity.title) {
+            @for (activity of recentActivities(); track $index) {
               <div class="flex items-start space-x-3">
                 <div class="flex-shrink-0">
                   <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -122,11 +122,11 @@
       </div>
       <div class="p-6">
         <div class="grid grid-cols-2 gap-4">
-          <button mat-stroked-button routerLink="/projects" class="flex flex-col items-center p-4 h-20 justify-center">
+          <button mat-stroked-button routerLink="/projects/new" class="flex flex-col items-center p-4 h-20 justify-center">
             <mat-icon class="mb-1">folder_open</mat-icon>
             <span class="text-sm">New Project</span>
           </button>
-          <button mat-stroked-button routerLink="/tasks" class="flex flex-col items-center p-4 h-20 justify-center">
+          <button mat-stroked-button routerLink="/tasks/new" class="flex flex-col items-center p-4 h-20 justify-center">
             <mat-icon class="mb-1">add_task</mat-icon>
             <span class="text-sm">Add Task</span>
           </button>

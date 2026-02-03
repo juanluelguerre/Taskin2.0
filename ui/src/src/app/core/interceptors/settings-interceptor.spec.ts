@@ -30,12 +30,12 @@ describe('SettingsInterceptor', () => {
   });
 
   it('should set accept language', () => {
-    settings.setLanguage('zh-TW');
+    settings.setLanguage('es-ES');
 
     http.get('/me').subscribe();
     const testRequest = httpMock.expectOne('/me');
     testRequest.flush({ me: true });
 
-    expect(testRequest.request.headers.get('Accept-Language')).toEqual('zh-TW');
+    expect(testRequest.request.headers.get('Accept-Language')).toEqual('es-ES');
   });
 });

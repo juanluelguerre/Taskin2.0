@@ -1,10 +1,4 @@
 {
-  "header": {
-    "title": "Task[in]",
-    "language": "Language",
-    "logout": "Logout",
-    "profile": "Profile"
-  },
   "menu": {
     "dashboard": "Dashboard",
     "projects": "Projects",
@@ -12,9 +6,7 @@
     "pomodoros": "Pomodoros"
   },
   "messages": {
-    "error": "An error occurred. Please try again.",
-    "success": "Operation completed successfully.",
-    "warning": "Please check your input."
+    "error": "An error occurred. Please try again."
   },
   "projects": {
     "messages": {
@@ -52,5 +44,41 @@
     "messages": {
       "reset": "Form has been reset."
     }
-  }
+  },
+  "validation": {
+    "required": "This field is required",
+    "min": "This value should be no less than {{number}}",
+    "max": "This value should be no more than {{number}}",
+    "min_length": "This value should be no less than {{number}} characters",
+    "max_length": "This value should be no more than {{number}} characters",
+    "invalid_email": "Invalid email"
+  },
+  "paginator": {
+    "items_per_page_label": "Items per page:",
+    "previous_page_label": "Previous page",
+    "next_page_label": "Next page",
+    "first_page_label": "First page",
+    "last_page_label": "Last page",
+    "range_page_label_1": "no record",
+    "range_page_label_2": "{{startIndex}} - {{endIndex}} of {{length}}"
+  },
+  "position": "Position",
+  "name": "Name",
+  "weight": "Weight",
+  "symbol": "Symbol",
+  "gender": "Gender",
+  "mobile": "Mobile",
+  "tele": "Telephone",
+  "birthday": "Birthday",
+  "city": "City",
+  "address": "Address",
+  "website": "Website",
+  "company": "Company",
+  "email": "Email",
+  "operation": "Operation",
+  "edit": "Edit",
+  "delete": "Delete",
+  "confirm_delete": "Confirm delete?",
+  "ok": "Ok",
+  "close": "Close"
 }

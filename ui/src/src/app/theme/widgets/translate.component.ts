@@ -31,12 +31,10 @@ export class TranslateComponent {
   langs = {
     'en-US': 'English',
     'es-ES': 'Español',
-    'zh-CN': '中文简体',
-    'zh-TW': '中文繁体',
   };
 
   constructor() {
-    this.translate.addLangs(['en-US', 'es-ES', 'zh-CN', 'zh-TW']);
+    this.translate.addLangs(['en-US', 'es-ES']);
   }
 
   useLanguage(language: string) {

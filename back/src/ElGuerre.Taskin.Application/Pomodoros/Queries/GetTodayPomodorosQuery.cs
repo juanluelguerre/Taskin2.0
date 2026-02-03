@@ -1,8 +1,15 @@
-using ElGuerre.Taskin.Domain.Entities;
 using MediatR;
 
 namespace ElGuerre.Taskin.Application.Pomodoros.Queries;
 
-public class GetTodayPomodorosQuery : IRequest<List<Pomodoro>>
+public record TodayPomodoroDto(
+    Guid Id,
+    Guid TaskId,
+    DateTime StartTime,
+    int DurationInMinutes,
+    DateTime CreatedAt
+);
+
+public class GetTodayPomodorosQuery : IRequest<List<TodayPomodoroDto>>
 {
 }

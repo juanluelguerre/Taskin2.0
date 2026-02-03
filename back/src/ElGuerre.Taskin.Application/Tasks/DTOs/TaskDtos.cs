@@ -73,3 +73,10 @@ public record DashboardStatsDto(
     int WeeklyProgress,
     double FocusHours
 );
+
+public record RecentActivityDto(
+    string Icon,
+    string Title,
+    string Time,
+    DateTime Timestamp
+);

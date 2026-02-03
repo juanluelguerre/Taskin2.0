@@ -7,7 +7,9 @@
     "start": "ng serve --port 4200",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "i18n:extract": "transloco-keys-manager extract --langs en,es --input src --output src/assets/i18n",
+    "i18n:find": "transloco-keys-manager find --langs en,es --input src --output src/assets/i18n"
   },
   "dependencies": {
     "@angular/animations": "^19.2.0",
@@ -36,6 +38,7 @@
     "@angular-devkit/build-angular": "^19.2.0",
     "@angular/cli": "^19.2.0",
     "@angular/compiler-cli": "^19.2.0",
+    "@jsverse/transloco-keys-manager": "^8.1.0",
     "@types/jasmine": "~5.1.0",
     "autoprefixer": "^10.4.20",
     "jasmine-core": "~5.1.0",

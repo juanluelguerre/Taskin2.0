@@ -12,6 +12,12 @@ export interface DashboardStats {
   focusHours: number
 }
 
+export interface RecentActivity {
+  icon: string
+  title: string
+  time: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,5 +27,11 @@ export class DashboardService {
 
   getStats(): Observable<DashboardStats> {
     return this.http.get<DashboardStats>(`${this.baseUrl}/stats`)
+  }
+
+  getRecentActivity(limit: number = 10): Observable<RecentActivity[]> {
+    return this.http.get<RecentActivity[]>(`${this.baseUrl}/recent-activity`, {
+      params: { limit: limit.toString() }
+    })
   }
 }

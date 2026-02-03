@@ -12,7 +12,7 @@ export class TranslateLangService {
   load() {
     return new Promise<void>(resolve => {
       const browserLang = navigator.language;
-      const defaultLang = browserLang.match(/en-US|es-ES|zh-CN|zh-TW/) ? browserLang : 'en-US';
+      const defaultLang = browserLang.match(/en-US|es-ES/) ? browserLang : 'en-US';
 
       this.settings.setLanguage(defaultLang);
       this.translate.setDefaultLang(defaultLang);
