@@ -45,8 +45,12 @@ app-sidebar nav a:hover mat-icon { color: #fff; }
   font-family: inherit;
 }
 
-/* White background for form fields — html prefix for higher specificity than
-   Material's component styles injected after globals */
+/* White background for Material cards and form fields — html prefix for higher
+   specificity than Material's component styles injected after globals */
+html .mat-mdc-card {
+  background-color: #fff;
+}
+
 html .mdc-text-field--filled:not(.mdc-text-field--disabled) {
   background-color: #fff;
 }
