@@ -13,8 +13,6 @@ Taskin 2.0 is an Angular 19 application built with Angular Material, focusing on
 - `npm start` or `ng serve` - Start development server at http://localhost:4200/
 - `npm run build` or `ng build` - Build the project (output to `dist/`)
 - `npm run watch` or `ng build --watch --configuration development` - Build with watch mode
-- `npm test` or `ng test` - Run unit tests via Karma
-
 ### Component Generation
 
 When creating new components, use standalone mode:
@@ -40,8 +38,6 @@ ng g c modules/organizations/pages/component-name --standalone --skip-tests --in
 - NgRx Store for state management
 - Transloco for i18n (supports en-US, es-ES, zh-CN, zh-TW)
 - TailwindCSS for utility-first styling
-- Karma/Jasmine for testing
-
 ### Path Aliases
 
 The project uses TypeScript path aliases defined in `tsconfig.json`:

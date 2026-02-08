@@ -7,7 +7,6 @@
     "start": "ng serve --port 4200",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
     "i18n:extract": "transloco-keys-manager extract --langs en,es --input src --output src/assets/i18n",
     "i18n:find": "transloco-keys-manager find --langs en,es --input src --output src/assets/i18n"
   },
@@ -39,14 +38,7 @@
     "@angular/cli": "^19.2.0",
     "@angular/compiler-cli": "^19.2.0",
     "@jsverse/transloco-keys-manager": "^8.1.0",
-    "@types/jasmine": "~5.1.0",
     "autoprefixer": "^10.4.20",
-    "jasmine-core": "~5.1.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
     "typescript": "~5.6.2"

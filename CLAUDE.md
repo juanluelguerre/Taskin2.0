@@ -78,9 +78,6 @@ npm start  # or ng serve --port 4200
 # Build for production
 npm run build  # or ng build
 
-# Run unit tests
-npm test  # or ng test
-
 # Build with watch mode
 npm run watch  # or ng build --watch --configuration development
 ```
@@ -348,14 +345,6 @@ const routes: Routes = [
 ];
 ```
 
-### Testing
-
-Use Karma/Jasmine for unit tests:
-
-```bash
-npm test
-```
-
 ## Architecture
 
 ### Project Structure
@@ -398,11 +387,6 @@ features/
 
 - Development: `src/environments/environment.ts`
 - Production: `src/environments/environment.prod.ts`
-
-## Testing
-
-- Unit tests with Karma/Jasmine: `npm test`
-- E2E tests (configured but needs implementation)
 
 ---
 
@@ -525,7 +509,7 @@ dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuer
 
 ## Testing
 
-- Unit tests using xUnit (when implemented)
+- Unit tests using xUnit
 - Integration tests for API endpoints
 
 ## Technology Stack
@@ -595,7 +579,7 @@ Context7: Azure Bicep infrastructure as code
 
 ## DevOps & Monitoring
 
-- **CI/CD**: GitHub Actions with automated testing and deployment
+- **CI/CD**: GitHub Actions with automated deployment
 - **Monitoring**: Azure Application Insights with health checks
 - **Security**: Automated vulnerability scanning with Trivy
 
