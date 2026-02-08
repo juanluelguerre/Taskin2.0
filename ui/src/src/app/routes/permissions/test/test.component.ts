@@ -1,7 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { MtxAlertModule } from '@ng-matero/extensions/alert';
 import { NgxPermissionsModule, NgxPermissionsService } from 'ngx-permissions';
 
 import { PageHeaderComponent } from '@shared';
@@ -11,7 +10,7 @@ import { PageHeaderComponent } from '@shared';
   templateUrl: './test.component.html',
   styleUrl: './test.component.scss',
   standalone: true,
-  imports: [JsonPipe, MatCardModule, MtxAlertModule, NgxPermissionsModule, PageHeaderComponent],
+  imports: [JsonPipe, MatCardModule, NgxPermissionsModule, PageHeaderComponent],
 })
 export class PermissionsTestComponent {
   private readonly permissionsSrv = inject(NgxPermissionsService);

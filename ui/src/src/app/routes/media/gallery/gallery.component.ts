@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatLineModule } from '@angular/material/core';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MtxPhotoviewerModule } from '@ng-matero/extensions/photoviewer';
 
 import { PageHeaderComponent } from '@shared';
 
@@ -10,7 +9,7 @@ import { PageHeaderComponent } from '@shared';
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
   standalone: true,
-  imports: [MatGridListModule, MatLineModule, MtxPhotoviewerModule, PageHeaderComponent],
+  imports: [MatGridListModule, MatLineModule, PageHeaderComponent],
 })
 export class MediaGalleryComponent implements OnInit {
   dir = 'images/pixabay/';

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, signal } from '@angular/core'
 import { TitleCasePipe } from '@angular/common'
-import { CommonModule } from '@angular/common'
+
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
@@ -15,7 +15,6 @@ import { TaskStatus, TaskPriority, TaskFilters } from '../shared/types/task.type
   selector: 'app-task-filters',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -24,7 +23,7 @@ import { TaskStatus, TaskPriority, TaskFilters } from '../shared/types/task.type
     MatButtonToggleModule,
     MatIconModule,
     MatChipsModule
-  ],
+],
   templateUrl: './task-filters.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })

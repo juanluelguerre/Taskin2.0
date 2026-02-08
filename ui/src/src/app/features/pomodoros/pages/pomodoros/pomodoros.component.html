@@ -1,25 +1,21 @@
 <div class="space-y-6">
   <!-- Page Header -->
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">Pomodoro Timer</h1>
-        <p class="mt-1 text-sm text-gray-600">
-          Stay focused with the Pomodoro Technique - 25 minutes of focused work, 5 minutes break.
-        </p>
-      </div>
-      <div class="mt-4 sm:mt-0">
-        <div class="flex items-center space-x-2 text-sm text-gray-600">
-          <mat-icon class="text-green-600">check_circle</mat-icon>
-          <span>{{ completedPomodoros() }} completed today</span>
-        </div>
-      </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Pomodoro Timer</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        Stay focused with the Pomodoro Technique - 25 minutes of focused work, 5 minutes break.
+      </p>
+    </div>
+    <div class="flex items-center space-x-2 text-sm text-slate-500">
+      <mat-icon class="text-green-600">check_circle</mat-icon>
+      <span>{{ completedPomodoros() }} completed today</span>
     </div>
   </div>
 
   <!-- Timer Section -->
   <div class="max-w-2xl mx-auto">
-    <div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200 text-center">
+    <div class="bg-white rounded-xl p-8 border border-gray-100 text-center">
       <!-- Session Type Indicator -->
       <div class="mb-6">
         <div
@@ -137,9 +133,9 @@
   </div>
 
   <!-- Today's Sessions -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-    <div class="p-6 border-b border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900">Today's Sessions</h3>
+  <div class="bg-white rounded-xl border border-gray-100">
+    <div class="px-6 py-4 border-b border-gray-100">
+      <h3 class="text-sm font-semibold text-slate-900 uppercase tracking-wider">Today's Sessions</h3>
     </div>
     <div class="p-6">
       <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
@@ -188,20 +184,20 @@
   </div>
 
   <!-- Statistics -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 text-center">
-      <div class="text-3xl font-bold text-blue-600 mb-2">{{ totalFocusTime() }}</div>
-      <div class="text-sm text-gray-600">Total Focus Time Today</div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-blue-500);">
+      <div class="text-2xl font-bold text-slate-900 mb-1">{{ totalFocusTime() }}</div>
+      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Focus Time Today</div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 text-center">
-      <div class="text-3xl font-bold text-green-600 mb-2">{{ averageSessionLength() }}</div>
-      <div class="text-sm text-gray-600">Average Session Length</div>
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-emerald-500);">
+      <div class="text-2xl font-bold text-slate-900 mb-1">{{ averageSessionLength() }}</div>
+      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Average Session Length</div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 text-center">
-      <div class="text-3xl font-bold text-purple-600 mb-2">{{ productivityScore() }}%</div>
-      <div class="text-sm text-gray-600">Productivity Score</div>
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-violet-500);">
+      <div class="text-2xl font-bold text-slate-900 mb-1">{{ productivityScore() }}%</div>
+      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Productivity Score</div>
     </div>
   </div>
 </div>

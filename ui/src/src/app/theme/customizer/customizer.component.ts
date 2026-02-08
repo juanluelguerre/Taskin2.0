@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MtxDrawer, MtxDrawerModule, MtxDrawerRef } from '@ng-matero/extensions/drawer';
+import { Dialog, DialogRef, DialogModule } from '@angular/cdk/dialog';
 import { Subscription } from 'rxjs';
 
 import { AppSettings, SettingsService } from '@core';
@@ -36,7 +36,7 @@ import { DisableControlDirective } from '@shared';
     MatRadioModule,
     MatSlideToggleModule,
     MatTooltipModule,
-    MtxDrawerModule,
+    DialogModule,
     DisableControlDirective,
   ],
 })
@@ -44,7 +44,7 @@ export class CustomizerComponent {
   @Output() optionsChange = new EventEmitter<AppSettings>();
 
   private readonly settings = inject(SettingsService);
-  private readonly drawer = inject(MtxDrawer);
+  private readonly dialog = inject(Dialog);
   private readonly fb = inject(FormBuilder);
 
   form = this.fb.nonNullable.group<AppSettings>(this.settings.options);
@@ -65,7 +65,7 @@ export class CustomizerComponent {
 
   private dragging = false;
 
-  private drawerRef?: MtxDrawerRef;
+  private dialogRef?: DialogRef;
 
   onDragStart(event: CdkDragStart) {
     this.dragging = true;
@@ -77,24 +77,25 @@ export class CustomizerComponent {
       return;
     }
 
-    this.drawerRef = this.drawer.open(templateRef, {
-      position: this.form.get('dir')?.value === 'rtl' ? 'left' : 'right',
+    this.dialogRef = this.dialog.open(templateRef, {
+      panelClass: 'customizer-drawer-panel',
+      hasBackdrop: true,
       width: '320px',
     });
 
-    this.drawerRef.afterOpened().subscribe(() => {
+    this.dialogRef.opened.subscribe(() => {
       this.formSubscription = this.form.valueChanges.subscribe(value => {
         this.sendOptions(this.form.getRawValue());
       });
     });
 
-    this.drawerRef.afterDismissed().subscribe(() => {
+    this.dialogRef.closed.subscribe(() => {
       this.formSubscription.unsubscribe();
     });
   }
 
   closePanel() {
-    this.drawerRef?.dismiss();
+    this.dialogRef?.close();
   }
 
   sendOptions(options: AppSettings) {

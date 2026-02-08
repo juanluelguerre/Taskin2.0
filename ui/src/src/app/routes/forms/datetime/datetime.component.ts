@@ -7,34 +7,28 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { DateAdapter } from '@angular/material/core';
+import { DateAdapter, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {
-  MtxDatetimepickerFilterType,
-  MtxDatetimepickerModule,
-} from '@ng-matero/extensions/datetimepicker';
 import { TranslateService } from '@ngx-translate/core';
-import * as _moment from 'moment';
-import { default as _rollupMoment } from 'moment';
 import { Subscription } from 'rxjs';
 
 import { PageHeaderComponent } from '@shared';
-
-const moment = _rollupMoment || _moment;
 
 @Component({
   selector: 'app-forms-datetime',
   templateUrl: './datetime.component.html',
   styleUrl: './datetime.component.scss',
   standalone: true,
+  providers: [provideNativeDateAdapter()],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
-    MtxDatetimepickerModule,
     PageHeaderComponent,
   ],
 })
@@ -43,36 +37,30 @@ export class FormsDatetimeComponent implements OnInit, OnDestroy {
   private readonly dateAdapter = inject(DateAdapter);
   private readonly translate = inject(TranslateService);
 
-  type = 'moment';
+  type = 'native';
 
   group: FormGroup;
-  today: moment.Moment;
-  tomorrow: moment.Moment;
-  min: moment.Moment;
-  max: moment.Moment;
-  start: moment.Moment;
-  filter: (date: moment.Moment | null, type: MtxDatetimepickerFilterType) => boolean;
+  today: Date;
+  tomorrow: Date;
+  min: Date;
+  max: Date;
+  start: Date;
+  filter: (date: Date | null) => boolean;
 
   private translateSubscription = Subscription.EMPTY;
 
   constructor() {
-    this.today = moment.utc();
-    this.tomorrow = moment.utc().date(moment.utc().date() + 1);
-    this.min = this.today.clone().year(2018).month(10).date(3).hour(11).minute(10);
-    this.max = this.min.clone().date(4).minute(45);
-    this.start = this.today.clone().year(1930).month(9).date(28);
-    this.filter = (date: moment.Moment | null, type: MtxDatetimepickerFilterType) => {
+    this.today = new Date();
+    this.tomorrow = new Date();
+    this.tomorrow.setDate(this.tomorrow.getDate() + 1);
+    this.min = new Date(2018, 10, 3);
+    this.max = new Date(2018, 10, 4);
+    this.start = new Date(1930, 9, 28);
+    this.filter = (date: Date | null) => {
       if (date === null) {
         return true;
       }
-      switch (type) {
-        case MtxDatetimepickerFilterType.DATE:
-          return date.year() % 2 === 0 && date.month() % 2 === 0 && date.date() % 2 === 0;
-        case MtxDatetimepickerFilterType.HOUR:
-          return date.hour() % 2 === 0;
-        case MtxDatetimepickerFilterType.MINUTE:
-          return date.minute() % 2 === 0;
-      }
+      return date.getFullYear() % 2 === 0 && date.getMonth() % 2 === 0 && date.getDate() % 2 === 0;
     };
 
     this.group = this.fb.group({

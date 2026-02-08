@@ -26,13 +26,24 @@
   <button class="m-x-4" mat-button color="warn" (click)="reset()">Reset</button>
 </form>
 
-<mtx-grid [data]="list"
-          [columns]="columns"
-          [length]="total"
-          [loading]="isLoading"
-          [pageOnFront]="false"
-          [pageIndex]="query.page"
-          [pageSize]="query.per_page"
-          [pageSizeOptions]="[5,10,20]"
-          (page)="getNextPage($event)">
-</mtx-grid>
+@if (isLoading) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+<mat-table [dataSource]="list">
+  @for (column of columns; track column.field) {
+    <ng-container [matColumnDef]="column.field">
+      <mat-header-cell *matHeaderCellDef [style.width]="column.width">{{ column.header }}</mat-header-cell>
+      <mat-cell *matCellDef="let row" [style.width]="column.width">{{ getNestedValue(row, column.field) }}</mat-cell>
+    </ng-container>
+  }
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator [length]="total"
+               [pageIndex]="query.page"
+               [pageSize]="query.per_page"
+               [pageSizeOptions]="[5,10,20]"
+               (page)="getNextPage($event)">
+</mat-paginator>

@@ -9,10 +9,8 @@
         </mat-card-header>
         <mat-card-content>
           <h2 class="m-t-0 m-b-8">{{stat.amount}}</h2>
-          <mtx-progress [value]="stat.progress.value"
-            height="2px"
-            foreground="rgba(255,255,255,1)"
-            background='rgba(0,0,0,.4)' />
+          <mat-progress-bar mode="determinate" [value]="stat.progress.value"
+            class="h-0.5" />
           <small class="text-muted">Monthly</small>
         </mat-card-content>
       </mat-card>

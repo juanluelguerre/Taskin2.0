@@ -5,28 +5,27 @@
 
 <div class="space-y-6">
   <!-- Page Header -->
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">Tasks</h1>
-        <p class="mt-1 text-sm text-gray-600">Manage your tasks and stay organized across all projects.</p>
-      </div>
-      <div class="mt-4 sm:mt-0 flex items-center space-x-3">
-        <button mat-icon-button 
-                matTooltip="Refresh tasks" 
-                (click)="onRefresh()"
-                [disabled]="loading()">
-          <mat-icon>refresh</mat-icon>
-        </button>
-        
-        <button mat-raised-button 
-                color="primary" 
-                (click)="onNewTaskClick()"
-                [disabled]="saving()">
-          <mat-icon class="mr-2">add</mat-icon>
-          New Task
-        </button>
-      </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Tasks</h1>
+      <p class="mt-1 text-sm text-slate-500">Manage your tasks and stay organized across all projects.</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <button mat-icon-button
+              matTooltip="Refresh tasks"
+              (click)="onRefresh()"
+              [disabled]="loading()"
+              class="text-slate-500">
+        <mat-icon>refresh</mat-icon>
+      </button>
+
+      <button mat-flat-button
+              color="primary"
+              (click)="onNewTaskClick()"
+              [disabled]="saving()">
+        <mat-icon class="mr-2">add</mat-icon>
+        New Task
+      </button>
     </div>
   </div>
 
@@ -60,7 +59,7 @@
   </app-task-filters>
 
   <!-- View Mode Toggle -->
-  <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+  <div class="bg-white rounded-lg shadow-xs p-4 border border-gray-200">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <h3 class="text-lg font-semibold text-gray-900">
@@ -93,14 +92,14 @@
   <!-- Tasks Content -->
   @if (loading() && tasks().length === 0) {
     <!-- Loading state -->
-    <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+    <div class="bg-white rounded-lg shadow-xs p-12 text-center">
       <mat-icon class="text-gray-300 mb-4 animate-spin" style="font-size: 48px; width: 48px; height: 48px;">sync</mat-icon>
       <h3 class="text-lg font-medium text-gray-900 mb-2">Loading tasks...</h3>
       <p class="text-gray-600">Please wait while we fetch your tasks.</p>
     </div>
   } @else if (tasks().length === 0) {
     <!-- Empty state -->
-    <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+    <div class="bg-white rounded-lg shadow-xs p-12 text-center">
       <mat-icon class="text-gray-300 mb-4" style="font-size: 48px; width: 48px; height: 48px;">task_alt</mat-icon>
       <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks found</h3>
       <p class="text-gray-600 mb-6">
@@ -143,7 +142,7 @@
       @case ('kanban') {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <!-- Pending Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
             <div class="p-4 border-b border-gray-200">
               <h4 class="font-medium text-gray-900">Pending</h4>
               <p class="text-sm text-gray-500">{{ stats().pending }} tasks</p>
@@ -165,7 +164,7 @@
           </div>
           
           <!-- In Progress Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
             <div class="p-4 border-b border-gray-200">
               <h4 class="font-medium text-gray-900">In Progress</h4>
               <p class="text-sm text-gray-500">{{ stats().inProgress }} tasks</p>
@@ -187,7 +186,7 @@
           </div>
           
           <!-- Completed Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
             <div class="p-4 border-b border-gray-200">
               <h4 class="font-medium text-gray-900">Completed</h4>
               <p class="text-sm text-gray-500">{{ stats().completed }} tasks</p>
@@ -209,7 +208,7 @@
           </div>
           
           <!-- Cancelled Column -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
             <div class="p-4 border-b border-gray-200">
               <h4 class="font-medium text-gray-900">Cancelled</h4>
               <p class="text-sm text-gray-500">
@@ -236,7 +235,7 @@
       
       @default {
         <!-- List View -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-white rounded-lg shadow-xs border border-gray-200">
           <div class="divide-y divide-gray-200">
             @for (task of tasks(); track task.id) {
               <div class="p-6">
@@ -257,7 +256,7 @@
     
     <!-- Pagination -->
     @if (totalPages() > 1) {
-      <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+      <div class="bg-white rounded-lg shadow-xs p-6 border border-gray-200">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <button mat-icon-button 

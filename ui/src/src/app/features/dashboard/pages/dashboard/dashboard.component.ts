@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,12 +10,11 @@ import { DashboardService, DashboardStats, RecentActivity } from '../../services
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule
-  ],
+],
   templateUrl: './dashboard.component.html',
   styles: ``,
   encapsulation: ViewEncapsulation.None,
@@ -47,7 +46,7 @@ export class DashboardComponent implements OnInit {
       }
     });
 
-    this.dashboardService.getRecentActivity(10).subscribe({
+    this.dashboardService.getRecentActivity(5).subscribe({
       next: (activities) => {
         this.recentActivities.set(activities);
       },

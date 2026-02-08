@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -26,7 +26,6 @@ import { ProjectStore } from '../../stores/project.store';
   selector: 'app-project-new',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
@@ -36,8 +35,8 @@ import { ProjectStore } from '../../stores/project.store';
     MatDatepickerModule,
     MatNativeDateModule,
     MatCardModule,
-    MatProgressSpinnerModule,
-  ],
+    MatProgressSpinnerModule
+],
   providers: [ProjectStore],
   templateUrl: './project-new.component.html',
   styleUrl: './project-new.component.scss',

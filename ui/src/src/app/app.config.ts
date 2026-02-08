@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection, isDevMode } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection, isDevMode } from '@angular/core';
 import {
   PreloadAllModules,
   provideRouter,
@@ -23,7 +23,7 @@ import { provideFaro } from './core/observability/faro.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideRouter(
       routes,
       withPreloading(PreloadAllModules),
@@ -48,7 +48,6 @@ export const appConfig: ApplicationConfig = {
       autoPause: true,
       trace: false,
       traceLimit: 75,
-      connectInZone: true,
     }),
     provideIcons(),
     ...provideFaro(),

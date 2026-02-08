@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,7 +22,7 @@ interface sidebarMenu {
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
-  imports: [CommonModule, RouterModule, MatSidenavModule, MatIconModule],
+  imports: [RouterModule, MatSidenavModule, MatIconModule],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,7 +46,7 @@ export class SidebarComponent {
     // Map MDI icons to Material icons
     const iconMap: Record<string, string> = {
       'mdi:view-dashboard-variant-outline': 'dashboard',
-      'mdi:folder-outline': 'folder',
+      'mdi:folder-outline': 'folder_open',
       'mdi:check-circle-outline': 'task_alt',
       'mdi:timer-outline': 'timer',
       'mdi:account-outline': 'person',

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -23,7 +23,6 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
   selector: 'app-tasks',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
@@ -31,8 +30,8 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
     MatButtonToggleModule,
     TaskCardComponent,
     TaskStatsComponent,
-    TaskFiltersComponent,
-  ],
+    TaskFiltersComponent
+],
   templateUrl: './tasks.component.html',
   styles: `
     .loading-bar {

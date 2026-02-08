@@ -5,7 +5,7 @@ import {
   HostListener,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidenav/sidebar.component';
 import { RouterModule } from '@angular/router';
@@ -15,7 +15,7 @@ import { FooterComponent } from '../footer/footer.component';
   selector: 'app-layout',
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css'],
-  imports: [CommonModule, RouterModule, HeaderComponent, SidebarComponent, FooterComponent],
+  imports: [RouterModule, HeaderComponent, SidebarComponent, FooterComponent],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,18 +23,20 @@ import { FooterComponent } from '../footer/footer.component';
 export class LayoutComponent {
   isSidebarMinimized = signal(false);
   isSidebarHidden = signal(true);
+  isDesktop = signal(false);
 
   constructor() {
     this.checkScreenSize();
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     this.checkScreenSize();
   }
 
   private checkScreenSize() {
     const isDesktop = window.innerWidth >= 768;
+    this.isDesktop.set(isDesktop);
     if (isDesktop) {
       this.isSidebarHidden.set(false);
     } else {

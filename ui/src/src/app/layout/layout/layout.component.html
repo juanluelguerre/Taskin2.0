@@ -1,25 +1,25 @@
-<div class="flex h-screen bg-gray-50">
+<div class="flex h-screen bg-slate-50">
   <!-- Sidebar -->
   <app-sidebar
     [isMinimized]="isSidebarMinimized()"
     [isHidden]="isSidebarHidden()"
-    class="h-screen z-30 transition-all duration-300 ease-in-out"
-    [class.transform]="isSidebarHidden()"
+    class="h-screen z-30 transition-all duration-300 ease-in-out top-0 left-0"
+    [style.position]="isDesktop() ? 'relative' : 'fixed'"
     [class.-translate-x-full]="isSidebarHidden()"
-    [class.md:translate-x-0]="true"
   ></app-sidebar>
 
   <!-- Main Container -->
   <div class="flex flex-col flex-1 min-w-0">
     <!-- Header -->
     <app-header
+      [isDesktop]="isDesktop()"
       (toggleSidebarEvent)="toggleSidebar()"
       (minimizeSidebarEvent)="minimizeSidebar()"
-      class="sticky top-0 z-20 shadow-sm"
+      class="sticky top-0 z-20 shadow-xs"
     ></app-header>
 
     <!-- Main Content Area -->
-    <main class="flex-1 p-6 overflow-auto bg-gray-50">
+    <main class="flex-1 p-6 overflow-auto bg-slate-50">
       <div class="max-w-7xl mx-auto">
         <router-outlet></router-outlet>
       </div>
@@ -30,9 +30,10 @@
   </div>
 
   <!-- Mobile Overlay -->
-  <div
-    *ngIf="!isSidebarHidden()"
-    class="fixed inset-0 z-20 bg-black bg-opacity-50 md:hidden mobile-overlay"
-    (click)="toggleSidebar()"
-  ></div>
+  @if (!isSidebarHidden() && !isDesktop()) {
+    <div
+      class="fixed inset-0 z-20 bg-black bg-opacity-50 mobile-overlay"
+      (click)="toggleSidebar()"
+    ></div>
+  }
 </div>

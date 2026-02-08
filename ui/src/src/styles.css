@@ -1,10 +1,66 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "./**/*.{html,ts}";
+
+@theme {
+  --color-primary: #2563EB;
+  --color-secondary: #475569;
+  --color-accent: #14B8A6;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+/* Fix: Material icon color (unlayered) overrides Tailwind text-* (layered).
+   These unlayered rules with higher specificity (type+class) restore Tailwind colors on mat-icon. */
+mat-icon.text-blue-500 { color: var(--color-blue-500); }
+mat-icon.text-blue-600 { color: var(--color-blue-600); }
+mat-icon.text-yellow-600 { color: var(--color-yellow-600); }
+mat-icon.text-green-600 { color: var(--color-green-600); }
+mat-icon.text-red-400 { color: var(--color-red-400); }
+mat-icon.text-red-500 { color: var(--color-red-500); }
+mat-icon.text-red-600 { color: var(--color-red-600); }
+mat-icon.text-orange-600 { color: var(--color-orange-600); }
+mat-icon.text-purple-600 { color: var(--color-purple-600); }
+mat-icon.text-indigo-600 { color: var(--color-indigo-600); }
+mat-icon.text-gray-300 { color: var(--color-gray-300); }
+mat-icon.text-gray-400 { color: var(--color-gray-400); }
+mat-icon.text-gray-500 { color: var(--color-gray-500); }
+mat-icon.text-slate-400 { color: var(--color-slate-400); }
+mat-icon.text-slate-500 { color: var(--color-slate-500); }
+.group:hover mat-icon.group-hover\:text-white { color: #fff; }
+.group:hover mat-icon.group-hover\:text-gray-700 { color: var(--color-gray-700); }
+
+/* Fix: Sidebar link colors - global `a { color: var(--link-color) }` (unlayered)
+   overrides Tailwind's layered text-slate-300. These unlayered rules restore sidebar colors. */
+app-sidebar nav a { color: var(--color-slate-300); }
+app-sidebar nav a.bg-blue-600 { color: #fff; }
+app-sidebar nav a.bg-blue-600 mat-icon { color: #fff; }
+app-sidebar nav a mat-icon { color: var(--color-slate-400); }
+app-sidebar nav a:hover { color: #fff; }
+app-sidebar nav a:hover mat-icon { color: #fff; }
+
+/* Quick Actions links - prevent global a { color: var(--link-color) } override */
+.text-slate-700 a, a.text-slate-700, a span.text-slate-700 { color: var(--color-slate-700); }
 
 /* Minimal Material Design fixes for Tailwind conflicts */
 .mat-mdc-form-field {
   font-family: inherit;
+}
+
+/* White background for form fields — html prefix for higher specificity than
+   Material's component styles injected after globals */
+html .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #fff;
+}
+html .mdc-text-field--filled.mdc-text-field--disabled {
+  background-color: #f8fafc;
+}
+
+/* White background for Material menus and select panels */
+html .mat-mdc-menu-panel {
+  --mat-menu-container-color: #fff;
+}
+
+html div.mat-mdc-select-panel {
+  --mat-select-panel-background-color: #fff;
 }
 
 /* Preserve Material's native outline behavior */
@@ -15,4 +71,14 @@
 /* Fix for select dropdown positioning */
 .cdk-overlay-pane {
   z-index: 1000;
+}
+
+/* Smooth page transitions */
+router-outlet + * {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

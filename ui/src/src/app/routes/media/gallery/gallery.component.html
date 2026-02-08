@@ -1,9 +1,8 @@
 <page-header class="bg-rose-70" />
 
 <p>
-  The media pictures are powered by
-  <a href="https://github.com/nzbin/photoviewer" target="_blank">PhotoViewer</a>,
-  you can click the picture to enlarge it.
+  Browse the media gallery below.
+  You can click any picture to view it in detail.
 </p>
 
 <mat-grid-list cols="4" rowHeight="1:1">
@@ -13,9 +12,6 @@
         <span matLine>Gallery Image: {{ i+1 }}</span>
       </mat-grid-tile-header>
       <img class="w-full h-full object-cover cursor-pointer"
-        mtxPhotoviewer
-        [mtxPhotoviewerItems]="images"
-        [mtxPhotoviewerOptions]="{ index: i }"
         [src]="image.src" alt="Gallery Image {{ i+1 }}" />
     </mat-grid-tile>
   }

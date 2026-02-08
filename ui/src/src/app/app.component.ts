@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LayoutComponent } from './layout/layout/layout.component';
@@ -7,7 +7,7 @@ import { LayoutComponent } from './layout/layout/layout.component';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: [],
-  imports: [CommonModule, RouterModule, LayoutComponent],
+  imports: [RouterModule, LayoutComponent],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

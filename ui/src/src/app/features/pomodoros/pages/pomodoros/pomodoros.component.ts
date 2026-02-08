@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, OnDestroy, OnInit, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -15,11 +15,10 @@ interface Session {
   selector: 'app-pomodoros',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule
-  ],
+],
   templateUrl: './pomodoros.component.html',
   styles: ``,
   encapsulation: ViewEncapsulation.None,

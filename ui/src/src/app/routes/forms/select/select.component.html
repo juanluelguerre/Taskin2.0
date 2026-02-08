@@ -2,10 +2,9 @@
 
 <div class="m-b-16">
   The following examples use the
-  <a href="https://ng-matero.github.io/extensions/components/select" target="_blank">
-    <code>select</code></a> component of
-  <a href="https://github.com/ng-matero/extensions" target="_blank">Material Extensions</a>,
-  it is a Material form field wrapper of <code>ng-select</code>.
+  <a href="https://material.angular.io/components/select" target="_blank">
+    <code>mat-select</code></a> component of
+  <a href="https://material.angular.io" target="_blank">Angular Material</a>.
 </div>
 
 <div class="row">
@@ -17,13 +16,16 @@
 
       <mat-card-content>
         <p class="m-t-0">
-          Most common case is showing data from backend API and with mtx-select this is extremely
+          Most common case is showing data from backend API and with mat-select this is extremely
           simple since you can bind directly to observable when using angular <b> | async</b> pipe.
         </p>
         <mat-form-field class="w-full">
           <mat-label>select person</mat-label>
-          <mtx-select [items]="(people$ | async)!" bindLabel="name" bindValue="id" autofocus
-            [(ngModel)]="selectedPersonId" />
+          <mat-select [(ngModel)]="selectedPersonId">
+            @for (person of (people$ | async)!; track person.id) {
+              <mat-option [value]="person.id">{{ person.name }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
         Selected: {{selectedPersonId}}
         <mat-divider class="m-y-16" />
@@ -33,8 +35,11 @@
         </p>
         <mat-form-field class="w-full">
           <mat-label>select person</mat-label>
-          <mtx-select [items]="people" bindLabel="name" bindValue="id"
-            [(ngModel)]="selectedPersonId2" />
+          <mat-select [(ngModel)]="selectedPersonId2">
+            @for (person of people; track person.id) {
+              <mat-option [value]="person.id">{{ person.name }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
         Selected: {{selectedPersonId2}}
         <mat-divider class="m-y-16" />
@@ -45,14 +50,18 @@
         </p>
         <mat-form-field class="w-full">
           <mat-label>select person</mat-label>
-          <mtx-select [items]="simpleItems" [(ngModel)]="selectedSimpleItem" />
+          <mat-select [(ngModel)]="selectedSimpleItem">
+            @for (item of simpleItems; track item) {
+              <mat-option [value]="item">{{ item }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
         Selected: {{selectedSimpleItem | json}}
         <mat-divider class="m-y-16" />
 
         <p>
           If you have simple use case, you can omit items array and bind options directly in html
-          using <b>ng-option</b> component.
+          using <b>mat-option</b> component.
         </p>
         <button class="m-b-8" type="button" mat-flat-button (click)="toggleDisabled()">
           Toggle option[1] disabled
@@ -60,12 +69,12 @@
 
         <mat-form-field class="w-full">
           <mat-label>Select car</mat-label>
-          <mtx-select [(ngModel)]="selectedCarId">
+          <mat-select [(ngModel)]="selectedCarId">
             @for (car of cars; track car) {
-              <mtx-option [value]="car.id" [disabled]="car.disabled">{{car.name}}</mtx-option>
+              <mat-option [value]="car.id" [disabled]="car.disabled">{{car.name}}</mat-option>
             }
-            <mtx-option [value]="'custom'">Custom</mtx-option>
-          </mtx-select>
+            <mat-option [value]="'custom'">Custom</mat-option>
+          </mat-select>
         </mat-form-field>
 
         Selected car ID: {{selectedCarId | json}}
@@ -83,7 +92,11 @@
         <label>Default tags</label>
         <mat-form-field class="w-full">
           <mat-label>Select item</mat-label>
-          <mtx-select [items]="[]" [addTag]="true" [(ngModel)]="selectedCompany" />
+          <mat-select [(ngModel)]="selectedCompany">
+            @for (company of companies; track company.id) {
+              <mat-option [value]="company">{{ company.name }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
         <p>
@@ -94,8 +107,11 @@
         <label>Custom tags</label>
         <mat-form-field class="w-full">
           <mat-label>Select item</mat-label>
-          <mtx-select [items]="companies" [addTag]="addTag" [hideSelected]="true" [multiple]="true"
-            bindLabel="name" [(ngModel)]="selectedCompanyCustom" />
+          <mat-select [(ngModel)]="selectedCompanyCustom" multiple>
+            @for (company of companies; track company.id) {
+              <mat-option [value]="company">{{ company.name }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
         <p>
@@ -107,22 +123,23 @@
         <label>Server side tags</label>
         <mat-form-field class="w-full">
           <mat-label>Select item</mat-label>
-          <mtx-select [items]="companies" [addTag]="addTagPromise" [multiple]="true"
-            bindLabel="name" [loading]="loading"
-            [(ngModel)]="selectedCompanyCustomPromise">
-            <ng-template ng-tag-tmp let-search="searchTerm">
-              <b>create new</b>: {{search}}
-            </ng-template>
-          </mtx-select>
+          <mat-select [(ngModel)]="selectedCompanyCustomPromise" multiple>
+            @for (company of companies; track company.id) {
+              <mat-option [value]="company">{{ company.name }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
         <mat-divider class="m-y-16" />
 
-        <label>Tagging without dropdown. Press enter to add item</label>
+        <label>Select items</label>
         <mat-form-field class="w-full">
           <mat-label>Select item</mat-label>
-          <mtx-select [items]="[]" [addTag]="true" [multiple]="true" [selectOnTab]="true"
-            [isOpen]="false" />
+          <mat-select multiple>
+            @for (company of companies; track company.id) {
+              <mat-option [value]="company">{{ company.name }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
       </mat-card-content>
@@ -136,7 +153,7 @@
       </mat-card-header>
 
       <mat-card-content>
-        <p>Test ng-select in a dialog.</p>
+        <p>Test mat-select in a dialog.</p>
         <button mat-flat-button (click)="openDialog()">Open Dialog</button>
       </mat-card-content>
     </mat-card>

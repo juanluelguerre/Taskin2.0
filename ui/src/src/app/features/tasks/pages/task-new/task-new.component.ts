@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -38,7 +38,6 @@ import {
   selector: 'app-task-new',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
@@ -51,8 +50,8 @@ import {
     MatChipsModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatAutocompleteModule,
-  ],
+    MatAutocompleteModule
+],
   templateUrl: './task-new.component.html',
   styleUrl: './task-new.component.scss',
   encapsulation: ViewEncapsulation.None,

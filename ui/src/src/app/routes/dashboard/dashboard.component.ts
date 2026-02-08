@@ -1,8 +1,7 @@
 import {
-  AfterViewInit,
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
-  NgZone,
   OnDestroy,
   OnInit,
   inject,
@@ -15,7 +14,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterLink } from '@angular/router';
-import { MtxProgressModule } from '@ng-matero/extensions/progress';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Subscription } from 'rxjs';
 
 import { AppSettings, SettingsService } from '@core';
@@ -38,12 +37,11 @@ import { DashboardService } from './dashboard.service';
     MatGridListModule,
     MatTableModule,
     MatTabsModule,
-    MtxProgressModule,
+    MatProgressBarModule,
     BreadcrumbComponent,
   ],
 })
-export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
-  private readonly ngZone = inject(NgZone);
+export class DashboardComponent implements OnInit, OnDestroy {
   private readonly settings = inject(SettingsService);
   private readonly dashboardSrv = inject(DashboardService);
 
@@ -60,16 +58,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   notifySubscription = Subscription.EMPTY;
 
+  constructor() {
+    afterNextRender(() => this.initCharts());
+  }
+
   ngOnInit() {
     this.notifySubscription = this.settings.notify.subscribe(opts => {
       console.log(opts);
 
       this.updateCharts(opts);
     });
-  }
-
-  ngAfterViewInit() {
-    this.ngZone.runOutsideAngular(() => this.initCharts());
   }
 
   ngOnDestroy() {

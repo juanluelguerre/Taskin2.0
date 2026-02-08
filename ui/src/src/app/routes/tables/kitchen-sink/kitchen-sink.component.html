@@ -22,36 +22,50 @@
 <div class="m-y-8">
   <button mat-button (click)="updateCell()">Update cell</button>
   <button mat-button (click)="updateList()">Update list</button>
-
-  <a mat-button
-     href="https://ng-matero.github.io/extensions/components/data-grid"
-     target="_blank">View more examples</a>
 </div>
 
-<mtx-grid [data]="list"
-          [columns]="columns"
-          [loading]="isLoading"
-          [columnResizable]="columnResizable"
-          [multiSelectable]="multiSelectable"
-          [rowSelectable]="rowSelectable"
-          [hideRowSelectionCheckbox]="hideRowSelectionCheckbox"
-          [rowHover]="rowHover"
-          [rowStriped]="rowStriped"
-          [showToolbar]="showToolbar"
-          [toolbarTitle]="'Data Grid Toolbar'"
-          [columnHideable]="columnHideable"
-          [columnSortable]="columnSortable"
-          [columnPinnable]="columnPinnable"
-          [expandable]="expandable"
-          [expansionTemplate]="expansionTpl"
-          [pageOnFront]="showPaginator"
-          [showPaginator]="showPaginator"
-          [pageSizeOptions]="[5,10,50,100]"
-          [pageIndex]="0"
-          [pageSize]="5"
-          (sortChange)="changeSort($event)"
-          (selectionChange)="changeSelect($event)">
-</mtx-grid>
-<ng-template #expansionTpl let-row>
-  {{row.name}}
-</ng-template>
+@if (isLoading) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+<mat-table [dataSource]="list" matSort (matSortChange)="changeSort($event)">
+  @for (column of columns; track column.field) {
+    @if (!column.hide) {
+      <ng-container [matColumnDef]="column.field">
+        <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.sortable ? column.field : ''"
+          [style.min-width.px]="column.minWidth" [style.width]="column.width">
+          {{ column.header }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [style.min-width.px]="column.minWidth" [style.width]="column.width">
+          {{ row[column.field] }}
+        </mat-cell>
+      </ng-container>
+    }
+  }
+
+  <ng-container matColumnDef="operation">
+    <mat-header-cell *matHeaderCellDef style="min-width: 140px; width: 140px;">Operation</mat-header-cell>
+    <mat-cell *matCellDef="let row" style="min-width: 140px; width: 140px;">
+      <button mat-icon-button (click)="edit(row)" title="Edit">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="delete(row)" title="Delete">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"
+    [class.row-hover]="rowHover"
+    [class.row-striped]="rowStriped">
+  </mat-row>
+</mat-table>
+
+@if (showPaginator) {
+  <mat-paginator [pageSizeOptions]="[5,10,50,100]"
+                 [pageIndex]="0"
+                 [pageSize]="5"
+                 [length]="list.length">
+  </mat-paginator>
+}

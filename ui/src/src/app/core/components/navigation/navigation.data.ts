@@ -12,7 +12,7 @@ export const defaultNavigation: NavigationItem[] = [
     id: 'projects',
     title: 'menu.projects',
     type: 'basic',
-    icon: 'folder',
+    icon: 'folder_open',
     link: '/projects',
   },
   {

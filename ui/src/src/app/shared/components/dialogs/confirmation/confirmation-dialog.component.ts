@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation, inject } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { CommonModule, NgClass } from '@angular/common'
+import { CommonModule, NgClass } from '@angular/common';
 import { UiConfirmationConfig } from './confirmation.types'
 
 @Component({

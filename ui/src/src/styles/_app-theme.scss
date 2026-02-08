@@ -1,4 +1,3 @@
-@use 'sass:color';
 @use 'sass:map';
 @use '@angular/material' as mat;
 
@@ -11,34 +10,47 @@ html {
   --sidenav-collapsed-width: 4rem;
 }
 
-// Tokens for the app that are based on the current theme.
-@mixin theme($theme) {
-  $bg-color: mat.get-theme-color($theme,
-    if(mat.get-theme-type($theme) == dark, surface-container-high, surface-container));
+@mixin theme-tokens($type) {
+  @if $type == light {
+    --body-background-color: var(--mat-sys-surface-container);
+    --link-color: var(--mat-sys-primary);
+    --link-hover-color: var(--mat-sys-primary);
+    --code-border-color: rgba(0, 0, 0, .08);
+    --code-background-color: rgba(0, 0, 0, .04);
+    --header-background-color: color-mix(in srgb, var(--mat-sys-surface-container) 80%, transparent);
+    --user-panel-background-color: var(--mat-sys-surface-container);
+    --user-panel-hover-background-color: var(--mat-sys-surface-variant);
+    --sidemenu-heading-hover-background-color: var(--mat-sys-surface-container-highest);
+    --sidemenu-active-heading-text-color: var(--mat-sys-primary);
+    --sidemenu-active-heading-background-color: var(--mat-sys-primary-container);
+    --sidemenu-active-heading-hover-background-color: var(--mat-sys-primary-container);
+    --sidemenu-expanded-background-color: var(--mat-sys-surface-container);
+    --topmenu-text-color: var(--mat-sys-on-background);
+    --topmenu-background-color: color-mix(in srgb, var(--mat-sys-surface-container) 80%, transparent);
+    --topmenu-item-active-background-color: var(--mat-sys-primary-container);
+    --topmenu-dropdown-item-active-text-color: var(--mat-sys-primary);
+  } @else {
+    --body-background-color: var(--mat-sys-surface-container-high);
+    --link-color: var(--mat-sys-primary);
+    --link-hover-color: var(--mat-sys-primary);
+    --code-border-color: rgba(255, 255, 255, .08);
+    --code-background-color: rgba(255, 255, 255, .04);
+    --header-background-color: color-mix(in srgb, var(--mat-sys-surface-container-high) 80%, transparent);
+    --user-panel-background-color: var(--mat-sys-surface-container-high);
+    --user-panel-hover-background-color: var(--mat-sys-surface-variant);
+    --sidemenu-heading-hover-background-color: var(--mat-sys-surface-container-highest);
+    --sidemenu-active-heading-text-color: var(--mat-sys-primary);
+    --sidemenu-active-heading-background-color: var(--mat-sys-primary-container);
+    --sidemenu-active-heading-hover-background-color: var(--mat-sys-primary-container);
+    --sidemenu-expanded-background-color: var(--mat-sys-surface-container-high);
+    --topmenu-text-color: var(--mat-sys-on-background);
+    --topmenu-background-color: color-mix(in srgb, var(--mat-sys-surface-container-high) 80%, transparent);
+    --topmenu-item-active-background-color: var(--mat-sys-primary-container);
+    --topmenu-dropdown-item-active-text-color: var(--mat-sys-primary);
+  }
 
-  --body-background-color: #{$bg-color};
-  --link-color: #{mat.get-theme-color($theme, primary)};
-  --link-hover-color: #{color.adjust(mat.get-theme-color($theme, primary), $lightness: -10%)};
-  --code-border-color: #{rgba(mat.get-theme-color($theme, on-secondary-container), .08)};
-  --code-background-color: #{rgba(mat.get-theme-color($theme, on-secondary-container), .04)};
-  --header-background-color: #{rgba($bg-color, .8)};
-  --user-panel-background-color: #{$bg-color};
-  --user-panel-hover-background-color: #{mat.get-theme-color($theme, surface-variant)};
-  --sidemenu-heading-hover-background-color: #{mat.get-theme-color($theme, surface-container-highest)};
-  --sidemenu-active-heading-text-color: #{mat.get-theme-color($theme, primary)};
-  --sidemenu-active-heading-background-color: #{mat.get-theme-color($theme, primary-container)};
-  --sidemenu-active-heading-hover-background-color: #{mat.get-theme-color($theme, primary-container)};
-  --sidemenu-expanded-background-color: #{$bg-color};
-  --topmenu-text-color: #{mat.get-theme-color($theme, on-background)};
-  --topmenu-background-color: #{rgba($bg-color, .8)};
-  --topmenu-item-active-background-color: #{mat.get-theme-color($theme, primary-container)};
-  --topmenu-dropdown-item-active-text-color: #{mat.get-theme-color($theme, primary)};
-  --toast-info-background-color: #{map.get(mat.$azure-palette,
-    if(mat.get-theme-type($theme) == dark, 30, 50))};
-  --toast-success-background-color: #{map.get(mat.$green-palette,
-    if(mat.get-theme-type($theme) == dark, 40, 60))};
-  --toast-warning-background-color: #{map.get(mat.$orange-palette,
-    if(mat.get-theme-type($theme) == dark, 40, 60))};
-  --toast-error-background-color: #{map.get(mat.$red-palette,
-    if(mat.get-theme-type($theme) == dark, 30, 50))};
+  --toast-info-background-color: #{map.get(mat.$azure-palette, if($type == dark, 30, 50))};
+  --toast-success-background-color: #{map.get(mat.$green-palette, if($type == dark, 40, 60))};
+  --toast-warning-background-color: #{map.get(mat.$orange-palette, if($type == dark, 40, 60))};
+  --toast-error-background-color: #{map.get(mat.$red-palette, if($type == dark, 30, 50))};
 }

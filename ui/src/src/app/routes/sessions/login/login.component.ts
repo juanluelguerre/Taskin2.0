@@ -6,8 +6,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
-import { MtxButtonModule } from '@ng-matero/extensions/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
@@ -27,7 +27,7 @@ import { AuthService } from '@core/authentication';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    MtxButtonModule,
+    MatProgressSpinnerModule,
     TranslateModule,
   ],
 })

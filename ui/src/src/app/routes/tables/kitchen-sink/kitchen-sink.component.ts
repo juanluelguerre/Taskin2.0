@@ -2,14 +2,32 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
-import { MtxDialog } from '@ng-matero/extensions/dialog';
-import { MtxGridColumn, MtxGridModule } from '@ng-matero/extensions/grid';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 
 import { PageHeaderComponent } from '@shared';
 import { TablesDataService } from '../data.service';
 import { TablesKitchenSinkEditComponent } from './edit/edit.component';
+
+export interface ColumnDef {
+  header: any;
+  field: string;
+  sortable?: boolean;
+  disabled?: boolean;
+  minWidth?: number;
+  width?: string;
+  hide?: boolean;
+  pinned?: string;
+  type?: string;
+  showExpand?: boolean;
+  buttons?: any[];
+}
 
 @Component({
   selector: 'app-table-kitchen-sink',
@@ -21,26 +39,30 @@ import { TablesKitchenSinkEditComponent } from './edit/edit.component';
     FormsModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatIconModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
     MatRadioModule,
-    MtxGridModule,
+    MatSortModule,
+    MatTableModule,
     PageHeaderComponent,
   ],
 })
 export class TablesKitchenSinkComponent implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly dataSrv = inject(TablesDataService);
-  private readonly dialog = inject(MtxDialog);
+  private readonly dialog = inject(MatDialog);
 
-  columns: MtxGridColumn[] = [
+  columns: ColumnDef[] = [
     {
-      header: this.translate.stream('position'),
+      header: 'Position',
       field: 'position',
       sortable: true,
       minWidth: 100,
       width: '100px',
     },
     {
-      header: this.translate.stream('name'),
+      header: 'Name',
       field: 'name',
       sortable: true,
       disabled: true,
@@ -48,92 +70,69 @@ export class TablesKitchenSinkComponent implements OnInit {
       width: '100px',
     },
     {
-      header: this.translate.stream('weight'),
+      header: 'Weight',
       field: 'weight',
       minWidth: 100,
     },
     {
-      header: this.translate.stream('symbol'),
+      header: 'Symbol',
       field: 'symbol',
       minWidth: 100,
     },
     {
-      header: this.translate.stream('gender'),
+      header: 'Gender',
       field: 'gender',
       minWidth: 100,
     },
     {
-      header: this.translate.stream('mobile'),
+      header: 'Mobile',
       field: 'mobile',
       hide: true,
       minWidth: 120,
     },
     {
-      header: this.translate.stream('tele'),
+      header: 'Tele',
       field: 'tele',
       minWidth: 120,
       width: '120px',
     },
     {
-      header: this.translate.stream('birthday'),
+      header: 'Birthday',
       field: 'birthday',
       minWidth: 180,
     },
     {
-      header: this.translate.stream('city'),
+      header: 'City',
       field: 'city',
       minWidth: 120,
     },
     {
-      header: this.translate.stream('address'),
+      header: 'Address',
       field: 'address',
       minWidth: 180,
       width: '200px',
     },
     {
-      header: this.translate.stream('company'),
+      header: 'Company',
       field: 'company',
       minWidth: 120,
     },
     {
-      header: this.translate.stream('website'),
+      header: 'Website',
       field: 'website',
       minWidth: 180,
     },
     {
-      header: this.translate.stream('email'),
+      header: 'Email',
       field: 'email',
       minWidth: 180,
     },
-    {
-      header: this.translate.stream('operation'),
-      field: 'operation',
-      minWidth: 140,
-      width: '140px',
-      pinned: 'right',
-      type: 'button',
-      buttons: [
-        {
-          type: 'icon',
-          icon: 'edit',
-          tooltip: this.translate.stream('edit'),
-          click: record => this.edit(record),
-        },
-        {
-          type: 'icon',
-          color: 'warn',
-          icon: 'delete',
-          tooltip: this.translate.stream('delete'),
-          pop: {
-            title: this.translate.stream('confirm_delete'),
-            closeText: this.translate.stream('close'),
-            okText: this.translate.stream('ok'),
-          },
-          click: record => this.delete(record),
-        },
-      ],
-    },
   ];
+
+  get displayedColumns(): string[] {
+    return this.columns.filter(c => !c.hide).map(c => c.field).concat(['operation']);
+  }
+
   list: any[] = [];
   isLoading = true;
 
@@ -156,7 +155,7 @@ export class TablesKitchenSinkComponent implements OnInit {
   }
 
   edit(value: any) {
-    const dialogRef = this.dialog.originalOpen(TablesKitchenSinkEditComponent, {
+    const dialogRef = this.dialog.open(TablesKitchenSinkEditComponent, {
       width: '600px',
       data: { record: value },
     });
@@ -165,7 +164,7 @@ export class TablesKitchenSinkComponent implements OnInit {
   }
 
   delete(value: any) {
-    this.dialog.alert(`You have deleted ${value.position}!`);
+    window.alert(`You have deleted ${value.position}!`);
   }
 
   changeSelect(e: any) {

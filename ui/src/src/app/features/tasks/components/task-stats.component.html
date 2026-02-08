@@ -1,97 +1,83 @@
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-5">
   <!-- Total Tasks -->
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="flex items-center">
-      <div class="p-3 bg-blue-100 rounded-full mr-4">
-        <mat-icon class="text-blue-600">task_alt</mat-icon>
-      </div>
+  <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-blue-500);">
+    <div class="flex items-center justify-between">
       <div>
-        <p class="text-sm text-gray-600">Total Tasks</p>
-        <p class="text-2xl font-bold text-gray-900">{{ stats().total }}</p>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Tasks</p>
+        <p class="text-2xl font-bold text-slate-900">{{ stats().total }}</p>
       </div>
+      <mat-icon class="text-blue-500" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">task_alt</mat-icon>
     </div>
   </div>
-  
+
   <!-- Pending Tasks -->
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="flex items-center">
-      <div class="p-3 bg-yellow-100 rounded-full mr-4">
-        <mat-icon class="text-yellow-600">pending</mat-icon>
-      </div>
+  <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-amber-500);">
+    <div class="flex items-center justify-between">
       <div>
-        <p class="text-sm text-gray-600">Pending</p>
-        <p class="text-2xl font-bold text-gray-900">{{ stats().pending }}</p>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Pending</p>
+        <p class="text-2xl font-bold text-slate-900">{{ stats().pending }}</p>
       </div>
+      <mat-icon class="text-yellow-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">pending</mat-icon>
     </div>
   </div>
-  
+
   <!-- In Progress Tasks -->
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="flex items-center">
-      <div class="p-3 bg-orange-100 rounded-full mr-4">
-        <mat-icon class="text-orange-600">play_circle</mat-icon>
-      </div>
+  <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-orange-500);">
+    <div class="flex items-center justify-between">
       <div>
-        <p class="text-sm text-gray-600">In Progress</p>
-        <p class="text-2xl font-bold text-gray-900">{{ stats().inProgress }}</p>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">In Progress</p>
+        <p class="text-2xl font-bold text-slate-900">{{ stats().inProgress }}</p>
       </div>
+      <mat-icon class="text-orange-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">play_circle</mat-icon>
     </div>
   </div>
-  
+
   <!-- Completed Tasks -->
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="flex items-center">
-      <div class="p-3 bg-green-100 rounded-full mr-4">
-        <mat-icon class="text-green-600">check_circle</mat-icon>
-      </div>
+  <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-emerald-500);">
+    <div class="flex items-center justify-between">
       <div>
-        <p class="text-sm text-gray-600">Completed</p>
-        <p class="text-2xl font-bold text-gray-900">{{ stats().completed }}</p>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Completed</p>
+        <p class="text-2xl font-bold text-slate-900">{{ stats().completed }}</p>
       </div>
+      <mat-icon class="text-green-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">check_circle</mat-icon>
     </div>
   </div>
-  
+
   <!-- Overdue Tasks -->
   @if (stats().overdue > 0) {
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-red-200">
-      <div class="flex items-center">
-        <div class="p-3 bg-red-100 rounded-full mr-4">
-          <mat-icon class="text-red-600">warning</mat-icon>
-        </div>
+    <div class="bg-white rounded-xl p-5 border border-red-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-red-500);">
+      <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-gray-600">Overdue</p>
-          <p class="text-2xl font-bold text-red-900">{{ stats().overdue }}</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Overdue</p>
+          <p class="text-2xl font-bold text-red-600">{{ stats().overdue }}</p>
         </div>
+        <mat-icon class="text-red-500" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">warning</mat-icon>
       </div>
     </div>
   }
-  
+
   <!-- Completion Rate -->
   @if (stats().total > 0) {
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="p-3 bg-purple-100 rounded-full mr-4">
-          <mat-icon class="text-purple-600">trending_up</mat-icon>
-        </div>
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-violet-500);">
+      <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-gray-600">Completion Rate</p>
-          <p class="text-2xl font-bold text-gray-900">{{ stats().completionRate }}%</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Completion Rate</p>
+          <p class="text-2xl font-bold text-slate-900">{{ stats().completionRate }}%</p>
         </div>
+        <mat-icon class="text-purple-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">trending_up</mat-icon>
       </div>
     </div>
   }
-  
+
   <!-- Productivity Score -->
   @if (stats().productivity > 0) {
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="p-3 bg-indigo-100 rounded-full mr-4">
-          <mat-icon class="text-indigo-600">speed</mat-icon>
-        </div>
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-indigo-500);">
+      <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-gray-600">Productivity</p>
-          <p class="text-2xl font-bold text-gray-900">{{ stats().productivity }}%</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Productivity</p>
+          <p class="text-2xl font-bold text-slate-900">{{ stats().productivity }}%</p>
         </div>
+        <mat-icon class="text-indigo-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">speed</mat-icon>
       </div>
     </div>
   }

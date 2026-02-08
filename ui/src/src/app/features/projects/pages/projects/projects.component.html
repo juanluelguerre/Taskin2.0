@@ -1,18 +1,14 @@
 <div class="space-y-6">
   <!-- Page Header -->
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">Projects</h1>
-        <p class="mt-1 text-sm text-gray-600">Manage your projects and track progress across your team.</p>
-      </div>
-      <div class="mt-4 sm:mt-0">
-        <button mat-raised-button color="primary" class="flex items-center" (click)="onNewProject()">
-          <mat-icon class="mr-2">add</mat-icon>
-          New Project
-        </button>
-      </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Projects</h1>
+      <p class="mt-1 text-sm text-slate-500">Manage your projects and track progress across your team.</p>
     </div>
+    <button mat-flat-button color="primary" class="flex items-center" (click)="onNewProject()">
+      <mat-icon class="mr-2">add</mat-icon>
+      New Project
+    </button>
   </div>
 
   <!-- Error Message -->
@@ -26,73 +22,63 @@
   }
 
   <!-- Project Stats -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="p-3 bg-blue-100 rounded-full mr-4">
-          <mat-icon class="text-blue-600">folder</mat-icon>
-        </div>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-blue-500);">
+      <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-gray-600">Total Projects</p>
-          <p class="text-2xl font-bold text-gray-900">{{ stats().total }}</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Projects</p>
+          <p class="text-2xl font-bold text-slate-900">{{ stats().total }}</p>
         </div>
+        <mat-icon class="text-blue-500" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">folder_open</mat-icon>
       </div>
     </div>
-    
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="p-3 bg-green-100 rounded-full mr-4">
-          <mat-icon class="text-green-600">trending_up</mat-icon>
-        </div>
+
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-emerald-500);">
+      <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-gray-600">Active</p>
-          <p class="text-2xl font-bold text-gray-900">{{ stats().active }}</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Active</p>
+          <p class="text-2xl font-bold text-slate-900">{{ stats().active }}</p>
         </div>
+        <mat-icon class="text-green-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">trending_up</mat-icon>
       </div>
     </div>
-    
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="p-3 bg-yellow-100 rounded-full mr-4">
-          <mat-icon class="text-yellow-600">schedule</mat-icon>
-        </div>
+
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-amber-500);">
+      <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-gray-600">On Hold</p>
-          <p class="text-2xl font-bold text-gray-900">{{ stats().onHold }}</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">On Hold</p>
+          <p class="text-2xl font-bold text-slate-900">{{ stats().onHold }}</p>
         </div>
+        <mat-icon class="text-yellow-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">schedule</mat-icon>
       </div>
     </div>
-    
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="p-3 bg-purple-100 rounded-full mr-4">
-          <mat-icon class="text-purple-600">check_circle</mat-icon>
-        </div>
+
+    <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-violet-500);">
+      <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm text-gray-600">Completed</p>
-          <p class="text-2xl font-bold text-gray-900">{{ stats().completed }}</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Completed</p>
+          <p class="text-2xl font-bold text-slate-900">{{ stats().completed }}</p>
         </div>
+        <mat-icon class="text-purple-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">check_circle</mat-icon>
       </div>
     </div>
   </div>
 
   <!-- Filter and Search -->
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-      <div class="flex items-center space-x-4">
-        <mat-form-field class="w-80">
+  <div class="bg-white rounded-lg shadow-xs p-6 border border-gray-200">
+    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 200px;">
+        <mat-form-field class="w-full">
           <input matInput placeholder="Search projects" [value]="searchTerm()" (input)="onSearch($event)">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
-      <div class="flex items-center space-x-2">
-        <mat-button-toggle-group [value]="selectedFilter()" (change)="onFilterChange($event.value)" class="border rounded">
-          <mat-button-toggle value="all">All</mat-button-toggle>
-          <mat-button-toggle value="active">Active</mat-button-toggle>
-          <mat-button-toggle value="completed">Completed</mat-button-toggle>
-          <mat-button-toggle value="onhold">On Hold</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
+      <mat-button-toggle-group [value]="selectedFilter()" (change)="onFilterChange($event.value)" class="border rounded" style="flex-shrink: 0;">
+        <mat-button-toggle value="all">All</mat-button-toggle>
+        <mat-button-toggle value="active">Active</mat-button-toggle>
+        <mat-button-toggle value="completed">Completed</mat-button-toggle>
+        <mat-button-toggle value="onhold">On Hold</mat-button-toggle>
+      </mat-button-toggle-group>
     </div>
   </div>
 
@@ -107,7 +93,7 @@
   @if (!loading()) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       @for (project of projects(); track project.id) {
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <div class="bg-white rounded-lg shadow-xs border border-gray-200 hover:shadow-md transition-shadow">
           <!-- Project Image -->
           @if (project.imageUrl) {
             <div class="h-32 rounded-t-lg bg-cover bg-center" [style.background-image]="'url(' + project.imageUrl + ')'">

@@ -1,8 +1,9 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Input,
   Output,
   ViewEncapsulation,
 } from '@angular/core';
@@ -15,12 +16,13 @@ import { TranslocoModule } from '@jsverse/transloco';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
-  imports: [CommonModule, TranslocoModule, MatToolbarModule, MatIconModule, MatMenuModule],
+  imports: [TranslocoModule, MatToolbarModule, MatIconModule, MatMenuModule],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
+  @Input() isDesktop = false;
   userName = 'JuanLu';
 
   @Output() toggleSidebarEvent = new EventEmitter<void>();
