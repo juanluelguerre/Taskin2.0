@@ -1,13 +1,14 @@
+<ng-container *transloco="let t">
 <div class="space-y-6">
   <!-- Page Header -->
   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Projects</h1>
-      <p class="mt-1 text-sm text-slate-500">Manage your projects and track progress across your team.</p>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('projects.title') }}</h1>
+      <p class="mt-1 text-sm text-slate-500">{{ t('projects.subtitle') }}</p>
     </div>
     <button mat-flat-button color="primary" class="flex items-center" (click)="onNewProject()">
       <mat-icon class="mr-2">add</mat-icon>
-      New Project
+      {{ t('projects.newProject') }}
     </button>
   </div>
 
@@ -26,7 +27,7 @@
     <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-blue-500);">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Projects</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ t('projects.totalProjects') }}</p>
           <p class="text-2xl font-bold text-slate-900">{{ stats().total }}</p>
         </div>
         <mat-icon class="text-blue-500" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">folder_open</mat-icon>
@@ -36,7 +37,7 @@
     <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-emerald-500);">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Active</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ t('common.active') }}</p>
           <p class="text-2xl font-bold text-slate-900">{{ stats().active }}</p>
         </div>
         <mat-icon class="text-green-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">trending_up</mat-icon>
@@ -46,7 +47,7 @@
     <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-amber-500);">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">On Hold</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ t('projects.onHold') }}</p>
           <p class="text-2xl font-bold text-slate-900">{{ stats().onHold }}</p>
         </div>
         <mat-icon class="text-yellow-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">schedule</mat-icon>
@@ -56,7 +57,7 @@
     <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-violet-500);">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Completed</p>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ t('common.completed') }}</p>
           <p class="text-2xl font-bold text-slate-900">{{ stats().completed }}</p>
         </div>
         <mat-icon class="text-purple-600" style="font-size: 32px; width: 32px; height: 32px; opacity: 0.7;">check_circle</mat-icon>
@@ -69,15 +70,15 @@
     <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
       <div style="flex: 1; min-width: 200px;">
         <mat-form-field class="w-full">
-          <input matInput placeholder="Search projects" [value]="searchTerm()" (input)="onSearch($event)">
+          <input matInput [placeholder]="t('projects.searchProjects')" [value]="searchTerm()" (input)="onSearch($event)">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
       <mat-button-toggle-group [value]="selectedFilter()" (change)="onFilterChange($event.value)" class="border rounded" style="flex-shrink: 0;">
-        <mat-button-toggle value="all">All</mat-button-toggle>
-        <mat-button-toggle value="active">Active</mat-button-toggle>
-        <mat-button-toggle value="completed">Completed</mat-button-toggle>
-        <mat-button-toggle value="onhold">On Hold</mat-button-toggle>
+        <mat-button-toggle value="all">{{ t('common.all') }}</mat-button-toggle>
+        <mat-button-toggle value="active">{{ t('common.active') }}</mat-button-toggle>
+        <mat-button-toggle value="completed">{{ t('common.completed') }}</mat-button-toggle>
+        <mat-button-toggle value="onhold">{{ t('projects.onHold') }}</mat-button-toggle>
       </mat-button-toggle-group>
     </div>
   </div>
@@ -100,7 +101,7 @@
               <div class="h-full w-full rounded-t-lg" [style.background-color]="project.backgroundColor" style="opacity: 0.8;"></div>
             </div>
           }
-          
+
           <div class="p-6">
             <!-- Project Header -->
             <div class="flex items-start justify-between mb-4">
@@ -114,22 +115,22 @@
               <mat-menu #projectMenu="matMenu">
                 <button mat-menu-item (click)="onEditProject(project.id)">
                   <mat-icon>edit</mat-icon>
-                  Edit
+                  {{ t('common.edit') }}
                 </button>
                 <button mat-menu-item (click)="onViewProject(project.id)">
                   <mat-icon>visibility</mat-icon>
-                  View Details
+                  {{ t('common.viewDetails') }}
                 </button>
                 <button mat-menu-item class="text-red-600" (click)="onDeleteProject(project.id, project.name)">
                   <mat-icon class="text-red-600">delete</mat-icon>
-                  Delete
+                  {{ t('common.delete') }}
                 </button>
               </mat-menu>
             </div>
 
             <!-- Status Badge -->
             <div class="mb-4">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                     [class]="project.status | statusColor:'project'">
                 {{ project.status | statusDisplay:'project' | titlecase }}
               </span>
@@ -138,11 +139,11 @@
             <!-- Progress -->
             <div class="mb-4">
               <div class="flex justify-between text-sm text-gray-600 mb-1">
-                <span>Progress</span>
+                <span>{{ t('common.progress') }}</span>
                 <span>{{ project.progress }}%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2">
-                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300"
                      [style.width.%]="project.progress"></div>
               </div>
             </div>
@@ -151,11 +152,11 @@
             <div class="grid grid-cols-2 gap-4 mb-4 text-center">
               <div>
                 <p class="text-lg font-semibold text-gray-900">{{ project.totalTasks }}</p>
-                <p class="text-xs text-gray-600">Total Tasks</p>
+                <p class="text-xs text-gray-600">{{ t('projects.totalTasks') }}</p>
               </div>
               <div>
                 <p class="text-lg font-semibold text-gray-900">{{ project.completedTasks }}</p>
-                <p class="text-xs text-gray-600">Completed</p>
+                <p class="text-xs text-gray-600">{{ t('common.completed') }}</p>
               </div>
             </div>
 
@@ -163,10 +164,10 @@
             <div class="flex items-center justify-between text-sm text-gray-600">
               <div class="flex items-center">
                 <mat-icon class="text-gray-400 mr-1 text-sm">schedule</mat-icon>
-                <span>Due {{ project.dueDate | date:'MMM d, y' }}</span>
+                <span>{{ t('projects.due') }} {{ project.dueDate | date:'MMM d, y' }}</span>
               </div>
               <button mat-button color="primary" class="text-sm" (click)="onViewProject(project.id)">
-                View Details
+                {{ t('common.viewDetails') }}
               </button>
             </div>
           </div>
@@ -174,14 +175,15 @@
       } @empty {
         <div class="col-span-full text-center py-12">
           <mat-icon class="text-gray-300 text-6xl mb-4">folder_open</mat-icon>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">No projects found</h3>
-          <p class="text-gray-500 mb-4">Get started by creating your first project.</p>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('projects.noProjectsFound') }}</h3>
+          <p class="text-gray-500 mb-4">{{ t('projects.getStarted') }}</p>
           <button mat-raised-button color="primary" (click)="onNewProject()">
             <mat-icon class="mr-2">add</mat-icon>
-            Create Project
+            {{ t('projects.createProject') }}
           </button>
         </div>
       }
     </div>
   }
 </div>
+</ng-container>

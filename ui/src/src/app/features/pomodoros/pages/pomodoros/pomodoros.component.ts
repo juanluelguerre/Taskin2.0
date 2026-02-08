@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, OnDestro
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { TranslocoModule } from '@jsverse/transloco';
 import { PomodoroService, PomodoroDto } from '../../services/pomodoro.service';
 
 interface Session {
@@ -17,7 +18,8 @@ interface Session {
   imports: [
     MatButtonModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    TranslocoModule
 ],
   templateUrl: './pomodoros.component.html',
   styles: ``,

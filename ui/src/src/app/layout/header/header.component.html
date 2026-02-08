@@ -51,20 +51,20 @@
         <mat-menu #profileMenu="matMenu" class="mt-2">
           <div class="px-4 py-3 border-b border-gray-100">
             <p class="text-sm text-slate-900 font-medium">{{ userName }}</p>
-            <p class="text-xs text-slate-500">Administrator</p>
+            <p class="text-xs text-slate-500">{{ t('header.administrator') }}</p>
           </div>
           <button mat-menu-item class="flex items-center">
             <mat-icon class="mr-3 text-slate-400">person</mat-icon>
-            Profile Settings
+            {{ t('header.profileSettings') }}
           </button>
           <button mat-menu-item class="flex items-center">
             <mat-icon class="mr-3 text-slate-400">settings</mat-icon>
-            Preferences
+            {{ t('header.preferences') }}
           </button>
           <div class="border-t border-gray-100 my-1"></div>
           <button mat-menu-item (click)="logout()" class="flex items-center text-red-600">
             <mat-icon class="mr-3 text-red-600">logout</mat-icon>
-            Sign Out
+            {{ t('header.signOut') }}
           </button>
         </mat-menu>
       </div>

@@ -1,3 +1,4 @@
+<ng-container *transloco="let t">
 <div class="bg-white rounded-lg shadow-xs border border-gray-200 p-5 hover:shadow-md transition-shadow h-full">
   <!-- Header: Title + Actions -->
   <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.5rem;">
@@ -13,25 +14,25 @@
       @if (!task().isCompleted) {
         <button mat-menu-item (click)="taskToggled.emit(task())">
           <mat-icon>check_circle</mat-icon>
-          Mark as Done
+          {{ t('tasks.markAsDone') }}
         </button>
       }
       <button mat-menu-item (click)="taskEdited.emit(task())">
         <mat-icon>edit</mat-icon>
-        Edit Task
+        {{ t('tasks.editTask') }}
       </button>
       <button mat-menu-item (click)="taskDuplicated.emit(task())">
         <mat-icon>content_copy</mat-icon>
-        Duplicate
+        {{ t('common.duplicate') }}
       </button>
       <button mat-menu-item (click)="taskViewed.emit(task())">
         <mat-icon>visibility</mat-icon>
-        View Details
+        {{ t('common.viewDetails') }}
       </button>
       <div class="border-t border-gray-200 my-1"></div>
       <button mat-menu-item class="text-red-600" (click)="taskDeleted.emit(task())">
         <mat-icon class="text-red-600">delete</mat-icon>
-        Delete Task
+        {{ t('tasks.deleteTask') }}
       </button>
     </mat-menu>
   </div>
@@ -80,14 +81,14 @@
                   [class.text-red-400]="task().isOverdue">schedule</mat-icon>
         <span>
           @if (task().isOverdue) {
-            Overdue
+            {{ t('common.overdue') }}
           } @else if (task().daysUntilDue !== undefined) {
             @if (task().daysUntilDue === 0) {
-              Due today
+              {{ t('tasks.dueToday') }}
             } @else if (task().daysUntilDue === 1) {
-              Due tomorrow
+              {{ t('tasks.dueTomorrow') }}
             } @else if (task().daysUntilDue !== undefined && task().daysUntilDue! > 0) {
-              {{ task().daysUntilDue }}d left
+              {{ t('tasks.daysLeft', { days: task().daysUntilDue }) }}
             }
           }
         </span>
@@ -111,3 +112,4 @@
     }
   </div>
 </div>
+</ng-container>

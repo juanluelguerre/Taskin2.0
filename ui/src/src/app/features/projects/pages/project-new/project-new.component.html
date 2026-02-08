@@ -1,3 +1,4 @@
+<ng-container *transloco="let t">
 <div class="space-y-6">
   <!-- Page Header -->
   <div class="bg-white rounded-lg shadow-xs p-6 border border-gray-200">
@@ -7,12 +8,12 @@
       </button>
       <div>
         <nav class="text-sm text-gray-500 mb-1">
-          <a (click)="onCancel()" class="hover:text-gray-700 cursor-pointer">Projects</a>
+          <a (click)="onCancel()" class="hover:text-gray-700 cursor-pointer">{{ t('projects.title') }}</a>
           <span class="mx-2">/</span>
-          <span class="text-gray-900">{{ isEditMode() ? 'Edit Project' : 'New Project' }}</span>
+          <span class="text-gray-900">{{ isEditMode() ? t('projects.editProject') : t('projects.newProject') }}</span>
         </nav>
         <h1 class="text-2xl font-bold text-gray-900">
-          {{ isEditMode() ? 'Edit Project' : 'Create New Project' }}
+          {{ isEditMode() ? t('projects.editProject') : t('projects.createProject') }}
         </h1>
       </div>
     </div>
@@ -43,17 +44,17 @@
       <div style="flex: 1; min-width: 300px;">
         <mat-card class="border border-gray-200 shadow-xs hover:shadow-md transition-shadow">
           <mat-card-header>
-            <mat-card-title class="text-gray-900">Project Information</mat-card-title>
+            <mat-card-title class="text-gray-900">{{ t('projects.projectInfo') }}</mat-card-title>
           </mat-card-header>
 
           <mat-card-content class="p-6">
             <div class="space-y-6">
               <!-- Project Name -->
               <div class="form-field-wrapper">
-                <mat-label for="name">Project Name</mat-label>
+                <mat-label for="name">{{ t('projects.projectName') }}</mat-label>
                 <mat-form-field class="w-full">
 
-                  <input matInput formControlName="name"  placeholder="Enter project name" />
+                  <input matInput formControlName="name" [placeholder]="t('projects.enterProjectName')" />
                   @if (hasError('name', 'required')) {
                   <mat-error>{{ getErrorMessage('name') }}</mat-error>
                   } @if (hasError('name', 'minlength')) {
@@ -64,20 +65,20 @@
 
               <!-- Description -->
               <div class="form-field-wrapper">
-                <label>Description</label>
+                <label>{{ t('projects.description') }}</label>
                 <mat-form-field class="w-full">
                   <textarea
                     matInput
                     formControlName="description"
                     rows="4"
-                    placeholder="Describe your project goals and requirements"
+                    [placeholder]="t('projects.descriptionPlaceholder')"
                   ></textarea>
                 </mat-form-field>
               </div>
 
               <!-- Status -->
               <div class="form-field-wrapper">
-                <label>Status</label>
+                <label>{{ t('projects.status') }}</label>
                 <mat-form-field class="w-full">
                   <mat-select formControlName="status">
                     @for (option of statusOptions; track option.value) {
@@ -89,10 +90,10 @@
 
               <!-- Due Date -->
               <div class="form-field-wrapper">
-                <label>Due Date</label>
+                <label>{{ t('projects.dueDate') }}</label>
                 <mat-form-field class="w-full">
                   <input matInput [matDatepicker]="picker" formControlName="dueDate" />
-                  <mat-hint>Optional: Set a target completion date</mat-hint>
+                  <mat-hint>{{ t('projects.dueDateHint') }}</mat-hint>
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
@@ -107,17 +108,15 @@
         <!-- Visual Settings -->
         <mat-card class="border border-gray-200 shadow-xs hover:shadow-md transition-shadow">
           <mat-card-header>
-            <mat-card-title class="text-gray-900">Visual Settings</mat-card-title>
-            <mat-card-subtitle class="text-gray-600"
-              >Customize the project appearance</mat-card-subtitle
-            >
+            <mat-card-title class="text-gray-900">{{ t('projects.visualSettings') }}</mat-card-title>
+            <mat-card-subtitle class="text-gray-600">{{ t('projects.customizeAppearance') }}</mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content class="p-6">
             <div class="space-y-6">
               <!-- Background Color -->
               <div class="form-field-wrapper">
-                <label>Background Color</label>
+                <label>{{ t('projects.backgroundColor') }}</label>
                 <mat-form-field class="w-full">
                   <mat-select formControlName="backgroundColor">
                     @for (color of colorOptions; track color.value) {
@@ -137,20 +136,20 @@
 
               <!-- Image URL -->
               <div class="form-field-wrapper">
-                <label>Image URL</label>
+                <label>{{ t('projects.imageUrl') }}</label>
                 <mat-form-field class="w-full">
                   <input
                     matInput
                     formControlName="imageUrl"
-                    placeholder="https://example.com/image.jpg"
+                    [placeholder]="t('projects.imageUrlPlaceholder')"
                   />
-                  <mat-hint>Optional: Add a header image for the project</mat-hint>
+                  <mat-hint>{{ t('projects.imageUrlHint') }}</mat-hint>
                 </mat-form-field>
               </div>
 
               <!-- Preview -->
               <div class="form-field-wrapper">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Preview</label>
+                <label class="text-sm font-medium text-gray-700 mb-3 block">{{ t('projects.preview') }}</label>
                 <div
                   class="h-32 rounded-lg border border-gray-200 relative overflow-hidden bg-gray-50"
                 >
@@ -172,7 +171,7 @@
                   <div class="absolute inset-0 flex items-center justify-center p-4">
                     <div class="text-center">
                       <div class="text-white font-semibold text-lg mb-1">
-                        {{ projectForm.get('name')?.value || 'Project Name' }}
+                        {{ projectForm.get('name')?.value || t('projects.projectName') }}
                       </div>
                       @if (projectForm.get('description')?.value) {
                       <div class="text-white/80 text-sm line-clamp-2">
@@ -202,7 +201,7 @@
                 <mat-spinner diameter="20" class="mr-2"></mat-spinner>
                 }
                 <mat-icon class="mr-2">{{ isEditMode() ? 'save' : 'add' }}</mat-icon>
-                {{ isEditMode() ? 'Update Project' : 'Create Project' }}
+                {{ isEditMode() ? t('projects.updateProject') : t('projects.createProject') }}
               </button>
 
               <button
@@ -214,7 +213,7 @@
                 [disabled]="loading()"
               >
                 <mat-icon class="mr-2">cancel</mat-icon>
-                Cancel
+                {{ t('common.cancel') }}
               </button>
             </div>
           </mat-card-content>
@@ -225,16 +224,16 @@
           <mat-card-header>
             <mat-card-title class="flex items-center text-gray-900">
               <mat-icon class="mr-2 text-blue-500">help_outline</mat-icon>
-              Tips
+              {{ t('projects.tips') }}
             </mat-card-title>
           </mat-card-header>
 
           <mat-card-content class="p-6">
             <div class="text-sm text-gray-600 space-y-2">
-              <p>• Use a descriptive name that clearly identifies your project</p>
-              <p>• Set a realistic due date to help with planning</p>
-              <p>• Choose colors that match your team's visual identity</p>
-              <p>• Add tasks after creating the project to track progress</p>
+              <p>{{ t('projects.tip1') }}</p>
+              <p>{{ t('projects.tip2') }}</p>
+              <p>{{ t('projects.tip3') }}</p>
+              <p>{{ t('projects.tip4') }}</p>
             </div>
           </mat-card-content>
         </mat-card>
@@ -243,3 +242,4 @@
   </form>
   }
 </div>
+</ng-container>

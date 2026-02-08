@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
 import { MatIconModule } from '@angular/material/icon'
 import { MatChipsModule } from '@angular/material/chips'
+import { TranslocoModule } from '@jsverse/transloco'
 import { TaskStatus, TaskPriority, TaskFilters } from '../shared/types/task.types'
 
 @Component({
@@ -22,7 +23,8 @@ import { TaskStatus, TaskPriority, TaskFilters } from '../shared/types/task.type
     MatButtonModule,
     MatButtonToggleModule,
     MatIconModule,
-    MatChipsModule
+    MatChipsModule,
+    TranslocoModule
 ],
   templateUrl: './task-filters.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

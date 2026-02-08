@@ -1,10 +1,11 @@
+<ng-container *transloco="let t">
 <div class="bg-white rounded-lg shadow-xs p-6 border border-gray-200">
   <!-- Row 1: Search + Status Toggle -->
   <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
     <div style="flex: 1; min-width: 200px;">
       <mat-form-field class="w-full">
         <input matInput
-               placeholder="Search tasks..."
+               [placeholder]="t('tasks.searchTasks')"
                [formControl]="searchControl"
                (input)="onSearchChange($event)">
         <mat-icon matSuffix>search</mat-icon>
@@ -13,10 +14,10 @@
     <mat-button-toggle-group [value]="filters().status || 'all'"
                             (change)="onStatusChange($event.value)"
                             class="border rounded shadow-xs" style="flex-shrink: 0;">
-      <mat-button-toggle value="all">All</mat-button-toggle>
-      <mat-button-toggle value="Todo">To Do</mat-button-toggle>
-      <mat-button-toggle value="Doing">In Progress</mat-button-toggle>
-      <mat-button-toggle value="Done">Done</mat-button-toggle>
+      <mat-button-toggle value="all">{{ t('common.all') }}</mat-button-toggle>
+      <mat-button-toggle value="Todo">{{ t('tasks.toDo') }}</mat-button-toggle>
+      <mat-button-toggle value="Doing">{{ t('tasks.inProgress') }}</mat-button-toggle>
+      <mat-button-toggle value="Done">{{ t('tasks.done') }}</mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 
@@ -24,10 +25,10 @@
   <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
     <div style="display: flex; flex: 1; gap: 1rem; min-width: 0; flex-wrap: wrap;">
       <mat-form-field style="flex: 1; min-width: 150px;">
-        <mat-label>Project</mat-label>
+        <mat-label>{{ t('tasks.project') }}</mat-label>
         <mat-select [value]="filters().projectId || 'all'"
                    (selectionChange)="onProjectChange($event.value)">
-          <mat-option value="all">All Projects</mat-option>
+          <mat-option value="all">{{ t('tasks.allProjects') }}</mat-option>
           @for (project of projects(); track project.id) {
             <mat-option [value]="project.id">{{ project.name }}</mat-option>
           }
@@ -35,10 +36,10 @@
       </mat-form-field>
 
       <mat-form-field style="flex: 1; min-width: 150px;">
-        <mat-label>Priority</mat-label>
+        <mat-label>{{ t('tasks.priority') }}</mat-label>
         <mat-select [value]="filters().priority || 'all'"
                    (selectionChange)="onPriorityChange($event.value)">
-          <mat-option value="all">All Priorities</mat-option>
+          <mat-option value="all">{{ t('tasks.allPriorities') }}</mat-option>
           @for (priority of priorityOptions; track priority.value) {
             <mat-option [value]="priority.value">{{ priority.label }}</mat-option>
           }
@@ -46,12 +47,12 @@
       </mat-form-field>
 
       <mat-form-field style="flex: 1; min-width: 150px;">
-        <mat-label>Assignee</mat-label>
+        <mat-label>{{ t('tasks.assignee') }}</mat-label>
         <mat-select [value]="filters().assigneeId || 'all'"
                    (selectionChange)="onAssigneeChange($event.value)">
-          <mat-option value="all">All Assignees</mat-option>
-          <mat-option value="me">Assigned to me</mat-option>
-          <mat-option value="unassigned">Unassigned</mat-option>
+          <mat-option value="all">{{ t('tasks.allAssignees') }}</mat-option>
+          <mat-option value="me">{{ t('tasks.assignedToMe') }}</mat-option>
+          <mat-option value="unassigned">{{ t('tasks.unassigned') }}</mat-option>
           @for (assignee of assignees(); track assignee.id) {
             <mat-option [value]="assignee.id">{{ assignee.name }}</mat-option>
           }
@@ -64,14 +65,14 @@
               [color]="filters().isOverdue ? 'warn' : 'basic'"
               (click)="toggleOverdueFilter()">
         <mat-icon class="mr-1">schedule</mat-icon>
-        Overdue
+        {{ t('common.overdue') }}
       </button>
 
       <button mat-stroked-button
               [color]="hasActiveFilters() ? 'primary' : 'basic'"
               (click)="clearAllFilters()">
         <mat-icon class="mr-1">clear</mat-icon>
-        Clear
+        {{ t('common.clear') }}
       </button>
     </div>
   </div>
@@ -80,7 +81,7 @@
   @if (activeFilterChips().length > 0) {
     <div class="mt-4 pt-4 border-t border-gray-200">
       <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
-        <span class="text-sm text-gray-600 mr-2">Active filters:</span>
+        <span class="text-sm text-gray-600 mr-2">{{ t('tasks.activeFilters') }}</span>
         @for (chip of activeFilterChips(); track chip.key) {
           <mat-chip [removable]="true" (removed)="removeFilter(chip.key)">
             {{ chip.label }}
@@ -91,3 +92,4 @@
     </div>
   }
 </div>
+</ng-container>

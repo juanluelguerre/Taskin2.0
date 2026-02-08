@@ -1,3 +1,4 @@
+<ng-container *transloco="let t">
 <!-- Loading bar -->
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" class="loading-bar"></mat-progress-bar>
@@ -7,12 +8,12 @@
   <!-- Page Header -->
   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Tasks</h1>
-      <p class="mt-1 text-sm text-slate-500">Manage your tasks and stay organized across all projects.</p>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('tasks.title') }}</h1>
+      <p class="mt-1 text-sm text-slate-500">{{ t('tasks.subtitle') }}</p>
     </div>
     <div class="flex items-center space-x-3">
       <button mat-icon-button
-              matTooltip="Refresh tasks"
+              [matTooltip]="t('tasks.refreshTasks')"
               (click)="onRefresh()"
               [disabled]="loading()"
               class="text-slate-500">
@@ -24,7 +25,7 @@
               (click)="onNewTaskClick()"
               [disabled]="saving()">
         <mat-icon class="mr-2">add</mat-icon>
-        New Task
+        {{ t('tasks.newTask') }}
       </button>
     </div>
   </div>
@@ -48,7 +49,7 @@
   <app-task-stats [stats]="stats()"></app-task-stats>
 
   <!-- Filters -->
-  <app-task-filters 
+  <app-task-filters
     [filters]="filters()"
     [searchTerm]="searchTerm()"
     [projects]="projects"
@@ -63,25 +64,25 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <h3 class="text-lg font-semibold text-gray-900">
-          Tasks 
+          {{ t('tasks.title') }}
           @if (tasks().length > 0) {
-            <span class="text-sm font-normal text-gray-500">({{ tasks().length }} found)</span>
+            <span class="text-sm font-normal text-gray-500">({{ tasks().length }} {{ t('tasks.tasksFound', { count: tasks().length }) }})</span>
           }
         </h3>
       </div>
-      
+
       <div class="flex items-center space-x-2">
         <!-- View mode toggle -->
-        <mat-button-toggle-group [value]="viewMode()" 
-                                (change)="onViewModeChanged($event.value)" 
+        <mat-button-toggle-group [value]="viewMode()"
+                                (change)="onViewModeChanged($event.value)"
                                 class="border rounded">
-          <mat-button-toggle value="list" matTooltip="List view">
+          <mat-button-toggle value="list" [matTooltip]="t('tasks.listView')">
             <mat-icon>view_list</mat-icon>
           </mat-button-toggle>
-          <mat-button-toggle value="grid" matTooltip="Grid view">
+          <mat-button-toggle value="grid" [matTooltip]="t('tasks.gridView')">
             <mat-icon>view_module</mat-icon>
           </mat-button-toggle>
-          <mat-button-toggle value="kanban" matTooltip="Kanban view">
+          <mat-button-toggle value="kanban" [matTooltip]="t('tasks.kanbanView')">
             <mat-icon>view_kanban</mat-icon>
           </mat-button-toggle>
         </mat-button-toggle-group>
@@ -94,30 +95,30 @@
     <!-- Loading state -->
     <div class="bg-white rounded-lg shadow-xs p-12 text-center">
       <mat-icon class="text-gray-300 mb-4 animate-spin" style="font-size: 48px; width: 48px; height: 48px;">sync</mat-icon>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">Loading tasks...</h3>
-      <p class="text-gray-600">Please wait while we fetch your tasks.</p>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('tasks.loadingTasks') }}</h3>
+      <p class="text-gray-600">{{ t('tasks.pleaseWait') }}</p>
     </div>
   } @else if (tasks().length === 0) {
     <!-- Empty state -->
     <div class="bg-white rounded-lg shadow-xs p-12 text-center">
       <mat-icon class="text-gray-300 mb-4" style="font-size: 48px; width: 48px; height: 48px;">task_alt</mat-icon>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">No tasks found</h3>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('tasks.noTasksFound') }}</h3>
       <p class="text-gray-600 mb-6">
         @if (searchTerm() || hasActiveFilters()) {
-          Try adjusting your search or filters to find what you're looking for.
+          {{ t('tasks.tryAdjusting') }}
         } @else {
-          Get started by creating your first task.
+          {{ t('tasks.getStarted') }}
         }
       </p>
       @if (searchTerm() || hasActiveFilters()) {
         <button mat-stroked-button (click)="onFiltersCleared()">
           <mat-icon class="mr-2">clear</mat-icon>
-          Clear Filters
+          {{ t('tasks.clearFilters') }}
         </button>
       } @else {
         <button mat-raised-button color="primary" (click)="onNewTaskClick()">
           <mat-icon class="mr-2">add</mat-icon>
-          Create Task
+          {{ t('tasks.createTask') }}
         </button>
       }
     </div>
@@ -127,7 +128,7 @@
       @case ('grid') {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           @for (task of tasks(); track task.id) {
-            <app-task-card 
+            <app-task-card
               [task]="task"
               (taskToggled)="onTaskToggled($event)"
               (taskEdited)="onTaskEdited($event)"
@@ -138,19 +139,19 @@
           }
         </div>
       }
-      
+
       @case ('kanban') {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <!-- Pending Column -->
           <div class="bg-white rounded-lg shadow-xs border border-gray-200">
             <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">Pending</h4>
-              <p class="text-sm text-gray-500">{{ stats().pending }} tasks</p>
+              <h4 class="font-medium text-gray-900">{{ t('tasks.pending') }}</h4>
+              <p class="text-sm text-gray-500">{{ stats().pending }} {{ t('tasks.title').toLowerCase() }}</p>
             </div>
             <div class="p-4 space-y-4">
               @for (task of tasks(); track task.id) {
                 @if (task.status === TaskStatus.Todo) {
-                  <app-task-card 
+                  <app-task-card
                     [task]="task"
                     (taskToggled)="onTaskToggled($event)"
                     (taskEdited)="onTaskEdited($event)"
@@ -162,17 +163,17 @@
               }
             </div>
           </div>
-          
+
           <!-- In Progress Column -->
           <div class="bg-white rounded-lg shadow-xs border border-gray-200">
             <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">In Progress</h4>
-              <p class="text-sm text-gray-500">{{ stats().inProgress }} tasks</p>
+              <h4 class="font-medium text-gray-900">{{ t('tasks.inProgress') }}</h4>
+              <p class="text-sm text-gray-500">{{ stats().inProgress }} {{ t('tasks.title').toLowerCase() }}</p>
             </div>
             <div class="p-4 space-y-4">
               @for (task of tasks(); track task.id) {
                 @if (task.status === TaskStatus.Doing) {
-                  <app-task-card 
+                  <app-task-card
                     [task]="task"
                     (taskToggled)="onTaskToggled($event)"
                     (taskEdited)="onTaskEdited($event)"
@@ -184,17 +185,17 @@
               }
             </div>
           </div>
-          
+
           <!-- Completed Column -->
           <div class="bg-white rounded-lg shadow-xs border border-gray-200">
             <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">Completed</h4>
-              <p class="text-sm text-gray-500">{{ stats().completed }} tasks</p>
+              <h4 class="font-medium text-gray-900">{{ t('common.completed') }}</h4>
+              <p class="text-sm text-gray-500">{{ stats().completed }} {{ t('tasks.title').toLowerCase() }}</p>
             </div>
             <div class="p-4 space-y-4">
               @for (task of tasks(); track task.id) {
                 @if (task.status === TaskStatus.Done) {
-                  <app-task-card 
+                  <app-task-card
                     [task]="task"
                     (taskToggled)="onTaskToggled($event)"
                     (taskEdited)="onTaskEdited($event)"
@@ -206,19 +207,19 @@
               }
             </div>
           </div>
-          
+
           <!-- Cancelled Column -->
           <div class="bg-white rounded-lg shadow-xs border border-gray-200">
             <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">Cancelled</h4>
+              <h4 class="font-medium text-gray-900">{{ t('tasks.cancelled') }}</h4>
               <p class="text-sm text-gray-500">
-                {{ cancelledTasksCount() }} tasks
+                {{ cancelledTasksCount() }} {{ t('tasks.title').toLowerCase() }}
               </p>
             </div>
             <div class="p-4 space-y-4">
               @for (task of tasks(); track task.id) {
                 @if (task.status === TaskStatus.Cancelled) {
-                  <app-task-card 
+                  <app-task-card
                     [task]="task"
                     (taskToggled)="onTaskToggled($event)"
                     (taskEdited)="onTaskEdited($event)"
@@ -232,14 +233,14 @@
           </div>
         </div>
       }
-      
+
       @default {
         <!-- List View -->
         <div class="bg-white rounded-lg shadow-xs border border-gray-200">
           <div class="divide-y divide-gray-200">
             @for (task of tasks(); track task.id) {
               <div class="p-6">
-                <app-task-card 
+                <app-task-card
                   [task]="task"
                   (taskToggled)="onTaskToggled($event)"
                   (taskEdited)="onTaskEdited($event)"
@@ -253,36 +254,35 @@
         </div>
       }
     }
-    
+
     <!-- Pagination -->
     @if (totalPages() > 1) {
       <div class="bg-white rounded-lg shadow-xs p-6 border border-gray-200">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
-            <button mat-icon-button 
-                    [disabled]="!hasPreviousPage()" 
+            <button mat-icon-button
+                    [disabled]="!hasPreviousPage()"
                     (click)="onPreviousPage()">
               <mat-icon>chevron_left</mat-icon>
             </button>
-            
+
             <span class="text-sm text-gray-600">
-              Page {{ currentPage() }} of {{ totalPages() }}
+              {{ t('tasks.page', { current: currentPage(), total: totalPages() }) }}
             </span>
-            
-            <button mat-icon-button 
-                    [disabled]="!hasNextPage()" 
+
+            <button mat-icon-button
+                    [disabled]="!hasNextPage()"
                     (click)="onNextPage()">
               <mat-icon>chevron_right</mat-icon>
             </button>
           </div>
-          
+
           <div class="text-sm text-gray-500">
-            Showing {{ showingFromIndex() }} to 
-            {{ showingToIndex() }} 
-            of {{ tasks().length }} tasks
+            {{ t('tasks.showing', { from: showingFromIndex(), to: showingToIndex(), total: tasks().length }) }}
           </div>
         </div>
       </div>
     }
   }
 </div>
+</ng-container>

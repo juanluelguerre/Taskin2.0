@@ -1,15 +1,16 @@
+<ng-container *transloco="let t">
 <div class="space-y-6">
   <!-- Page Header -->
   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Pomodoro Timer</h1>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('pomodoros.title') }}</h1>
       <p class="mt-1 text-sm text-slate-500">
-        Stay focused with the Pomodoro Technique - 25 minutes of focused work, 5 minutes break.
+        {{ t('pomodoros.subtitle') }}
       </p>
     </div>
     <div class="flex items-center space-x-2 text-sm text-slate-500">
       <mat-icon class="text-green-600">check_circle</mat-icon>
-      <span>{{ completedPomodoros() }} completed today</span>
+      <span>{{ t('pomodoros.completedToday', { count: completedPomodoros() }) }}</span>
     </div>
   </div>
 
@@ -32,7 +33,7 @@
           >
             {{ currentSession() === 'work' ? 'work' : 'coffee' }}
           </mat-icon>
-          {{ currentSession() === 'work' ? 'Focus Time' : 'Break Time' }}
+          {{ currentSession() === 'work' ? t('pomodoros.focusTime') : t('pomodoros.breakTime') }}
         </div>
       </div>
 
@@ -62,7 +63,7 @@
               {{ formatTime(timeLeft()) }}
             </div>
             <div class="text-sm text-gray-500">
-              {{ currentSession() === 'work' ? 'Focus' : 'Break' }}
+              {{ currentSession() === 'work' ? t('pomodoros.focus') : t('pomodoros.break') }}
             </div>
           </div>
         </div>
@@ -80,12 +81,12 @@
 
           <button mat-stroked-button (click)="resetTimer()" class="px-6">
             <mat-icon class="mr-2">refresh</mat-icon>
-            Reset
+            {{ t('pomodoros.reset') }}
           </button>
 
           <button mat-stroked-button (click)="skipSession()" class="px-6">
             <mat-icon class="mr-2">skip_next</mat-icon>
-            Skip
+            {{ t('pomodoros.skip') }}
           </button>
         </div>
       </div>
@@ -94,7 +95,7 @@
       <div class="border-t border-gray-200 pt-6">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           <div>
-            <p class="text-sm text-gray-600 mb-2">Work Session</p>
+            <p class="text-sm text-gray-600 mb-2">{{ t('pomodoros.workSession') }}</p>
             <div class="flex items-center justify-center space-x-2">
               <button mat-icon-button (click)="adjustWorkTime(-1)" [disabled]="isRunning()">
                 <mat-icon>remove</mat-icon>
@@ -109,7 +110,7 @@
           </div>
 
           <div>
-            <p class="text-sm text-gray-600 mb-2">Break Time</p>
+            <p class="text-sm text-gray-600 mb-2">{{ t('pomodoros.breakTime') }}</p>
             <div class="flex items-center justify-center space-x-2">
               <button mat-icon-button (click)="adjustBreakTime(-1)" [disabled]="isRunning()">
                 <mat-icon>remove</mat-icon>
@@ -124,7 +125,7 @@
           </div>
 
           <div>
-            <p class="text-sm text-gray-600 mb-2">Sessions Today</p>
+            <p class="text-sm text-gray-600 mb-2">{{ t('pomodoros.sessionsToday') }}</p>
             <div class="text-lg font-semibold text-gray-900">{{ completedPomodoros() }}</div>
           </div>
         </div>
@@ -135,7 +136,7 @@
   <!-- Today's Sessions -->
   <div class="bg-white rounded-xl border border-gray-100">
     <div class="px-6 py-4 border-b border-gray-100">
-      <h3 class="text-sm font-semibold text-slate-900 uppercase tracking-wider">Today's Sessions</h3>
+      <h3 class="text-sm font-semibold text-slate-900 uppercase tracking-wider">{{ t('pomodoros.todaysSessions') }}</h3>
     </div>
     <div class="p-6">
       <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
@@ -150,17 +151,17 @@
             [class.text-gray-500]="session.type === 'upcoming'"
             [title]="
               session.type === 'work'
-                ? 'Work session completed'
+                ? t('pomodoros.workSessionCompleted')
                 : session.type === 'break'
-                ? 'Break completed'
-                : 'Upcoming session'
+                ? t('pomodoros.breakCompleted')
+                : t('pomodoros.upcomingSession')
             "
           >
             {{ i + 1 }}
           </div>
         } @empty {
           <div class="col-span-full text-center text-gray-500 text-sm py-4">
-            No sessions yet. Start a pomodoro to begin tracking.
+            {{ t('pomodoros.noSessionsYet') }}
           </div>
         }
       </div>
@@ -168,15 +169,15 @@
         <div class="flex items-center space-x-4">
           <div class="flex items-center">
             <div class="w-3 h-3 bg-blue-100 rounded-full mr-2"></div>
-            <span>Work sessions</span>
+            <span>{{ t('pomodoros.workSessions') }}</span>
           </div>
           <div class="flex items-center">
             <div class="w-3 h-3 bg-green-100 rounded-full mr-2"></div>
-            <span>Break sessions</span>
+            <span>{{ t('pomodoros.breakSessions') }}</span>
           </div>
           <div class="flex items-center">
             <div class="w-3 h-3 bg-gray-100 rounded-full mr-2"></div>
-            <span>Upcoming</span>
+            <span>{{ t('pomodoros.upcoming') }}</span>
           </div>
         </div>
       </div>
@@ -187,17 +188,18 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
     <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-blue-500);">
       <div class="text-2xl font-bold text-slate-900 mb-1">{{ totalFocusTime() }}</div>
-      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Focus Time Today</div>
+      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ t('pomodoros.totalFocusTimeToday') }}</div>
     </div>
 
     <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-emerald-500);">
       <div class="text-2xl font-bold text-slate-900 mb-1">{{ averageSessionLength() }}</div>
-      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Average Session Length</div>
+      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ t('pomodoros.averageSessionLength') }}</div>
     </div>
 
     <div class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow duration-200" style="border-left: 3px solid var(--color-violet-500);">
       <div class="text-2xl font-bold text-slate-900 mb-1">{{ productivityScore() }}%</div>
-      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Productivity Score</div>
+      <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ t('pomodoros.productivityScore') }}</div>
     </div>
   </div>
 </div>
+</ng-container>

@@ -15,6 +15,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
+import { TranslocoModule } from '@jsverse/transloco';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
 import { TaskCardComponent, TaskFiltersComponent, TaskStatsComponent } from '../../components';
 import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared';
@@ -30,7 +31,8 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
     MatButtonToggleModule,
     TaskCardComponent,
     TaskStatsComponent,
-    TaskFiltersComponent
+    TaskFiltersComponent,
+    TranslocoModule
 ],
   templateUrl: './tasks.component.html',
   styles: `

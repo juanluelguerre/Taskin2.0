@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoModule } from '@jsverse/transloco';
 import { CreateProjectCommand, UpdateProjectCommand } from '../../services/project.service';
 import { ProjectStore } from '../../stores/project.store';
 
@@ -35,7 +36,8 @@ import { ProjectStore } from '../../stores/project.store';
     MatDatepickerModule,
     MatNativeDateModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    TranslocoModule
 ],
   providers: [ProjectStore],
   templateUrl: './project-new.component.html',

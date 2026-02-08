@@ -2,6 +2,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   Input,
   signal,
   ViewEncapsulation,
@@ -9,36 +10,27 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
+import { TranslocoModule } from '@jsverse/transloco';
 import { NavigationService } from '../../core/components/navigation/navigation.service';
 import { NavigationItem } from '../../core/components/navigation/navigation.type';
-
-interface sidebarMenu {
-  link: string;
-  icon: string;
-  menu: string;
-}
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
-  imports: [RouterModule, MatSidenavModule, MatIconModule],
+  imports: [RouterModule, MatSidenavModule, MatIconModule, TranslocoModule],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
+  private readonly navigationService = inject(NavigationService);
+
   @Input() isMinimized = false;
   @Input() isHidden = false;
 
-  menuItems = signal<NavigationItem[]>([]);
+  menuItems = signal<NavigationItem[]>(this.navigationService.buildNavigation());
   openSubmenus = signal<Set<string>>(new Set());
-
-  constructor(private navigationService: NavigationService) {
-    this.navigationService.buildNavigation().subscribe(menu => {
-      this.menuItems.set(menu);
-    });
-  }
 
   getIcon(iconString: string | undefined): string {
     if (!iconString) return 'circle';

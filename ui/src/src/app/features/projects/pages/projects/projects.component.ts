@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
+import { TranslocoModule } from '@jsverse/transloco';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
 import { StatusColorPipe, StatusDisplayPipe } from '@shared/pipes';
 import { ProjectStatus, ProjectStore } from '../../stores/project.store';
@@ -36,6 +37,7 @@ import { ProjectStatus, ProjectStore } from '../../stores/project.store';
     FormsModule,
     StatusColorPipe,
     StatusDisplayPipe,
+    TranslocoModule,
   ],
   providers: [ProjectStore],
   templateUrl: './projects.component.html',

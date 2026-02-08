@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatChipsModule } from '@angular/material/chips'
+import { TranslocoModule } from '@jsverse/transloco'
 import { TaskViewModel } from '../shared/types/task.types'
 
 @Component({
@@ -16,7 +17,8 @@ import { TaskViewModel } from '../shared/types/task.types'
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatChipsModule
+    MatChipsModule,
+    TranslocoModule
   ],
   templateUrl: './task-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

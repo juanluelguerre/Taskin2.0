@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   Output,
   ViewEncapsulation,
@@ -10,7 +11,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-header',
@@ -22,6 +23,8 @@ import { TranslocoModule } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
+  private readonly translocoService = inject(TranslocoService);
+
   @Input() isDesktop = false;
   userName = 'JuanLu';
 
@@ -46,8 +49,7 @@ export class HeaderComponent {
   }
 
   changeLanguage(lang: string) {
-    // TODO: Implement language change logic with TranslocoService
-    console.log(`Language changed to ${lang}`);
+    this.translocoService.setActiveLang(lang);
   }
 
   logout() {

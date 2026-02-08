@@ -1,3 +1,4 @@
+<ng-container *transloco="let t">
 <div
   class="h-full bg-slate-900 flex flex-col transition-all duration-300"
   [class.w-64]="!isMinimized"
@@ -31,14 +32,14 @@
             getIcon(item.icon)
           }}</mat-icon>
           @if (!isMinimized) {
-            <span class="ml-3 font-medium text-sm">{{ item.title }}</span>
+            <span class="ml-3 font-medium text-sm">{{ t(item.title!) }}</span>
           }
           <!-- Tooltip for minimized state -->
           @if (isMinimized) {
             <div
               class="absolute left-full ml-2 px-2 py-1 text-sm bg-slate-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50"
               >
-              {{ item.title }}
+              {{ t(item.title!) }}
             </div>
           }
         </a>
@@ -55,7 +56,7 @@
             }}</mat-icon>
             @if (!isMinimized) {
               <span class="ml-3 font-medium text-sm flex-1 text-left">{{
-                item.title
+                t(item.title!)
               }}</span>
             }
             @if (!isMinimized) {
@@ -75,7 +76,7 @@
                     class="flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-800 hover:text-slate-200 transition-all duration-200"
                     >
                     <mat-icon class="w-4 h-4 text-slate-500 mr-3">{{ getIcon(child.icon) }}</mat-icon>
-                    {{ child.title }}
+                    {{ t(child.title!) }}
                   </a>
                 }
               </div>
@@ -87,3 +88,4 @@
 
     <!-- Sidebar Footer removed to avoid duplicate footer/info -->
   </div>
+</ng-container>

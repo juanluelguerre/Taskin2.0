@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { TranslocoModule } from '@jsverse/transloco';
 import { DashboardService, DashboardStats, RecentActivity } from '../../services/dashboard.service';
 
 @Component({
@@ -13,7 +14,8 @@ import { DashboardService, DashboardStats, RecentActivity } from '../../services
     RouterModule,
     MatButtonModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    TranslocoModule
 ],
   templateUrl: './dashboard.component.html',
   styles: ``,

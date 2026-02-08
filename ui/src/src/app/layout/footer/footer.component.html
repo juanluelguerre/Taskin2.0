@@ -1,5 +1,5 @@
-<footer class="bg-white border-t border-gray-100 px-6 py-3">
+<footer *transloco="let t" class="bg-white border-t border-gray-100 px-6 py-3">
   <div class="text-xs text-slate-400">
-    <span>&copy; {{ currentYear() }} Task[in]. All rights reserved.</span>
+    <span>&copy; {{ currentYear() }} Task[in]. {{ t('common.allRightsReserved') }}</span>
   </div>
 </footer>
