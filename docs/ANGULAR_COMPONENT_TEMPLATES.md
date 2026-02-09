@@ -1,6 +1,9 @@
 # ANGULAR COMPONENT TEMPLATES
 
-Ready-to-use component templates for Angular 18+ applications with modern patterns.
+Ready-to-use component templates for Angular 21 applications with modern patterns.
+
+> **Note**: All components use standalone mode (default in Angular 21), signal-based inputs/outputs,
+> OnPush change detection, and separate template files. No `CommonModule` imports needed.
 
 ## Table of Contents
 - [Page Components](#page-components)
@@ -18,7 +21,7 @@ Ready-to-use component templates for Angular 18+ applications with modern patter
 **File:** `features/[feature]/pages/[feature]-list/[feature]-list.component.ts`
 
 ```typescript
-import { CommonModule } from '@angular/common'
+
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, inject, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
@@ -34,9 +37,7 @@ import { FeatureItemComponent } from '../../components/feature-item/feature-item
 
 @Component({
   selector: 'app-feature-list',
-  standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatIconModule,
     MatInputModule,
@@ -212,7 +213,7 @@ export class FeatureListComponent {
 **File:** `features/[feature]/pages/[feature]-details/[feature]-details.component.ts`
 
 ```typescript
-import { CommonModule } from '@angular/common'
+
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, inject, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
@@ -236,9 +237,7 @@ interface RouteTab {
 
 @Component({
   selector: 'app-feature-details',
-  standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -331,7 +330,7 @@ export class FeatureDetailsComponent {
 **File:** `features/[feature]/pages/[feature]-form/[feature]-form.component.ts`
 
 ```typescript
-import { CommonModule } from '@angular/common'
+
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, inject } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
@@ -348,9 +347,7 @@ import { CreateFeatureRequest, FeatureStatus, UpdateFeatureRequest } from '../..
 
 @Component({
   selector: 'app-feature-form',
-  standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -482,7 +479,7 @@ export class FeatureFormComponent {
 **File:** `features/[feature]/components/[feature]-card/[feature]-card.component.ts`
 
 ```typescript
-import { CommonModule } from '@angular/common'
+
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, input, output } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -493,9 +490,7 @@ import { Feature, FeatureStatus } from '../../shared/types/feature.types'
 
 @Component({
   selector: 'app-feature-card',
-  standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
@@ -550,7 +545,7 @@ export class FeatureCardComponent {
 **File:** `shared/components/form-field/form-field.component.ts`
 
 ```typescript
-import { CommonModule } from '@angular/common'
+
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, input, signal } from '@angular/core'
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field'
@@ -559,9 +554,7 @@ import { MatIconModule } from '@angular/material/icon'
 
 @Component({
   selector: 'app-form-field',
-  standalone: true,
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -1369,4 +1362,10 @@ export interface UserPreferences {
 }
 ```
 
-These templates provide a comprehensive foundation for building Angular 18+ applications with modern patterns, proper typing, and best practices. All references to specific business logic have been removed, making them reusable across different projects.
+These templates provide a comprehensive foundation for building Angular 21 applications with modern patterns, proper typing, and best practices. All references to specific business logic have been removed, making them reusable across different projects.
+
+> **Angular 21 Notes**: Components are standalone by default (no `standalone: true` needed),
+> use `input()` / `output()` instead of `@Input()` / `@Output()` decorators,
+> use `@if` / `@for` / `@switch` instead of `*ngIf` / `*ngFor` / `ngSwitch`,
+> use Tailwind CSS v4 (`shadow-xs`, `@media (width >= 768px)`),
+> and Material Design 3 button syntax (`matButton="filled"`, `matButton="elevated"`).

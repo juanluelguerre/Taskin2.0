@@ -1,16 +1,16 @@
 # ANGULAR_CLAUDE_GUIDE.md
 
-This file provides comprehensive guidance to Claude Code when working with Angular 18+ applications. Use this as a template for your project's CLAUDE.md file.
+This file provides comprehensive guidance to Claude Code when working with Angular 21 applications. Use this as a template for your project's CLAUDE.md file.
 
 ## Project Overview Template
 
-This is an Angular 18+ application using modern patterns including:
-- **Standalone Components** with signal-based architecture
+This is an Angular 21 application using modern patterns including:
+- **Standalone Components** (default) with signal-based inputs/outputs
 - **NgRx Signal Stores** for state management
-- **Angular Material** with custom theming
-- **Tailwind CSS** for utility-first styling
-- **Transloco** for internationalization
-- **GraphQL/Apollo** for API communication (optional)
+- **Angular Material 21** (MD3) with custom theming
+- **Tailwind CSS v4** for utility-first styling
+- **Transloco** for internationalization (en, es)
+- **Zoneless** — no zone.js dependency
 
 ## Development Commands
 
@@ -61,32 +61,36 @@ src/app/
 ## Code Conventions
 
 ### Component Generation
-Always create standalone components with these flags:
+Always create standalone components with these flags (do NOT include `--standalone`, it's the default in Angular 21):
 ```bash
-ng generate component features/[feature]/pages/[component-name] --standalone --skip-tests --inline-style --change-detection OnPush --view-encapsulation None
+ng generate component features/[feature]/pages/[component-name] --skip-tests --inline-style --change-detection OnPush --view-encapsulation None
 ```
 
 ### Component Structure Template
 ```typescript
-import { CommonModule } from '@angular/common'
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, ViewEncapsulation, inject, input, output, signal } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-component-name',
-  standalone: true,
-  imports: [CommonModule],
+  imports: [TranslocoDirective],
   templateUrl: './component-name.component.html',
-  styles: [],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComponentNameComponent {
   // Use inject() for dependency injection
-  private readonly _service = inject(ServiceName)
-  
-  // Prefer signals for reactive state
-  data = signal<DataType[]>([])
-  loading = signal<boolean>(false)
+  private readonly service = inject(ServiceName);
+
+  // Signal-based inputs (not @Input decorators)
+  data = input.required<DataType[]>();
+  disabled = input(false);
+
+  // Signal-based outputs (not @Output / EventEmitter)
+  itemSelected = output<DataType>();
+
+  // Internal signals for component state
+  loading = signal(false);
 }
 ```
 
@@ -95,8 +99,8 @@ export class ComponentNameComponent {
 - Use **PascalCase** for class names
 - Use **camelCase** for variables and methods
 - Follow the pattern: `features/[feature-name]/pages|components/[component-name]/`
-- Store logic in dedicated `.store.ts` files using NgRx Component Store
-- Service interfaces should be prefixed with `I` (e.g., `IUserService`)
+- Store logic in dedicated `.store.ts` files using NgRx Signal Store
+- No `I` prefix on interfaces (e.g., `ProjectListDto` not `IProjectListDto`)
 
 ### ESLint Configuration
 ```json
@@ -110,7 +114,7 @@ export class ComponentNameComponent {
     "@typescript-eslint/explicit-function-return-type": "error",
     "max-len": ["error", { "code": 120 }],
     "quotes": ["error", "single"],
-    "semi": ["error", "never"]
+    "semi": ["error", "always"]
   }
 }
 ```
@@ -258,8 +262,8 @@ export const routes: Routes = [
 
 ### Performance
 - Use `OnPush` change detection strategy
-- Implement `trackBy` functions for `*ngFor`
-- Use `async` pipe for observables
+- Use `track` expression in `@for` blocks (not `trackBy` with `*ngFor`)
+- Use `toSignal()` instead of `async` pipe for observables
 - Prefer signals over observables for component state
 
 ### Security

@@ -1,6 +1,10 @@
 # ANGULAR PATTERNS REFERENCE
 
-Comprehensive guide to Angular architecture patterns, best practices, and design principles for scalable applications.
+Comprehensive guide to Angular 21 architecture patterns, best practices, and design principles for scalable applications.
+
+> **Angular 21 Key Changes**: Standalone components are the default (no `--standalone` flag needed),
+> signal-based `input()`/`output()` replace `@Input()`/`@Output()`, `@if`/`@for`/`@switch` replace
+> `*ngIf`/`*ngFor`/`ngSwitch`, `CommonModule` import is no longer needed, and zoneless mode is supported.
 
 ## Table of Contents
 - [Architecture Overview](#architecture-overview)

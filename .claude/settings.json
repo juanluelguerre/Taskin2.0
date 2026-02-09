@@ -1,0 +1,121 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+
+      "Bash(ls:*)",
+      "Bash(dir:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(findstr:*)",
+
+      "Bash(npm start:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run watch:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm ls:*)",
+      "Bash(npx ng:*)",
+      "Bash(npx prettier:*)",
+      "Bash(npx transloco-keys-manager:*)",
+
+      "Bash(dotnet build:*)",
+      "Bash(dotnet build)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet run:*)",
+      "Bash(dotnet ef:*)",
+      "Bash(dotnet format:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet list:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet tool:*)",
+      "Bash(dotnet --version:*)",
+
+      "Bash(git add:*)",
+      "Bash(git mv:*)",
+      "Bash(git rm:*)",
+      "Bash(git checkout:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+
+      "Bash(docker ps:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker restart:*)",
+      "Bash(docker port:*)",
+      "Bash(docker container:*)",
+      "Bash(docker network:*)",
+      "Bash(docker volume:*)",
+
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(timeout:*)",
+
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "mcp__grafana__search_dashboards",
+      "mcp__grafana__get_dashboard_by_uid",
+      "mcp__grafana__update_dashboard",
+      "mcp__grafana__list_prometheus_metric_names",
+      "mcp__grafana__query_prometheus",
+      "mcp__grafana__query_loki_logs",
+      "mcp__grafana__list_loki_label_values",
+      "mcp__grafana__list_datasources",
+      "mcp__grafana__get_dashboard_summary",
+      "mcp__grafana__get_dashboard_property",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_tabs",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_close",
+
+      "WebSearch",
+      "WebFetch(domain:angular.dev)",
+      "WebFetch(domain:material.angular.dev)",
+      "WebFetch(domain:angular.love)",
+      "WebFetch(domain:grafana.com)",
+      "WebFetch(domain:opentelemetry.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:learn.microsoft.com)",
+      "WebFetch(domain:tailwindcss.com)",
+      "WebFetch(domain:ngrx.io)"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_FILE_PATHS\" | grep -qE 'ui/src/.*\\.(ts|html|scss|css|json)$'; then cd D:/code/elguerre/Taskin2.0/ui/src && npx prettier --write $CLAUDE_FILE_PATHS 2>/dev/null; fi",
+            "timeout": 10000
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_FILE_PATHS\" | grep -qE 'back/src/.*\\.cs$'; then cd D:/code/elguerre/Taskin2.0/back/src && dotnet format --include $CLAUDE_FILE_PATHS --verbosity quiet 2>/dev/null; fi",
+            "timeout": 15000
+          }
+        ]
+      }
+    ]
+  },
+  "enableAllProjectMcpServers": true
+}
