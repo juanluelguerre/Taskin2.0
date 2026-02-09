@@ -1,28 +1,23 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { finalize, Observable, take } from 'rxjs';
-import { LoadingService } from './loading.service';
+import { finalize, Observable } from 'rxjs';
+import { LoadingBarStore } from './loading-bar.store';
 
 export const loadingInterceptor = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> => {
-  const loadingService = inject(LoadingService);
-  let handleRequestsAutomatically = false;
+  const store = inject(LoadingBarStore);
 
-  loadingService.auto$.pipe(take(1)).subscribe((value) => {
-    handleRequestsAutomatically = value;
-  });
-
-  if (!handleRequestsAutomatically) {
+  if (!store.autoMode()) {
     return next(req);
   }
 
-  loadingService.setStatus(true, req.url);
+  store.setLoadingStatus(true, req.url);
 
   return next(req).pipe(
     finalize(() => {
-      loadingService.setStatus(false, req.url);
+      store.setLoadingStatus(false, req.url);
     })
   );
 };

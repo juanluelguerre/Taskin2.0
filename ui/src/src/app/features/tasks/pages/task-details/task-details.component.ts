@@ -132,6 +132,15 @@ export class TaskDetailsComponent implements OnInit {
     }
   });
 
+  // Navigate to edit page after task duplication
+  private readonly duplicateEffect = effect(() => {
+    const newId = this.taskStore.duplicatedTaskId();
+    if (newId) {
+      this.taskStore.clearDuplicatedTaskId();
+      this.router.navigate(['/tasks', newId, 'edit']);
+    }
+  });
+
   ngOnInit(): void {
     // Get task ID from route
     this.route.params.subscribe(params => {
@@ -162,9 +171,6 @@ export class TaskDetailsComponent implements OnInit {
     const currentTask = this.task();
     if (currentTask) {
       this.taskStore.duplicateTask(currentTask.id);
-      this.notificationService.notifySuccess('tasks.messages.duplicated', {
-        name: currentTask.title,
-      });
     }
   }
 

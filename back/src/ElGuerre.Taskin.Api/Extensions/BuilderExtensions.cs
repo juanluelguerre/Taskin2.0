@@ -1,4 +1,4 @@
-﻿using ProblemDetails;
+﻿using ElGuerre.Taskin.Infrastructure.Middleware;
 
 namespace ElGuerre.Taskin.Api.Extensions;
 

@@ -1,8 +1,8 @@
-# Backend CLAUDE.md — .NET 9 Clean Architecture
+# Backend CLAUDE.md — .NET 10 Clean Architecture
 
 ## Stack
 
-.NET 9 | ASP.NET Core | EF Core | MediatR | FluentValidation | Serilog | OpenTelemetry
+.NET 10 | ASP.NET Core | EF Core 10 | MediatR 14 | FluentValidation | Serilog 10 | OpenTelemetry
 
 ## Architecture Layers
 

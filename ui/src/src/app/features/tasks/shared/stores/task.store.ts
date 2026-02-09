@@ -34,29 +34,32 @@ type TaskState = {
   // Data
   tasks: Task[]
   selectedTask: Task | null
-  
+
   // Loading states
   loading: boolean
   saving: boolean
   deleting: boolean
-  
+
   // Pagination
   currentPage: number
   pageSize: number
   totalCount: number
-  
+
   // Filters and search
   searchTerm: string
   filters: TaskFilters
-  
+
   // Stats
   stats: TaskStats | null
-  
+
   // UI state
   viewMode: 'list' | 'grid' | 'kanban'
   sortBy: keyof Task
   sortDirection: 'asc' | 'desc'
-  
+
+  // Navigation signals
+  duplicatedTaskId: string | null
+
   // Error handling
   error: string | null
 }
@@ -84,6 +87,7 @@ const initialState: TaskState = {
   viewMode: 'list',
   sortBy: 'createdAt',
   sortDirection: 'desc',
+  duplicatedTaskId: null,
   error: null,
 }
 
@@ -451,7 +455,8 @@ export class TaskStore extends signalStore(
               next: (duplicatedTask: Task) => {
                 patchState(store, {
                   tasks: [duplicatedTask, ...store.tasks()],
-                  saving: false
+                  saving: false,
+                  duplicatedTaskId: duplicatedTask.id
                 })
               },
               error: (error: any) => {
@@ -504,7 +509,9 @@ export class TaskStore extends signalStore(
 
     // Utility methods
     clearError: () => patchState(store, { error: null }),
-    
+
+    clearDuplicatedTaskId: () => patchState(store, { duplicatedTaskId: null }),
+
     clearSelection: () => patchState(store, { selectedTask: null }),
 
     refreshTasks: () => {

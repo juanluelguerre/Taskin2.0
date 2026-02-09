@@ -1,5 +1,5 @@
-@if(show){
-<ng-container>
-  <mat-progress-bar [mode]="mode" [value]="progress"></mat-progress-bar>
-</ng-container>
+@if (store.visible()) {
+  <div class="loading-bar-container">
+    <mat-progress-bar [mode]="store.mode()" [value]="store.progress()" />
+  </div>
 }

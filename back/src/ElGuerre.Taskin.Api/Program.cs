@@ -4,6 +4,7 @@ using ElGuerre.Taskin.Application;
 using ElGuerre.Taskin.Infrastructure.EntityFramework;
 using ElGuerre.Taskin.Infrastructure.Middleware;
 using ElGuerre.Taskin.Application.Observability;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +17,15 @@ builder.AddSqlServerDbContext<TaskinDbContext>("taskin-db");
 // OpenTelemetry logging configured via ServiceDefaults
 // Logs will automatically export to Aspire Dashboard and Seq
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
+builder.Services.AddOpenApi();
 builder.Services.AddTaskin(builder.Configuration);
-builder.Services.AddProblemDetails(options => { });
+builder.Services.AddProblemDetails();
 
 // Add custom activity source for distributed tracing
 builder.Services.AddOpenTelemetry()
@@ -56,8 +61,8 @@ if (app.Environment.IsDevelopment())
 app.UseTasking();
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 // Request logging handled by OpenTelemetry instrumentation in ServiceDefaults

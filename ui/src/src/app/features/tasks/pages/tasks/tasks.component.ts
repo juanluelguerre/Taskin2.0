@@ -11,7 +11,6 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
@@ -26,7 +25,6 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
   imports: [
     MatButtonModule,
     MatIconModule,
-    MatProgressBarModule,
     MatTooltipModule,
     MatButtonToggleModule,
     TaskCardComponent,
@@ -35,15 +33,7 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
     TranslocoModule
 ],
   templateUrl: './tasks.component.html',
-  styles: `
-    .loading-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-    }
-  `,
+  styles: [],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TaskStore],
@@ -109,6 +99,15 @@ export class TasksComponent implements OnInit {
     }
   });
 
+  // Navigate to edit page after task duplication
+  private readonly duplicateEffect = effect(() => {
+    const newId = this.taskStore.duplicatedTaskId();
+    if (newId) {
+      this.taskStore.clearDuplicatedTaskId();
+      this.router.navigate(['/tasks', newId, 'edit']);
+    }
+  });
+
   ngOnInit(): void {
     // Load initial data
     this.taskStore.loadTasks();
@@ -125,7 +124,6 @@ export class TasksComponent implements OnInit {
 
   onTaskDuplicated(task: TaskViewModel): void {
     this.taskStore.duplicateTask(task.id);
-    this.notificationService.notifySuccess('tasks.messages.duplicated', { name: task.title });
   }
 
   onTaskViewed(task: TaskViewModel): void {

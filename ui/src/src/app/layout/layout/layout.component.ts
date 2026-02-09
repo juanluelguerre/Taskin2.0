@@ -10,12 +10,13 @@ import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidenav/sidebar.component';
 import { RouterModule } from '@angular/router';
 import { FooterComponent } from '../footer/footer.component';
+import { LoadingBarComponent } from '@core/components/loading-bar';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css'],
-  imports: [RouterModule, HeaderComponent, SidebarComponent, FooterComponent],
+  imports: [RouterModule, HeaderComponent, SidebarComponent, FooterComponent, LoadingBarComponent],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

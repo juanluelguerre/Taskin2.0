@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
+import { map, switchMap } from 'rxjs/operators'
 import { environment } from '@env/environment'
 import {
   Task,
@@ -71,7 +71,18 @@ export class TaskService implements ITaskService {
   }
 
   search(request: TaskSearchRequest): Observable<TaskListResponse> {
-    return this.http.post<TaskListResponse>(`${this.baseUrl}/search`, request)
+    let params = new HttpParams()
+      .set('page', request.page.toString())
+      .set('size', request.size.toString());
+
+    if (request.query) params = params.set('search', request.query);
+    if (request.filters?.status) params = params.set('status', request.filters.status);
+    if (request.filters?.priority) params = params.set('priority', request.filters.priority);
+    if (request.filters?.projectId) params = params.set('projectId', request.filters.projectId);
+    if (request.sortBy) params = params.set('sort', request.sortBy);
+    if (request.sortDirection) params = params.set('order', request.sortDirection);
+
+    return this.http.get<TaskListResponse>(this.baseUrl, { params });
   }
 
   getTasksByProjectId(projectId: string): Observable<Task[]> {
@@ -88,7 +99,26 @@ export class TaskService implements ITaskService {
   }
 
   duplicateTask(id: string): Observable<Task> {
-    return this.http.post<Task>(`${this.baseUrl}/${id}/duplicate`, {})
+    return this.getById(id).pipe(
+      switchMap((task) => {
+        const now = new Date();
+        const deadline = task.dueDate && new Date(task.dueDate) > now ? task.dueDate : null;
+        const body = {
+          title: `${task.title} (copy)`,
+          description: task.description,
+          status: 'Todo',
+          priority: task.priority,
+          projectId: task.projectId,
+          assigneeId: task.assigneeId,
+          deadline,
+          estimatedPomodoros: task.estimatedPomodoros ?? 0,
+          tags: task.tags?.length ? task.tags.join(',') : null
+        };
+        return this.http.post<string>(this.baseUrl, body).pipe(
+          switchMap((newId) => this.getById(newId))
+        );
+      })
+    );
   }
 
   getOverdueTasks(): Observable<Task[]> {

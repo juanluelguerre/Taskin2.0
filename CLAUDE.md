@@ -30,7 +30,7 @@ Full-stack Pomodoro task management app.
 | Layer | Stack |
 |-------|-------|
 | Frontend | Angular 21.1.3, Material 21, Tailwind CSS 4, NgRx Signals 21, Transloco 8 |
-| Backend | .NET 9, ASP.NET Core, EF Core, MediatR, FluentValidation, Serilog |
+| Backend | .NET 10, ASP.NET Core, EF Core 10, MediatR 14, FluentValidation, Serilog 10 |
 | Infrastructure | .NET Aspire, SQL Server, Redis, Seq, OpenTelemetry, Prometheus, Grafana |
 
 **Zoneless** — no zone.js. `@angular/build` builder.
@@ -39,7 +39,7 @@ Full-stack Pomodoro task management app.
 
 ```
 taskin2.0/
-├── back/src/                              # Backend (.NET 9 Clean Architecture)
+├── back/src/                              # Backend (.NET 10 Clean Architecture)
 │   ├── ElGuerre.Taskin.Api/               # Controllers, middleware
 │   ├── ElGuerre.Taskin.Application/       # CQRS commands/queries
 │   ├── ElGuerre.Taskin.Domain/            # Entities, enums
