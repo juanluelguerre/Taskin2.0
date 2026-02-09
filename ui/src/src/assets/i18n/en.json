@@ -180,7 +180,10 @@
     "upcoming": "Upcoming",
     "totalFocusTimeToday": "Total Focus Time Today",
     "averageSessionLength": "Average Session Length",
-    "productivityScore": "Productivity Score"
+    "productivityScore": "Productivity Score",
+    "linkedTask": "Linked Task",
+    "backToTask": "Back to task",
+    "pomodoroSaved": "Pomodoro saved for task"
   },
   "messages": {
     "error": "An error occurred. Please try again."

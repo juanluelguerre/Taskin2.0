@@ -214,9 +214,9 @@ export class TaskDetailsComponent implements OnInit {
   onStartPomodoro(): void {
     const currentTask = this.task();
     if (currentTask) {
-      // This would integrate with a pomodoro timer component
-      this.notificationService.notifyInfo('tasks.messages.pomodoroStarted');
-      // TODO: Navigate to pomodoro timer or start timer here
+      this.router.navigate(['/pomodoros'], {
+        queryParams: { taskId: currentTask.id, autoStart: true },
+      });
     }
   }
 

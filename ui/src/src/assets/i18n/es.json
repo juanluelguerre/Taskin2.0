@@ -180,7 +180,10 @@
     "upcoming": "Pr\u00f3ximas",
     "totalFocusTimeToday": "Tiempo Total de Enfoque Hoy",
     "averageSessionLength": "Duraci\u00f3n Promedio de Sesi\u00f3n",
-    "productivityScore": "Puntuaci\u00f3n de Productividad"
+    "productivityScore": "Puntuaci\u00f3n de Productividad",
+    "linkedTask": "Tarea Vinculada",
+    "backToTask": "Volver a la tarea",
+    "pomodoroSaved": "Pomodoro guardado para la tarea"
   },
   "messages": {
     "error": "Ha ocurrido un error. Por favor, int\u00e9ntelo de nuevo."

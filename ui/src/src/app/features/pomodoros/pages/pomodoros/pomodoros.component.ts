@@ -1,9 +1,14 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation, signal, OnDestroy, OnInit, inject, computed } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule } from '@jsverse/transloco';
+import { environment } from '@env/environment';
+import { NotificationService } from '@core/services/notification.service';
 import { PomodoroService, PomodoroDto } from '../../services/pomodoro.service';
 
 interface Session {
@@ -19,8 +24,9 @@ interface Session {
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    TranslocoModule
-],
+    MatTooltipModule,
+    TranslocoModule,
+  ],
   templateUrl: './pomodoros.component.html',
   styles: ``,
   encapsulation: ViewEncapsulation.None,
@@ -28,6 +34,14 @@ interface Session {
 })
 export class PomodorosComponent implements OnInit, OnDestroy {
   private readonly pomodoroService = inject(PomodoroService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly http = inject(HttpClient);
+  private readonly notificationService = inject(NotificationService);
+
+  // Linked task (from query params)
+  linkedTaskId = signal<string | null>(null);
+  linkedTaskName = signal<string | null>(null);
 
   currentSession = signal<'work' | 'break'>('work');
   workMinutes = signal(25);
@@ -59,6 +73,20 @@ export class PomodorosComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadTodaySessions();
+
+    const taskId = this.route.snapshot.queryParamMap.get('taskId');
+    const autoStart = this.route.snapshot.queryParamMap.get('autoStart');
+
+    if (taskId) {
+      this.linkedTaskId.set(taskId);
+      this.http
+        .get<{ id: string; title: string }>(`${environment.apiUrl}/api/Tasks/${taskId}`)
+        .subscribe(task => this.linkedTaskName.set(task.title));
+    }
+
+    if (autoStart === 'true') {
+      this.toggleTimer();
+    }
   }
 
   ngOnDestroy() {
@@ -141,8 +169,21 @@ export class PomodorosComponent implements OnInit, OnDestroy {
         { type: 'work', duration: this.workMinutes(), completed: true }
       ]);
 
-      // Save to backend (no taskId needed for standalone pomodoro - the backend will need to handle this)
-      // For now, we track locally. Backend integration requires selecting a task first.
+      // Save to backend if linked to a task
+      if (this.linkedTaskId()) {
+        this.pomodoroService
+          .create({
+            taskId: this.linkedTaskId()!,
+            startTime: new Date(Date.now() - this.workMinutes() * 60 * 1000).toISOString(),
+            durationInMinutes: this.workMinutes(),
+          })
+          .subscribe({
+            next: () =>
+              this.notificationService.notifySuccess('pomodoros.pomodoroSaved'),
+            error: () =>
+              this.notificationService.notifyError('messages.error'),
+          });
+      }
 
       this.currentSession.set('break');
       this.timeLeft.set(this.breakMinutes() * 60);
@@ -189,6 +230,13 @@ export class PomodorosComponent implements OnInit, OnDestroy {
     if (this.currentSession() === 'break') {
       this.timeLeft.set(newMinutes * 60);
       this.totalTime.set(newMinutes * 60);
+    }
+  }
+
+  navigateToTask(): void {
+    const taskId = this.linkedTaskId();
+    if (taskId) {
+      this.router.navigate(['/tasks', taskId]);
     }
   }
 
