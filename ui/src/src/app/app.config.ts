@@ -10,16 +10,12 @@ import {
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { loadingInterceptor } from './core/components/loading-bar/loading.interceptor';
 import { provideIcons } from './core/icons/icons.provider';
 import { provideTransloco } from '@jsverse/transloco';
 import { provideFaro } from './core/observability/faro.provider';
-
-// registerLocaleData(localeEs);
-// registerLocaleData(localeEn);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,7 +27,6 @@ export const appConfig: ApplicationConfig = {
       withViewTransitions()
     ),
     provideHttpClient(withInterceptors([loadingInterceptor])),
-    provideAnimationsAsync(),
     provideTransloco({
       config: {
         availableLangs: ['en', 'es'],
