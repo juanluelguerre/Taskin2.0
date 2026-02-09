@@ -23,7 +23,8 @@
     "active": "Active",
     "noResults": "No results found",
     "loading": "Loading...",
-    "allRightsReserved": "All rights reserved."
+    "allRightsReserved": "All rights reserved.",
+    "yes": "Yes"
   },
   "header": {
     "profileSettings": "Profile Settings",
@@ -184,6 +185,10 @@
     "linkedTask": "Linked Task",
     "backToTask": "Back to task",
     "pomodoroSaved": "Pomodoro saved for task"
+  },
+  "guards": {
+    "unsavedChangesTitle": "Leave this page?",
+    "unsavedChangesMessage": "You have unsaved changes. If you leave, your progress will be lost."
   },
   "messages": {
     "error": "An error occurred. Please try again."

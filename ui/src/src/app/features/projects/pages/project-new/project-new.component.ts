@@ -20,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
+import { CanComponentDeactivate } from '@core/guards/can-deactivate.guard';
 import { CreateProjectCommand, UpdateProjectCommand } from '../../services/project.service';
 import { ProjectStore } from '../../stores/project.store';
 
@@ -45,7 +46,7 @@ import { ProjectStore } from '../../stores/project.store';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectNewComponent implements OnInit {
+export class ProjectNewComponent implements OnInit, CanComponentDeactivate {
   private readonly fb = inject(FormBuilder);
   private readonly projectStore = inject(ProjectStore);
   private readonly router = inject(Router);
@@ -110,6 +111,10 @@ export class ProjectNewComponent implements OnInit {
       this.projectId.set(projectId);
       this.projectStore.loadProject(projectId);
     }
+  }
+
+  canDeactivate(): boolean {
+    return !this.projectForm.dirty;
   }
 
   populateForm(project: any) {

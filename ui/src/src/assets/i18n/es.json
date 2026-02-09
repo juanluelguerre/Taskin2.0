@@ -23,7 +23,8 @@
     "active": "Activo",
     "noResults": "No se encontraron resultados",
     "loading": "Cargando...",
-    "allRightsReserved": "Todos los derechos reservados."
+    "allRightsReserved": "Todos los derechos reservados.",
+    "yes": "Sí"
   },
   "header": {
     "profileSettings": "Configuraci\u00f3n de Perfil",
@@ -184,6 +185,10 @@
     "linkedTask": "Tarea Vinculada",
     "backToTask": "Volver a la tarea",
     "pomodoroSaved": "Pomodoro guardado para la tarea"
+  },
+  "guards": {
+    "unsavedChangesTitle": "\u00bfSalir de esta p\u00e1gina?",
+    "unsavedChangesMessage": "Tienes cambios sin guardar. Si sales, se perder\u00e1 tu progreso."
   },
   "messages": {
     "error": "Ha ocurrido un error. Por favor, int\u00e9ntelo de nuevo."

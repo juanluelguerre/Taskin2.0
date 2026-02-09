@@ -40,6 +40,11 @@ app-sidebar nav a:hover mat-icon { color: #fff; }
 /* Quick Actions links - prevent global a { color: var(--link-color) } override */
 .text-slate-700 a, a.text-slate-700, a span.text-slate-700 { color: var(--color-slate-700); }
 
+/* Fix: Tailwind v4 preflight resets button cursor to default */
+button, [role="button"] {
+  cursor: pointer;
+}
+
 /* Minimal Material Design fixes for Tailwind conflicts */
 .mat-mdc-form-field {
   font-family: inherit;

@@ -25,6 +25,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
+import { CanComponentDeactivate } from '@core/guards/can-deactivate.guard';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
 import {
   CreateTaskRequest,
@@ -58,7 +59,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TaskStore],
 })
-export class TaskNewComponent implements OnInit {
+export class TaskNewComponent implements OnInit, CanComponentDeactivate {
   // Dependencies
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -155,6 +156,10 @@ export class TaskNewComponent implements OnInit {
         this.taskStore.loadTask(id);
       }
     });
+  }
+
+  canDeactivate(): boolean {
+    return !this.form.dirty;
   }
 
   private populateFormFromTask(task: any): void {

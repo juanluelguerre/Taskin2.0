@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule } from '@jsverse/transloco';
 import { environment } from '@env/environment';
 import { NotificationService } from '@core/services/notification.service';
+import { CanComponentDeactivate } from '@core/guards/can-deactivate.guard';
 import { PomodoroService, PomodoroDto } from '../../services/pomodoro.service';
 
 interface Session {
@@ -32,7 +33,7 @@ interface Session {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PomodorosComponent implements OnInit, OnDestroy {
+export class PomodorosComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   private readonly pomodoroService = inject(PomodoroService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -93,6 +94,10 @@ export class PomodorosComponent implements OnInit, OnDestroy {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
+  }
+
+  canDeactivate(): boolean {
+    return !this.isRunning();
   }
 
   private loadTodaySessions(): void {

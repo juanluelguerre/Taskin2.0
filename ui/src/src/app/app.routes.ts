@@ -7,6 +7,7 @@ import { ProjectNewComponent } from './features/projects/pages/project-new/proje
 import { TasksComponent } from './features/tasks/pages/tasks/tasks.component';
 import { TaskDetailsComponent } from './features/tasks/pages/task-details/task-details.component';
 import { TaskNewComponent } from './features/tasks/pages/task-new/task-new.component';
+import { canDeactivateGuard } from './core/guards/can-deactivate.guard';
 
 export const routes: Route[] = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -14,16 +15,16 @@ export const routes: Route[] = [
 
   // Project routes
   { path: 'projects', component: ProjectsComponent },
-  { path: 'projects/new', component: ProjectNewComponent },
+  { path: 'projects/new', component: ProjectNewComponent, canDeactivate: [canDeactivateGuard] },
   { path: 'projects/:id', component: ProjectDetailsComponent },
-  { path: 'projects/:id/edit', component: ProjectNewComponent },
+  { path: 'projects/:id/edit', component: ProjectNewComponent, canDeactivate: [canDeactivateGuard] },
 
   // Task routes
   { path: 'tasks', component: TasksComponent },
-  { path: 'tasks/new', component: TaskNewComponent },
+  { path: 'tasks/new', component: TaskNewComponent, canDeactivate: [canDeactivateGuard] },
   { path: 'tasks/:id', component: TaskDetailsComponent },
-  { path: 'tasks/:id/edit', component: TaskNewComponent },
+  { path: 'tasks/:id/edit', component: TaskNewComponent, canDeactivate: [canDeactivateGuard] },
 
-  { path: 'pomodoros', component: PomodorosComponent },
+  { path: 'pomodoros', component: PomodorosComponent, canDeactivate: [canDeactivateGuard] },
   { path: '**', redirectTo: '/dashboard', pathMatch: 'full' },
 ];

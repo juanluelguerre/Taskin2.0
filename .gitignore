@@ -353,3 +353,4 @@ back/src/.DS_Store
 .DS_Store
 back/src/.idea
 .claude/settings.local.json
+ui/src/.claude/settings.local.json
