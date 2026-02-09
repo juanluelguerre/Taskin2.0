@@ -35,22 +35,20 @@
           </button>
           <mat-menu #actionsMenu="matMenu">
             <button mat-menu-item (click)="onEditTask()">
-              <mat-icon>edit</mat-icon>
+              <mat-icon style="color: #2563eb;">edit</mat-icon>
               Edit Task
             </button>
             <button mat-menu-item (click)="onDuplicateTask()">
-              <mat-icon>content_copy</mat-icon>
+              <mat-icon style="color: #6b7280;">content_copy</mat-icon>
               Duplicate Task
             </button>
             <button mat-menu-item (click)="onStartPomodoro()">
-              <mat-icon>timer</mat-icon>
+              <mat-icon style="color: #ea580c;">timer</mat-icon>
               Start Pomodoro
             </button>
             <mat-divider></mat-divider>
-            <button mat-menu-item 
-                    class="text-red-600" 
-                    (click)="onDeleteTask()">
-              <mat-icon class="text-red-600">delete</mat-icon>
+            <button mat-menu-item style="color: #dc2626;" (click)="onDeleteTask()">
+              <mat-icon style="color: #dc2626;">delete</mat-icon>
               Delete Task
             </button>
           </mat-menu>
@@ -173,7 +171,7 @@
             <div class="info-section">
               <!-- Project -->
               <div class="info-item">
-                <mat-icon class="text-gray-400">folder_open</mat-icon>
+                <mat-icon style="color: #2563eb;">folder_open</mat-icon>
                 <div class="info-label">Project</div>
                 <div class="info-value font-medium">{{ task()!.projectName }}</div>
               </div>
@@ -181,7 +179,7 @@
               <!-- Assignee -->
               @if (task()!.assigneeName) {
                 <div class="info-item">
-                  <mat-icon class="text-gray-400">person</mat-icon>
+                  <mat-icon style="color: #16a34a;">person</mat-icon>
                   <div class="info-label">Assigned to</div>
                   <div class="info-value font-medium">{{ task()!.assigneeName }}</div>
                 </div>
@@ -190,7 +188,7 @@
               <!-- Due Date -->
               @if (task()!.dueDate) {
                 <div class="info-item">
-                  <mat-icon class="text-gray-400">event</mat-icon>
+                  <mat-icon style="color: #ea580c;">event</mat-icon>
                   <div class="info-label">Due Date</div>
                   <div class="info-value font-medium">
                     {{ task()!.dueDate | date:'mediumDate' }}
@@ -200,7 +198,7 @@
 
               <!-- Status -->
               <div class="info-item">
-                <mat-icon class="text-gray-400">info</mat-icon>
+                <mat-icon style="color: #2563eb;">info</mat-icon>
                 <div class="info-label">Status</div>
                 <div class="info-value">
                   <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
@@ -212,7 +210,7 @@
 
               <!-- Priority -->
               <div class="info-item">
-                <mat-icon class="text-gray-400">flag</mat-icon>
+                <mat-icon style="color: #d97706;">flag</mat-icon>
                 <div class="info-label">Priority</div>
                 <div class="info-value">
                   <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"

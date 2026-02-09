@@ -1,8 +1,8 @@
 <div class="space-y-6">
   <!-- Breadcrumb and Actions -->
   <div class="bg-white rounded-lg shadow-xs p-6 border border-gray-200">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-      <div class="flex items-center space-x-4">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
         <button mat-icon-button (click)="onBackToProjects()" class="text-gray-600">
           <mat-icon>arrow_back</mat-icon>
         </button>
@@ -15,23 +15,23 @@
           <h1 class="text-2xl font-bold text-gray-900">Project Details</h1>
         </div>
       </div>
-      
+
       @if (project(); as proj) {
-        <div class="mt-4 sm:mt-0 flex space-x-2">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
           <button mat-stroked-button color="primary" (click)="onEdit()">
             <mat-icon class="mr-2">edit</mat-icon>
             Edit
           </button>
-          <button mat-button [matMenuTriggerFor]="actionsMenu" class="text-gray-600">
+          <button mat-icon-button [matMenuTriggerFor]="actionsMenu" class="text-gray-600">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #actionsMenu="matMenu">
             <button mat-menu-item (click)="onEdit()">
-              <mat-icon>edit</mat-icon>
+              <mat-icon style="color: #2563eb;">edit</mat-icon>
               Edit Project
             </button>
-            <button mat-menu-item class="text-red-600" (click)="onDelete()">
-              <mat-icon class="text-red-600">delete</mat-icon>
+            <button mat-menu-item style="color: #dc2626;" (click)="onDelete()">
+              <mat-icon style="color: #dc2626;">delete</mat-icon>
               Delete Project
             </button>
           </mat-menu>

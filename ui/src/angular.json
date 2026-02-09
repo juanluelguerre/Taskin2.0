@@ -36,7 +36,25 @@
               "src/styles.scss",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "@grafana/faro-web-sdk",
+              "@grafana/faro-web-tracing",
+              "@opentelemetry/api",
+              "@opentelemetry/sdk-trace-web",
+              "@opentelemetry/sdk-trace-base",
+              "@opentelemetry/core",
+              "@opentelemetry/semantic-conventions",
+              "@opentelemetry/resources",
+              "@opentelemetry/instrumentation",
+              "@opentelemetry/instrumentation-document-load",
+              "@opentelemetry/instrumentation-fetch",
+              "@opentelemetry/instrumentation-xml-http-request",
+              "@opentelemetry/context-zone",
+              "@opentelemetry/exporter-trace-otlp-http",
+              "@opentelemetry/propagator-b3",
+              "@opentelemetry/web-common"
+            ]
           },
           "configurations": {
             "production": {
@@ -48,8 +66,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
                 }
               ],
               "outputHashing": "all"

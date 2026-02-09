@@ -13,25 +13,25 @@
     <mat-menu #taskMenu="matMenu">
       @if (!task().isCompleted) {
         <button mat-menu-item (click)="taskToggled.emit(task())">
-          <mat-icon>check_circle</mat-icon>
+          <mat-icon style="color: #16a34a;">check_circle</mat-icon>
           {{ t('tasks.markAsDone') }}
         </button>
       }
       <button mat-menu-item (click)="taskEdited.emit(task())">
-        <mat-icon>edit</mat-icon>
+        <mat-icon style="color: #2563eb;">edit</mat-icon>
         {{ t('tasks.editTask') }}
       </button>
       <button mat-menu-item (click)="taskDuplicated.emit(task())">
-        <mat-icon>content_copy</mat-icon>
+        <mat-icon style="color: #6b7280;">content_copy</mat-icon>
         {{ t('common.duplicate') }}
       </button>
       <button mat-menu-item (click)="taskViewed.emit(task())">
-        <mat-icon>visibility</mat-icon>
+        <mat-icon style="color: #2563eb;">visibility</mat-icon>
         {{ t('common.viewDetails') }}
       </button>
       <div class="border-t border-gray-200 my-1"></div>
-      <button mat-menu-item class="text-red-600" (click)="taskDeleted.emit(task())">
-        <mat-icon class="text-red-600">delete</mat-icon>
+      <button mat-menu-item style="color: #dc2626;" (click)="taskDeleted.emit(task())">
+        <mat-icon style="color: #dc2626;">delete</mat-icon>
         {{ t('tasks.deleteTask') }}
       </button>
     </mat-menu>
@@ -69,7 +69,7 @@
   <div class="text-sm text-gray-500" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
     <!-- Project -->
     <div style="display: flex; align-items: center;">
-      <mat-icon class="text-gray-400 mr-1" style="font-size: 16px; width: 16px; height: 16px;">folder_open</mat-icon>
+      <mat-icon class="mr-1" style="font-size: 16px; width: 16px; height: 16px; color: #2563eb;">folder_open</mat-icon>
       <span>{{ task().projectName }}</span>
     </div>
 

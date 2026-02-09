@@ -39,7 +39,7 @@
                      formControlName="title" 
                      placeholder="Enter a clear, descriptive title"
                      maxlength="200">
-              <mat-hint>{{ form.get('title')?.value?.length || 0 }}/200</mat-hint>
+
               @if (getFieldError('title')) {
                 <mat-error>{{ getFieldError('title') }}</mat-error>
               }
@@ -55,7 +55,7 @@
                         placeholder="Provide a detailed description of what needs to be done"
                         rows="4"
                         maxlength="1000"></textarea>
-              <mat-hint>{{ form.get('description')?.value?.length || 0 }}/1000</mat-hint>
+
               @if (getFieldError('description')) {
                 <mat-error>{{ getFieldError('description') }}</mat-error>
               }
@@ -156,7 +156,7 @@
                      placeholder="How many 25-minute sessions?"
                      min="1" 
                      max="50">
-              <mat-hint>Each pomodoro = 25 minutes of focused work</mat-hint>
+
               @if (getFieldError('estimatedPomodoros')) {
                 <mat-error>{{ getFieldError('estimatedPomodoros') }}</mat-error>
               }
@@ -189,7 +189,7 @@
                    [matChipInputFor]="chipGrid"
                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                    (matChipInputTokenEnd)="addTag($event)" />
-            <mat-hint>Press Enter or comma to add a tag</mat-hint>
+
           </mat-form-field>
 
           <!-- Current Tags Display -->

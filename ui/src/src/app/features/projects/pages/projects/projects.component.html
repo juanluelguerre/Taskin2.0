@@ -114,15 +114,15 @@
               </button>
               <mat-menu #projectMenu="matMenu">
                 <button mat-menu-item (click)="onEditProject(project.id)">
-                  <mat-icon>edit</mat-icon>
+                  <mat-icon style="color: #2563eb;">edit</mat-icon>
                   {{ t('common.edit') }}
                 </button>
                 <button mat-menu-item (click)="onViewProject(project.id)">
-                  <mat-icon>visibility</mat-icon>
+                  <mat-icon style="color: #2563eb;">visibility</mat-icon>
                   {{ t('common.viewDetails') }}
                 </button>
-                <button mat-menu-item class="text-red-600" (click)="onDeleteProject(project.id, project.name)">
-                  <mat-icon class="text-red-600">delete</mat-icon>
+                <button mat-menu-item style="color: #dc2626;" (click)="onDeleteProject(project.id, project.name)">
+                  <mat-icon style="color: #dc2626;">delete</mat-icon>
                   {{ t('common.delete') }}
                 </button>
               </mat-menu>

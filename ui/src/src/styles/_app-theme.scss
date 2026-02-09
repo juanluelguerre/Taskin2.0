@@ -49,8 +49,15 @@ html {
     --topmenu-dropdown-item-active-text-color: var(--mat-sys-primary);
   }
 
-  --toast-info-background-color: #{map.get(mat.$azure-palette, if($type == dark, 30, 50))};
-  --toast-success-background-color: #{map.get(mat.$green-palette, if($type == dark, 40, 60))};
-  --toast-warning-background-color: #{map.get(mat.$orange-palette, if($type == dark, 40, 60))};
-  --toast-error-background-color: #{map.get(mat.$red-palette, if($type == dark, 30, 50))};
+  @if $type == dark {
+    --toast-info-background-color: #{map.get(mat.$azure-palette, 30)};
+    --toast-success-background-color: #{map.get(mat.$green-palette, 40)};
+    --toast-warning-background-color: #{map.get(mat.$orange-palette, 40)};
+    --toast-error-background-color: #{map.get(mat.$red-palette, 30)};
+  } @else {
+    --toast-info-background-color: #{map.get(mat.$azure-palette, 50)};
+    --toast-success-background-color: #{map.get(mat.$green-palette, 60)};
+    --toast-warning-background-color: #{map.get(mat.$orange-palette, 60)};
+    --toast-error-background-color: #{map.get(mat.$red-palette, 50)};
+  }
 }

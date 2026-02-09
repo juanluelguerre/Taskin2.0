@@ -93,7 +93,7 @@
                 <label>{{ t('projects.dueDate') }}</label>
                 <mat-form-field class="w-full">
                   <input matInput [matDatepicker]="picker" formControlName="dueDate" />
-                  <mat-hint>{{ t('projects.dueDateHint') }}</mat-hint>
+
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
