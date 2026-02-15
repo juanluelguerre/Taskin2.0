@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core'
 
 import { MatIconModule } from '@angular/material/icon'
-import { TranslocoModule } from '@jsverse/transloco'
+import { TranslocoDirective } from '@jsverse/transloco'
 import { TaskStatsViewModel } from '../shared/types/task.types'
 
 @Component({
@@ -9,7 +9,7 @@ import { TaskStatsViewModel } from '../shared/types/task.types'
   standalone: true,
   imports: [
     MatIconModule,
-    TranslocoModule
+    TranslocoDirective
 ],
   templateUrl: './task-stats.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

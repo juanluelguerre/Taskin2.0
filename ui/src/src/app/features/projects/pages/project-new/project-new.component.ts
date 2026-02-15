@@ -19,8 +19,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { CanComponentDeactivate } from '@core/guards/can-deactivate.guard';
+import { NotificationService } from '@core/services/notification.service';
 import { CreateProjectCommand, UpdateProjectCommand } from '../../services/project.service';
 import { ProjectStore } from '../../stores/project.store';
 
@@ -38,7 +39,7 @@ import { ProjectStore } from '../../stores/project.store';
     MatNativeDateModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    TranslocoModule
+    TranslocoDirective
 ],
   providers: [ProjectStore],
   templateUrl: './project-new.component.html',
@@ -51,6 +52,7 @@ export class ProjectNewComponent implements OnInit, CanComponentDeactivate {
   private readonly projectStore = inject(ProjectStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly notificationService = inject(NotificationService);
 
   // State signals
   isEditMode = signal(false);
@@ -100,6 +102,13 @@ export class ProjectNewComponent implements OnInit, CanComponentDeactivate {
     const project = this.project();
     if (project && this.isEditMode()) {
       this.populateForm(project);
+    }
+  });
+
+  errorEffect = effect(() => {
+    const error = this.error();
+    if (error) {
+      this.notificationService.notifyError(error);
     }
   });
 
@@ -167,6 +176,7 @@ export class ProjectNewComponent implements OnInit, CanComponentDeactivate {
       status: formValue.status,
     };
 
+    this.projectForm.markAsPristine();
     this.projectStore.createProject(command);
   }
 
@@ -184,6 +194,7 @@ export class ProjectNewComponent implements OnInit, CanComponentDeactivate {
       status: formValue.status,
     };
 
+    this.projectForm.markAsPristine();
     this.projectStore.updateProject({ id: projectId, command });
   }
 

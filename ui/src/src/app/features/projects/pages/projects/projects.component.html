@@ -1,26 +1,12 @@
 <ng-container *transloco="let t">
-<div class="space-y-6">
+<div class="flex flex-col gap-6">
   <!-- Page Header -->
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('projects.title') }}</h1>
-      <p class="mt-1 text-sm text-slate-500">{{ t('projects.subtitle') }}</p>
-    </div>
+  <app-page-header [title]="t('projects.title')" [subtitle]="t('projects.subtitle')">
     <button mat-flat-button color="primary" class="flex items-center" (click)="onNewProject()">
       <mat-icon class="mr-2">add</mat-icon>
       {{ t('projects.newProject') }}
     </button>
-  </div>
-
-  <!-- Error Message -->
-  @if (error()) {
-    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-      <div class="flex items-center">
-        <mat-icon class="text-red-500 mr-2">error</mat-icon>
-        <p class="text-red-700">{{ error() }}</p>
-      </div>
-    </div>
-  }
+  </app-page-header>
 
   <!-- Project Stats -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-5">

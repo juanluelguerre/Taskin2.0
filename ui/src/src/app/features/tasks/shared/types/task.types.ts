@@ -26,6 +26,7 @@ export enum TaskPriority {
 export interface Task extends BaseEntity {
   title: string
   description?: string
+  notes?: string
   status: TaskStatus
   priority: TaskPriority
   projectId: string
@@ -53,6 +54,7 @@ export interface TaskStatistics {
 export interface CreateTaskRequest {
   title: string
   description?: string
+  notes?: string
   status: TaskStatus
   priority: TaskPriority
   projectId: string
@@ -114,6 +116,7 @@ export interface TaskSearchRequest {
 export interface TaskFormData {
   title: string
   description: string
+  notes: string
   status: TaskStatus
   priority: TaskPriority
   projectId: string
@@ -132,6 +135,9 @@ export const TASK_VALIDATION = {
   },
   description: {
     maxLength: 1000,
+  },
+  notes: {
+    maxLength: 4000,
   },
   estimatedPomodoros: {
     min: 1,

@@ -24,7 +24,9 @@
     "noResults": "No results found",
     "loading": "Loading...",
     "allRightsReserved": "All rights reserved.",
-    "yes": "Yes"
+    "yes": "Yes",
+    "dismiss": "Dismiss",
+    "undo": "Undo"
   },
   "header": {
     "profileSettings": "Profile Settings",
@@ -144,6 +146,13 @@
     "dueToday": "Due today",
     "dueTomorrow": "Due tomorrow",
     "daysLeft": "{{days}}d left",
+    "form": {
+      "notes": "Notes",
+      "notesPlaceholder": "Add detailed notes, progress updates, or technical details"
+    },
+    "details": {
+      "notes": "Notes"
+    },
     "messages": {
       "created": "Task '{{name}}' created successfully.",
       "updated": "Task '{{name}}' updated successfully.",

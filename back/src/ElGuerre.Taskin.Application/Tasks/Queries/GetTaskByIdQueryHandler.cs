@@ -26,6 +26,7 @@ public class GetTaskByIdQueryHandler(ITaskinDbContext context)
             task.Id,
             task.Title,
             task.Description,
+            task.Notes,
             task.Status.ToString(),
             task.Priority.ToString(),
             task.ProjectId,

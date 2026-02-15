@@ -167,6 +167,7 @@ public static class DatabaseSeeder
             {
                 Title = "Design product catalog pages",
                 Description = "Design responsive product catalog pages with filtering, search, and pagination functionality",
+                Notes = "Using React 19 with TypeScript. Considering Material-UI v6 for component library. Need to implement virtual scrolling for performance with large product lists. API endpoints already documented in Swagger.",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
                 Status = TaskStatus.Doing,
@@ -181,6 +182,7 @@ public static class DatabaseSeeder
             {
                 Title = "Integrate Stripe payment gateway",
                 Description = "Integrate Stripe payment gateway with secure checkout flow and webhook handling",
+                Notes = "Using Stripe API v2024-01. Need to set up webhook endpoints for payment.intent.succeeded and payment.intent.failed events. Testing in sandbox environment first. Must implement idempotency keys for all payment operations.",
                 ProjectId = ecommerceProject.Id,
                 Project = ecommerceProject,
                 Status = TaskStatus.Todo,
@@ -257,6 +259,7 @@ public static class DatabaseSeeder
             {
                 Title = "Establish design system",
                 Description = "Establish comprehensive design system with components, colors, and typography guidelines",
+                Notes = "Base design system on Material Design 3 principles. Color palette already approved by stakeholders (Primary: #3B82F6, Secondary: #10B981). Typography: Inter for headings, Roboto for body text. Components library in Figma, ready for developer handoff.",
                 ProjectId = mobileProject.Id,
                 Project = mobileProject,
                 Status = TaskStatus.Doing,
@@ -388,6 +391,7 @@ public static class DatabaseSeeder
             {
                 Title = "Design interactive charts",
                 Description = "Design interactive charts and KPI widgets with real-time data visualization",
+                Notes = "Evaluating Chart.js vs Recharts vs D3.js. Initial testing shows Recharts has better TypeScript support and easier React integration. Need to support real-time WebSocket updates for live data. Target performance: render 10k data points without lag.",
                 ProjectId = analyticsProject.Id,
                 Project = analyticsProject,
                 Status = TaskStatus.Doing,
@@ -432,6 +436,7 @@ public static class DatabaseSeeder
             {
                 Title = "Conduct penetration testing",
                 Description = "Conduct penetration testing on web application and API endpoints",
+                Notes = "Using OWASP ZAP and Burp Suite Professional. Focus areas: SQL injection, XSS, CSRF, authentication bypass, API rate limiting. Staging environment prepared with test data. Security scan scheduled for off-peak hours to avoid performance impact.",
                 ProjectId = securityProject.Id,
                 Project = securityProject,
                 Status = TaskStatus.Doing,
@@ -483,13 +488,19 @@ public static class DatabaseSeeder
         foreach (Domain.Entities.Task task in tasks)
         {
             metrics.RecordTaskCreated();
-            if (task.Status == TaskStatus.Todo || task.Status == TaskStatus.Doing)
+            switch (task.Status)
             {
-                metrics.IncrementActiveTasks();
-            }
-            else if (task.Status == TaskStatus.Done)
-            {
-                metrics.RecordTaskCompleted();
+                case TaskStatus.Todo:
+                case TaskStatus.Doing:
+                    metrics.IncrementActiveTasks();
+                    break;
+                case TaskStatus.Done:
+                    metrics.RecordTaskCompleted();
+                    break;
+                case TaskStatus.Cancelled:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }
@@ -500,9 +511,10 @@ public static class DatabaseSeeder
         var doneTasks = await context.Tasks
             .Where(t => t.Status == TaskStatus.Done)
             .ToListAsync();
-            
+
         var doingTasks = await context.Tasks
             .Where(t => t.Status == TaskStatus.Doing)
+            .OrderBy(t => t.Id)
             .Take(3) // Only some of the doing tasks
             .ToListAsync();
 
@@ -560,4 +572,5 @@ public static class DatabaseSeeder
             metrics.RecordPomodoroDuration(pomodoro.DurationInMinutes);
         }
     }
+
 }

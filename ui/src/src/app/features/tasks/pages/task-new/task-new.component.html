@@ -50,14 +50,30 @@
           <div class="form-row">
             <mat-form-field class="full-width" appearance="outline">
               <mat-label>Description</mat-label>
-              <textarea matInput 
-                        formControlName="description" 
+              <textarea matInput
+                        formControlName="description"
                         placeholder="Provide a detailed description of what needs to be done"
                         rows="4"
                         maxlength="1000"></textarea>
 
               @if (getFieldError('description')) {
                 <mat-error>{{ getFieldError('description') }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-row">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Notes</mat-label>
+              <textarea matInput
+                        formControlName="notes"
+                        placeholder="Add detailed notes, progress updates, or technical details"
+                        rows="6"
+                        maxlength="4000"></textarea>
+              <mat-hint align="end">{{ form.get('notes')?.value?.length || 0 }} / 4000</mat-hint>
+              @if (getFieldError('notes')) {
+                <mat-error>{{ getFieldError('notes') }}</mat-error>
               }
             </mat-form-field>
           </div>

@@ -1,13 +1,13 @@
 .ui-confirmation-dialog {
   position: relative;
-  padding: 16px 16px 8px;
+  padding: 32px 32px 20px;
   min-width: 320px;
 }
 
 .ui-confirmation-dialog__close {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 16px;
+  right: 16px;
 }
 
 .ui-confirmation-dialog__content {

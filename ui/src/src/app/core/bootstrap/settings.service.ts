@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-import { AppDirectionality, LocalStorageService } from '@shared';
+import { LocalStorageService } from '@shared';
 import { AppSettings, AppTheme, defaults } from '../settings';
 
 @Injectable({
@@ -15,8 +15,6 @@ export class SettingsService {
   private readonly store = inject(LocalStorageService);
   private readonly mediaMatcher = inject(MediaMatcher);
   private readonly document = inject(DOCUMENT);
-  private readonly dir = inject(AppDirectionality);
-
   private readonly notify$ = new BehaviorSubject<Partial<AppSettings>>({});
 
   get notify() {
@@ -64,11 +62,6 @@ export class SettingsService {
     this.options.language = lang;
     this.store.set(this.key, this.options);
     this.notify$.next(this.options);
-  }
-
-  setDirection() {
-    this.dir.value = this.options.dir;
-    this.htmlElement.dir = this.dir.value;
   }
 
   setTheme() {

@@ -24,7 +24,9 @@
     "noResults": "No se encontraron resultados",
     "loading": "Cargando...",
     "allRightsReserved": "Todos los derechos reservados.",
-    "yes": "Sí"
+    "yes": "Sí",
+    "dismiss": "Descartar",
+    "undo": "Deshacer"
   },
   "header": {
     "profileSettings": "Configuraci\u00f3n de Perfil",
@@ -144,6 +146,13 @@
     "dueToday": "Vence hoy",
     "dueTomorrow": "Vence ma\u00f1ana",
     "daysLeft": "{{days}}d restantes",
+    "form": {
+      "notes": "Notas",
+      "notesPlaceholder": "Añade notas detalladas, actualizaciones de progreso o detalles técnicos"
+    },
+    "details": {
+      "notes": "Notas"
+    },
     "messages": {
       "created": "Tarea '{{name}}' creada exitosamente.",
       "updated": "Tarea '{{name}}' actualizada exitosamente.",

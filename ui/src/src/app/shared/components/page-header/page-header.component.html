@@ -1,6 +1,9 @@
-<div class="matero-page-header-inner">
-  <h1 class="matero-page-title">{{title | translate}} <small>{{subtitle}}</small></h1>
-  @if (!hideBreadcrumb) {
-    <breadcrumb [nav]="nav" />
-  }
+<div class="flex items-center justify-between flex-wrap gap-4">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ title() }}</h1>
+    @if (subtitle()) {
+      <p class="mt-1 text-sm text-slate-500">{{ subtitle() }}</p>
+    }
+  </div>
+  <ng-content />
 </div>

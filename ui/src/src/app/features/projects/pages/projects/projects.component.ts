@@ -4,6 +4,7 @@ import {
   Component,
   OnInit,
   ViewEncapsulation,
+  effect,
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -15,8 +16,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { NotificationService } from '@core/services/notification.service';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
+import { PageHeaderComponent } from '@shared';
 import { StatusColorPipe, StatusDisplayPipe } from '@shared/pipes';
 import { ProjectStatus, ProjectStore } from '../../stores/project.store';
 
@@ -37,7 +40,8 @@ import { ProjectStatus, ProjectStore } from '../../stores/project.store';
     FormsModule,
     StatusColorPipe,
     StatusDisplayPipe,
-    TranslocoModule,
+    TranslocoDirective,
+    PageHeaderComponent,
   ],
   providers: [ProjectStore],
   templateUrl: './projects.component.html',
@@ -47,6 +51,7 @@ import { ProjectStatus, ProjectStore } from '../../stores/project.store';
 export class ProjectsComponent implements OnInit {
   private readonly projectStore = inject(ProjectStore);
   private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
   private readonly confirmationService = inject(UiConfirmationService);
 
   // Expose store selectors
@@ -64,6 +69,13 @@ export class ProjectsComponent implements OnInit {
   readonly hasPreviousPage = this.projectStore.hasPreviousPage;
   readonly viewMode = this.projectStore.viewMode;
   readonly selectedFilter = this.projectStore.statusFilter;
+
+  errorEffect = effect(() => {
+    const error = this.error();
+    if (error) {
+      this.notificationService.notifyError('projects.errors.loadFailed');
+    }
+  });
 
   ngOnInit() {
     this.projectStore.loadProjects();

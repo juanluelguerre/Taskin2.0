@@ -1,4 +1,3 @@
-import { BidiModule } from '@angular/cdk/bidi';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   Component,
@@ -33,7 +32,6 @@ const MONITOR_MEDIAQUERY = 'screen and (min-width: 960px)';
   standalone: true,
   imports: [
     RouterOutlet,
-    BidiModule,
     MatSidenavModule,
     NgProgressbar,
     NgProgressRouter,
@@ -136,7 +134,6 @@ export class AdminLayoutComponent implements OnDestroy {
   updateOptions(options: AppSettings) {
     this.options = options;
     this.settings.setOptions(options);
-    this.settings.setDirection();
     this.settings.setTheme();
   }
 }

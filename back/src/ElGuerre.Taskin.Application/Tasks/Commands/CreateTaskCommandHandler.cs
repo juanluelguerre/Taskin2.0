@@ -23,6 +23,7 @@ public class CreateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
         {
             Title = request.Title,
             Description = request.Description,
+            Notes = request.Notes,
             ProjectId = request.ProjectId,
             Status = request.Status,
             Priority = request.Priority,

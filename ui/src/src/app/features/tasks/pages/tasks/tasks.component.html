@@ -1,283 +1,288 @@
 <ng-container *transloco="let t">
-<div class="space-y-6">
-  <!-- Page Header -->
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('tasks.title') }}</h1>
-      <p class="mt-1 text-sm text-slate-500">{{ t('tasks.subtitle') }}</p>
-    </div>
-    <div class="flex items-center space-x-3">
-      <button mat-icon-button
-              [matTooltip]="t('tasks.refreshTasks')"
-              (click)="onRefresh()"
-              [disabled]="loading()"
-              class="text-slate-500">
-        <mat-icon>refresh</mat-icon>
-      </button>
-
-      <button mat-flat-button
-              color="primary"
-              (click)="onNewTaskClick()"
-              [disabled]="saving()">
-        <mat-icon class="mr-2">add</mat-icon>
-        {{ t('tasks.newTask') }}
-      </button>
-    </div>
-  </div>
-
-  <!-- Error Alert -->
-  @if (error()) {
-    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <mat-icon class="text-red-400 mr-2">error</mat-icon>
-          <span class="text-red-800">{{ error() }}</span>
-        </div>
-        <button mat-icon-button (click)="onDismissError()">
-          <mat-icon class="text-red-400">close</mat-icon>
+  <div class="flex flex-col gap-6">
+    <!-- Page Header -->
+    <app-page-header [title]="t('tasks.title')" [subtitle]="t('tasks.subtitle')">
+      <div class="flex items-center gap-3">
+        <button
+          mat-icon-button
+          [matTooltip]="t('tasks.refreshTasks')"
+          (click)="onRefresh()"
+          [disabled]="loading()"
+          class="text-slate-500"
+        >
+          <mat-icon>refresh</mat-icon>
         </button>
-      </div>
-    </div>
-  }
-
-  <!-- Task Stats -->
-  <app-task-stats [stats]="stats()"></app-task-stats>
-
-  <!-- Filters -->
-  <app-task-filters
-    [filters]="filters()"
-    [searchTerm]="searchTerm()"
-    [projects]="projects"
-    [assignees]="assignees"
-    (filtersChanged)="onFiltersChanged($event)"
-    (searchChanged)="onSearchChanged($event)"
-    (filtersCleared)="onFiltersCleared()">
-  </app-task-filters>
-
-  <!-- View Mode Toggle -->
-  <div class="bg-white rounded-lg shadow-xs p-4 border border-gray-200">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <h3 class="text-lg font-semibold text-gray-900">
-          {{ t('tasks.title') }}
-          @if (tasks().length > 0) {
-            <span class="text-sm font-normal text-gray-500">({{ tasks().length }} {{ t('tasks.tasksFound', { count: tasks().length }) }})</span>
-          }
-        </h3>
-      </div>
-
-      <div class="flex items-center space-x-2">
-        <!-- View mode toggle -->
-        <mat-button-toggle-group [value]="viewMode()"
-                                (change)="onViewModeChanged($event.value)"
-                                class="border rounded">
-          <mat-button-toggle value="list" [matTooltip]="t('tasks.listView')">
-            <mat-icon>view_list</mat-icon>
-          </mat-button-toggle>
-          <mat-button-toggle value="grid" [matTooltip]="t('tasks.gridView')">
-            <mat-icon>view_module</mat-icon>
-          </mat-button-toggle>
-          <mat-button-toggle value="kanban" [matTooltip]="t('tasks.kanbanView')">
-            <mat-icon>view_kanban</mat-icon>
-          </mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tasks Content -->
-  @if (loading() && tasks().length === 0) {
-    <!-- Loading state -->
-    <div class="bg-white rounded-lg shadow-xs p-12 text-center">
-      <mat-icon class="text-gray-300 mb-4 animate-spin" style="font-size: 48px; width: 48px; height: 48px;">sync</mat-icon>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('tasks.loadingTasks') }}</h3>
-      <p class="text-gray-600">{{ t('tasks.pleaseWait') }}</p>
-    </div>
-  } @else if (tasks().length === 0) {
-    <!-- Empty state -->
-    <div class="bg-white rounded-lg shadow-xs p-12 text-center">
-      <mat-icon class="text-gray-300 mb-4" style="font-size: 48px; width: 48px; height: 48px;">task_alt</mat-icon>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('tasks.noTasksFound') }}</h3>
-      <p class="text-gray-600 mb-6">
-        @if (searchTerm() || hasActiveFilters()) {
-          {{ t('tasks.tryAdjusting') }}
-        } @else {
-          {{ t('tasks.getStarted') }}
-        }
-      </p>
-      @if (searchTerm() || hasActiveFilters()) {
-        <button mat-stroked-button (click)="onFiltersCleared()">
-          <mat-icon class="mr-2">clear</mat-icon>
-          {{ t('tasks.clearFilters') }}
-        </button>
-      } @else {
-        <button mat-raised-button color="primary" (click)="onNewTaskClick()">
+        <button mat-flat-button color="primary" (click)="onNewTaskClick()" [disabled]="saving()">
           <mat-icon class="mr-2">add</mat-icon>
-          {{ t('tasks.createTask') }}
+          {{ t('tasks.newTask') }}
         </button>
-      }
+      </div>
+    </app-page-header>
+
+    <!-- Task Stats -->
+    <app-task-stats [stats]="stats()"></app-task-stats>
+
+    <!-- Filters -->
+    <app-task-filters
+      class="mt-1"
+      [filters]="filters()"
+      [searchTerm]="searchTerm()"
+      [projects]="projects"
+      [assignees]="assignees"
+      (filtersChanged)="onFiltersChanged($event)"
+      (searchChanged)="onSearchChanged($event)"
+      (filtersCleared)="onFiltersCleared()"
+    >
+    </app-task-filters>
+
+    <!-- View Mode Toggle -->
+    <div class="bg-white rounded-lg shadow-xs py-4 pr-4 pl-6 border border-gray-200">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <h3 class="text-lg font-semibold text-gray-900">
+            {{ t('tasks.title') }}
+            @if (tasks().length > 0) {
+              <span class="text-sm font-normal text-gray-500"
+                >({{ tasks().length }} {{ t('tasks.tasksFound', { count: tasks().length }) }})</span
+              >
+            }
+          </h3>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <!-- View mode toggle -->
+          <mat-button-toggle-group
+            [value]="viewMode()"
+            (change)="onViewModeChanged($event.value)"
+            class="border rounded"
+          >
+            <mat-button-toggle value="list" [matTooltip]="t('tasks.listView')">
+              <mat-icon>view_list</mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle value="grid" [matTooltip]="t('tasks.gridView')">
+              <mat-icon>view_module</mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle value="kanban" [matTooltip]="t('tasks.kanbanView')">
+              <mat-icon>view_kanban</mat-icon>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </div>
     </div>
-  } @else {
-    <!-- Tasks List/Grid/Kanban -->
-    @switch (viewMode()) {
-      @case ('grid') {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          @for (task of tasks(); track task.id) {
-            <app-task-card
-              [task]="task"
-              (taskToggled)="onTaskToggled($event)"
-              (taskEdited)="onTaskEdited($event)"
-              (taskDuplicated)="onTaskDuplicated($event)"
-              (taskViewed)="onTaskViewed($event)"
-              (taskDeleted)="onTaskDeleted($event)">
-            </app-task-card>
+
+    <!-- Tasks Content -->
+    @if (loading() && tasks().length === 0) {
+      <!-- Loading state -->
+      <div class="bg-white rounded-lg shadow-xs p-12 text-center">
+        <mat-icon
+          class="text-gray-300 mb-4 animate-spin"
+          style="font-size: 48px; width: 48px; height: 48px"
+          >sync</mat-icon
+        >
+        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('tasks.loadingTasks') }}</h3>
+        <p class="text-gray-600">{{ t('tasks.pleaseWait') }}</p>
+      </div>
+    } @else if (tasks().length === 0) {
+      <!-- Empty state -->
+      <div class="bg-white rounded-lg shadow-xs p-12 text-center">
+        <mat-icon class="text-gray-300 mb-4" style="font-size: 48px; width: 48px; height: 48px"
+          >task_alt</mat-icon
+        >
+        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('tasks.noTasksFound') }}</h3>
+        <p class="text-gray-600 mb-6">
+          @if (searchTerm() || hasActiveFilters()) {
+            {{ t('tasks.tryAdjusting') }}
+          } @else {
+            {{ t('tasks.getStarted') }}
           }
-        </div>
-      }
-
-      @case ('kanban') {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- Pending Column -->
-          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
-            <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">{{ t('tasks.pending') }}</h4>
-              <p class="text-sm text-gray-500">{{ stats().pending }} {{ t('tasks.title').toLowerCase() }}</p>
-            </div>
-            <div class="p-4 space-y-4">
-              @for (task of tasks(); track task.id) {
-                @if (task.status === TaskStatus.Todo) {
-                  <app-task-card
-                    [task]="task"
-                    (taskToggled)="onTaskToggled($event)"
-                    (taskEdited)="onTaskEdited($event)"
-                    (taskDuplicated)="onTaskDuplicated($event)"
-                    (taskViewed)="onTaskViewed($event)"
-                    (taskDeleted)="onTaskDeleted($event)">
-                  </app-task-card>
-                }
-              }
-            </div>
-          </div>
-
-          <!-- In Progress Column -->
-          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
-            <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">{{ t('tasks.inProgress') }}</h4>
-              <p class="text-sm text-gray-500">{{ stats().inProgress }} {{ t('tasks.title').toLowerCase() }}</p>
-            </div>
-            <div class="p-4 space-y-4">
-              @for (task of tasks(); track task.id) {
-                @if (task.status === TaskStatus.Doing) {
-                  <app-task-card
-                    [task]="task"
-                    (taskToggled)="onTaskToggled($event)"
-                    (taskEdited)="onTaskEdited($event)"
-                    (taskDuplicated)="onTaskDuplicated($event)"
-                    (taskViewed)="onTaskViewed($event)"
-                    (taskDeleted)="onTaskDeleted($event)">
-                  </app-task-card>
-                }
-              }
-            </div>
-          </div>
-
-          <!-- Completed Column -->
-          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
-            <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">{{ t('common.completed') }}</h4>
-              <p class="text-sm text-gray-500">{{ stats().completed }} {{ t('tasks.title').toLowerCase() }}</p>
-            </div>
-            <div class="p-4 space-y-4">
-              @for (task of tasks(); track task.id) {
-                @if (task.status === TaskStatus.Done) {
-                  <app-task-card
-                    [task]="task"
-                    (taskToggled)="onTaskToggled($event)"
-                    (taskEdited)="onTaskEdited($event)"
-                    (taskDuplicated)="onTaskDuplicated($event)"
-                    (taskViewed)="onTaskViewed($event)"
-                    (taskDeleted)="onTaskDeleted($event)">
-                  </app-task-card>
-                }
-              }
-            </div>
-          </div>
-
-          <!-- Cancelled Column -->
-          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
-            <div class="p-4 border-b border-gray-200">
-              <h4 class="font-medium text-gray-900">{{ t('tasks.cancelled') }}</h4>
-              <p class="text-sm text-gray-500">
-                {{ cancelledTasksCount() }} {{ t('tasks.title').toLowerCase() }}
-              </p>
-            </div>
-            <div class="p-4 space-y-4">
-              @for (task of tasks(); track task.id) {
-                @if (task.status === TaskStatus.Cancelled) {
-                  <app-task-card
-                    [task]="task"
-                    (taskToggled)="onTaskToggled($event)"
-                    (taskEdited)="onTaskEdited($event)"
-                    (taskDuplicated)="onTaskDuplicated($event)"
-                    (taskViewed)="onTaskViewed($event)"
-                    (taskDeleted)="onTaskDeleted($event)">
-                  </app-task-card>
-                }
-              }
-            </div>
-          </div>
-        </div>
-      }
-
-      @default {
-        <!-- List View -->
-        <div class="bg-white rounded-lg shadow-xs border border-gray-200">
-          <div class="divide-y divide-gray-200">
+        </p>
+        @if (searchTerm() || hasActiveFilters()) {
+          <button mat-stroked-button (click)="onFiltersCleared()">
+            <mat-icon class="mr-2">clear</mat-icon>
+            {{ t('tasks.clearFilters') }}
+          </button>
+        } @else {
+          <button mat-raised-button color="primary" (click)="onNewTaskClick()">
+            <mat-icon class="mr-2">add</mat-icon>
+            {{ t('tasks.createTask') }}
+          </button>
+        }
+      </div>
+    } @else {
+      <!-- Tasks List/Grid/Kanban -->
+      @switch (viewMode()) {
+        @case ('grid') {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @for (task of tasks(); track task.id) {
-              <div class="p-6">
-                <app-task-card
-                  [task]="task"
-                  (taskToggled)="onTaskToggled($event)"
-                  (taskEdited)="onTaskEdited($event)"
-                  (taskDuplicated)="onTaskDuplicated($event)"
-                  (taskViewed)="onTaskViewed($event)"
-                  (taskDeleted)="onTaskDeleted($event)">
-                </app-task-card>
-              </div>
+              <app-task-card
+                [task]="task"
+                (taskToggled)="onTaskToggled($event)"
+                (taskEdited)="onTaskEdited($event)"
+                (taskDuplicated)="onTaskDuplicated($event)"
+                (taskViewed)="onTaskViewed($event)"
+                (taskDeleted)="onTaskDeleted($event)"
+              >
+              </app-task-card>
             }
           </div>
+        }
+
+        @case ('kanban') {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Pending Column -->
+            <div class="bg-white rounded-lg shadow-xs border border-gray-200">
+              <div class="p-4 border-b border-gray-200">
+                <h4 class="font-medium text-gray-900">{{ t('tasks.pending') }}</h4>
+                <p class="text-sm text-gray-500">
+                  {{ stats().pending }} {{ t('tasks.title').toLowerCase() }}
+                </p>
+              </div>
+              <div class="p-4 space-y-4">
+                @for (task of tasks(); track task.id) {
+                  @if (task.status === TaskStatus.Todo) {
+                    <app-task-card
+                      [task]="task"
+                      (taskToggled)="onTaskToggled($event)"
+                      (taskEdited)="onTaskEdited($event)"
+                      (taskDuplicated)="onTaskDuplicated($event)"
+                      (taskViewed)="onTaskViewed($event)"
+                      (taskDeleted)="onTaskDeleted($event)"
+                    >
+                    </app-task-card>
+                  }
+                }
+              </div>
+            </div>
+
+            <!-- In Progress Column -->
+            <div class="bg-white rounded-lg shadow-xs border border-gray-200">
+              <div class="p-4 border-b border-gray-200">
+                <h4 class="font-medium text-gray-900">{{ t('tasks.inProgress') }}</h4>
+                <p class="text-sm text-gray-500">
+                  {{ stats().inProgress }} {{ t('tasks.title').toLowerCase() }}
+                </p>
+              </div>
+              <div class="p-4 space-y-4">
+                @for (task of tasks(); track task.id) {
+                  @if (task.status === TaskStatus.Doing) {
+                    <app-task-card
+                      [task]="task"
+                      (taskToggled)="onTaskToggled($event)"
+                      (taskEdited)="onTaskEdited($event)"
+                      (taskDuplicated)="onTaskDuplicated($event)"
+                      (taskViewed)="onTaskViewed($event)"
+                      (taskDeleted)="onTaskDeleted($event)"
+                    >
+                    </app-task-card>
+                  }
+                }
+              </div>
+            </div>
+
+            <!-- Completed Column -->
+            <div class="bg-white rounded-lg shadow-xs border border-gray-200">
+              <div class="p-4 border-b border-gray-200">
+                <h4 class="font-medium text-gray-900">{{ t('common.completed') }}</h4>
+                <p class="text-sm text-gray-500">
+                  {{ stats().completed }} {{ t('tasks.title').toLowerCase() }}
+                </p>
+              </div>
+              <div class="p-4 space-y-4">
+                @for (task of tasks(); track task.id) {
+                  @if (task.status === TaskStatus.Done) {
+                    <app-task-card
+                      [task]="task"
+                      (taskToggled)="onTaskToggled($event)"
+                      (taskEdited)="onTaskEdited($event)"
+                      (taskDuplicated)="onTaskDuplicated($event)"
+                      (taskViewed)="onTaskViewed($event)"
+                      (taskDeleted)="onTaskDeleted($event)"
+                    >
+                    </app-task-card>
+                  }
+                }
+              </div>
+            </div>
+
+            <!-- Cancelled Column -->
+            <div class="bg-white rounded-lg shadow-xs border border-gray-200">
+              <div class="p-4 border-b border-gray-200">
+                <h4 class="font-medium text-gray-900">{{ t('tasks.cancelled') }}</h4>
+                <p class="text-sm text-gray-500">
+                  {{ cancelledTasksCount() }} {{ t('tasks.title').toLowerCase() }}
+                </p>
+              </div>
+              <div class="p-4 space-y-4">
+                @for (task of tasks(); track task.id) {
+                  @if (task.status === TaskStatus.Cancelled) {
+                    <app-task-card
+                      [task]="task"
+                      (taskToggled)="onTaskToggled($event)"
+                      (taskEdited)="onTaskEdited($event)"
+                      (taskDuplicated)="onTaskDuplicated($event)"
+                      (taskViewed)="onTaskViewed($event)"
+                      (taskDeleted)="onTaskDeleted($event)"
+                    >
+                    </app-task-card>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        @default {
+          <!-- List View -->
+          <div class="bg-white rounded-lg shadow-xs border border-gray-200">
+            <div class="divide-y divide-gray-200">
+              @for (task of tasks(); track task.id) {
+                <div class="p-6">
+                  <app-task-card
+                    [task]="task"
+                    (taskToggled)="onTaskToggled($event)"
+                    (taskEdited)="onTaskEdited($event)"
+                    (taskDuplicated)="onTaskDuplicated($event)"
+                    (taskViewed)="onTaskViewed($event)"
+                    (taskDeleted)="onTaskDeleted($event)"
+                  >
+                  </app-task-card>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="bg-white rounded-lg shadow-xs p-6 border border-gray-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <button mat-icon-button [disabled]="!hasPreviousPage()" (click)="onPreviousPage()">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+
+              <span class="text-sm text-gray-600">
+                {{ t('tasks.page', { current: currentPage(), total: totalPages() }) }}
+              </span>
+
+              <button mat-icon-button [disabled]="!hasNextPage()" (click)="onNextPage()">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
+
+            <div class="text-sm text-gray-500">
+              {{
+                t('tasks.showing', {
+                  from: showingFromIndex(),
+                  to: showingToIndex(),
+                  total: tasks().length,
+                })
+              }}
+            </div>
+          </div>
         </div>
       }
     }
-
-    <!-- Pagination -->
-    @if (totalPages() > 1) {
-      <div class="bg-white rounded-lg shadow-xs p-6 border border-gray-200">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <button mat-icon-button
-                    [disabled]="!hasPreviousPage()"
-                    (click)="onPreviousPage()">
-              <mat-icon>chevron_left</mat-icon>
-            </button>
-
-            <span class="text-sm text-gray-600">
-              {{ t('tasks.page', { current: currentPage(), total: totalPages() }) }}
-            </span>
-
-            <button mat-icon-button
-                    [disabled]="!hasNextPage()"
-                    (click)="onNextPage()">
-              <mat-icon>chevron_right</mat-icon>
-            </button>
-          </div>
-
-          <div class="text-sm text-gray-500">
-            {{ t('tasks.showing', { from: showingFromIndex(), to: showingToIndex(), total: tasks().length }) }}
-          </div>
-        </div>
-      </div>
-    }
-  }
-</div>
+  </div>
 </ng-container>

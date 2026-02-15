@@ -14,9 +14,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
-import { TaskCardComponent, TaskFiltersComponent, TaskStatsComponent } from '../../components';
+import { PageHeaderComponent } from '@shared';
+import { TaskCardComponent } from '../../components/task-card.component';
+import { TaskFiltersComponent } from '../../components/task-filters.component';
+import { TaskStatsComponent } from '../../components/task-stats.component';
 import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared';
 
 @Component({
@@ -30,7 +33,8 @@ import { TaskFilters, TaskStatus, TaskStore, TaskViewModel } from '../../shared'
     TaskCardComponent,
     TaskStatsComponent,
     TaskFiltersComponent,
-    TranslocoModule
+    TranslocoDirective,
+    PageHeaderComponent
 ],
   templateUrl: './tasks.component.html',
   styles: [],
@@ -203,9 +207,5 @@ export class TasksComponent implements OnInit {
   // Utility methods
   onRefresh(): void {
     this.taskStore.loadTasks();
-  }
-
-  onDismissError(): void {
-    this.taskStore.clearError();
   }
 }

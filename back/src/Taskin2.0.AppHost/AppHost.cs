@@ -200,4 +200,17 @@ else
     Console.WriteLine($"[Taskin AppHost] API configured for development (Aspire Dashboard)");
 }
 
+// ============================================================================
+// ANGULAR FRONTEND (managed by Aspire lifecycle)
+// ============================================================================
+
+var frontend = builder.AddJavaScriptApp("taskin-frontend", "../../../ui/src")
+    .WithNpm()
+    .WithRunScript("start")
+    // Aspire proxy listens on port 4200 and forwards to ng serve on 4201 to avoid port conflicts
+    .WithHttpEndpoint(port: 4200, targetPort: 4201, env: "PORT")
+    .WithExternalHttpEndpoints()
+    .WithReference(apiBuilder)
+    .WaitFor(apiBuilder);
+
 builder.Build().Run();

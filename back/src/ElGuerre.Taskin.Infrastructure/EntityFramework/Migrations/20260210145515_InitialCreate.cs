@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ElGuerre.Taskin.Infrastructure.EntityFramework.Migrations
 {
     /// <inheritdoc />
-    public partial class initialdb : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,6 +17,9 @@ namespace ElGuerre.Taskin.Infrastructure.EntityFramework.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     BackgroundColor = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -32,10 +35,20 @@ namespace ElGuerre.Taskin.Infrastructure.EntityFramework.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: true),
                     ProjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Status = table.Column<int>(type: "int", maxLength: 50, nullable: false),
+                    Priority = table.Column<int>(type: "int", maxLength: 50, nullable: false, defaultValue: 1),
                     Deadline = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Tags = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    AssigneeId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    AssigneeName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    EstimatedPomodoros = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    CompletedPomodoros = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },

@@ -1,16 +1,12 @@
 <ng-container *transloco="let t">
-<div class="space-y-6">
+<div class="flex flex-col gap-6">
   <!-- Page Header -->
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">{{ t('dashboard.title') }}</h1>
-      <p class="mt-1 text-sm text-slate-500">{{ t('dashboard.welcome', { name: userName }) }}</p>
-    </div>
+  <app-page-header [title]="t('dashboard.title')" [subtitle]="t('dashboard.welcome', { name: userName })">
     <button mat-flat-button color="primary" class="flex items-center" routerLink="/tasks/new">
       <mat-icon class="mr-2">add</mat-icon>
       {{ t('dashboard.quickAddTask') }}
     </button>
-  </div>
+  </app-page-header>
 
   <!-- Stats Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">

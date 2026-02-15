@@ -10,7 +10,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { NavigationService } from '../../core/components/navigation/navigation.service';
 import { NavigationItem } from '../../core/components/navigation/navigation.type';
 
@@ -18,7 +18,7 @@ import { NavigationItem } from '../../core/components/navigation/navigation.type
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
-  imports: [RouterModule, MatSidenavModule, MatIconModule, TranslocoModule],
+  imports: [RouterModule, MatSidenavModule, MatIconModule, TranslocoDirective],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

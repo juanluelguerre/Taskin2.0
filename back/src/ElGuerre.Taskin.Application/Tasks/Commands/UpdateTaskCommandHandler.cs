@@ -28,6 +28,7 @@ public class UpdateTaskCommandHandler(ITaskinDbContext context, IUnitOfWork unit
 
         task.Title = request.Title;
         task.Description = request.Description;
+        task.Notes = request.Notes ?? task.Notes;
         task.Status = request.Status != default ? request.Status : task.Status;
         task.Priority = request.Priority != default ? request.Priority : task.Priority;
         task.Deadline = request.Deadline ?? task.Deadline;

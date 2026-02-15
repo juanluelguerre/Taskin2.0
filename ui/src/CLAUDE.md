@@ -318,6 +318,9 @@ export class ItemsService {
 
 Languages: `en.json`, `es.json` in `src/assets/i18n/`
 
+**Always use the structural directive** (`*transloco="let t"`), never the pipe (`| transloco`).
+Import `TranslocoDirective` (not `TranslocoModule` or `TranslocoPipe`).
+
 ```html
 <div *transloco="let t">
   <h1>{{ t('projects.title') }}</h1>

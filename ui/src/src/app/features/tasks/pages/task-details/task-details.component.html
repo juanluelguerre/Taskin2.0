@@ -116,6 +116,18 @@
           </mat-card>
         }
 
+        <!-- Notes -->
+        @if (task()!.notes) {
+          <mat-card class="mb-6">
+            <mat-card-header>
+              <mat-card-title>Notes</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="text-gray-700 whitespace-pre-wrap">{{ task()!.notes }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+
         <!-- Progress Section -->
         @if (task()!.estimatedPomodoros) {
           <mat-card class="mb-6">

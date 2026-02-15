@@ -24,6 +24,7 @@ public record TaskDetailsDto(
     Guid Id,
     string Title,
     string? Description,
+    string? Notes,
     string Status,
     string Priority,
     Guid ProjectId,

@@ -19,6 +19,9 @@ internal class TaskEntityTypeConfiguration : IEntityTypeConfiguration<Task>
         builder.Property(t => t.Description)
             .HasMaxLength(1000);
 
+        builder.Property(t => t.Notes)
+            .HasMaxLength(4000);
+
         builder.Property(t => t.Status)
             .IsRequired()
             .HasMaxLength(50);
@@ -26,7 +29,8 @@ internal class TaskEntityTypeConfiguration : IEntityTypeConfiguration<Task>
         builder.Property(t => t.Priority)
             .IsRequired()
             .HasMaxLength(50)
-            .HasDefaultValue(ElGuerre.Taskin.Domain.Entities.TaskPriority.Medium);
+            .HasDefaultValue(Domain.Entities.TaskPriority.Medium)
+            .HasSentinel(Domain.Entities.TaskPriority.Low);
 
         builder.Property(t => t.Deadline);
 

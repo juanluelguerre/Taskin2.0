@@ -1,4 +1,4 @@
-<nav aria-label="breadcrumb">
+<nav *transloco="let t" aria-label="breadcrumb">
   <ol class="matero-breadcrumb">
     @for (item of navItems; track trackByNavItem($index, item); let isFirst = $first) {
       <li class="matero-breadcrumb-item">
@@ -7,7 +7,7 @@
         }
         @if (!isFirst) {
           <mat-icon class="chevron">chevron_right</mat-icon>
-          <span>{{item | translate}}</span>
+          <span>{{ t(item) }}</span>
         }
       </li>
     }

@@ -20,6 +20,10 @@ public class UpdateTaskCommandValidator : AbstractValidator<UpdateTaskCommand>
             .MaximumLength(1000)
             .WithMessage("Description cannot exceed 1000 characters");
 
+        RuleFor(x => x.Notes)
+            .MaximumLength(4000)
+            .WithMessage("Notes cannot exceed 4000 characters");
+
         RuleFor(x => x.Status)
             .IsInEnum()
             .WithMessage("Status must be a valid TaskStatus");

@@ -16,6 +16,10 @@ public class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
             .MaximumLength(1000)
             .WithMessage("Description cannot exceed 1000 characters");
 
+        RuleFor(x => x.Notes)
+            .MaximumLength(4000)
+            .WithMessage("Notes cannot exceed 4000 characters");
+
         RuleFor(x => x.ProjectId)
             .NotEmpty()
             .WithMessage("ProjectId is required");

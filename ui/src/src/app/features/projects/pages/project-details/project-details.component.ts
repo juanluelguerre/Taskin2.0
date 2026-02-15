@@ -4,6 +4,7 @@ import {
   Component,
   OnInit,
   ViewEncapsulation,
+  effect,
   inject,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '@core/services/notification.service';
 import { UiConfirmationService } from '@shared/components/dialogs/confirmation/confirmation.service';
 import { StatusColorPipe, StatusDisplayPipe, PriorityColorPipe } from '@shared/pipes';
 import { ProjectStore } from '../../stores/project.store';
@@ -45,6 +47,7 @@ export class ProjectDetailsComponent implements OnInit {
   private readonly projectStore = inject(ProjectStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
   private readonly confirmationService = inject(UiConfirmationService);
 
   // Expose store selectors
@@ -52,6 +55,13 @@ export class ProjectDetailsComponent implements OnInit {
   readonly loading = this.projectStore.loading;
   readonly error = this.projectStore.error;
   readonly deleting = this.projectStore.deleting;
+
+  errorEffect = effect(() => {
+    const error = this.error();
+    if (error) {
+      this.notificationService.notifyError(error);
+    }
+  });
 
   ngOnInit() {
     const projectId = this.route.snapshot.params['id'];

@@ -4,14 +4,14 @@ import {
   signal,
   ViewEncapsulation,
 } from '@angular/core';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: [],
   standalone: true,
-  imports: [TranslocoModule],
+  imports: [TranslocoDirective],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

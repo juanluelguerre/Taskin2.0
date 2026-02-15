@@ -121,6 +121,7 @@ export class TaskNewComponent implements OnInit, CanComponentDeactivate {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(200)]],
       description: ['', [Validators.maxLength(1000)]],
+      notes: ['', [Validators.maxLength(4000)]],
       status: [TaskStatus.Todo, [Validators.required]],
       priority: [TaskPriority.Medium, [Validators.required]],
       projectId: ['', [Validators.required]],
@@ -166,6 +167,7 @@ export class TaskNewComponent implements OnInit, CanComponentDeactivate {
     this.form.patchValue({
       title: task.title,
       description: task.description || '',
+      notes: task.notes || '',
       status: task.status,
       priority: task.priority,
       projectId: task.projectId,
@@ -222,6 +224,7 @@ export class TaskNewComponent implements OnInit, CanComponentDeactivate {
     const displayNames: { [key: string]: string } = {
       title: 'Title',
       description: 'Description',
+      notes: 'Notes',
       status: 'Status',
       priority: 'Priority',
       projectId: 'Project',
@@ -247,6 +250,7 @@ export class TaskNewComponent implements OnInit, CanComponentDeactivate {
           id: this.taskId()!,
           title: formValue.title,
           description: formValue.description || undefined,
+          notes: formValue.notes || undefined,
           status: formValue.status,
           priority: formValue.priority,
           projectId: formValue.projectId,
@@ -257,6 +261,7 @@ export class TaskNewComponent implements OnInit, CanComponentDeactivate {
           completedAt: formValue.status === TaskStatus.Done ? new Date() : undefined,
         };
 
+        this.form.markAsPristine();
         this.taskStore.updateTask({ id: this.taskId()!, request: updateRequest });
         this.notificationService.notifySuccess('tasks.messages.updated', { name: formValue.title });
         this.router.navigate(['/tasks', this.taskId()]);
@@ -264,6 +269,7 @@ export class TaskNewComponent implements OnInit, CanComponentDeactivate {
         const createRequest: CreateTaskRequest = {
           title: formValue.title,
           description: formValue.description || undefined,
+          notes: formValue.notes || undefined,
           status: formValue.status,
           priority: formValue.priority,
           projectId: formValue.projectId,
@@ -273,6 +279,7 @@ export class TaskNewComponent implements OnInit, CanComponentDeactivate {
           tags: this.tags(),
         };
 
+        this.form.markAsPristine();
         this.taskStore.createTask(createRequest);
         this.notificationService.notifySuccess('tasks.messages.created', { name: formValue.title });
         this.router.navigate(['/tasks']);

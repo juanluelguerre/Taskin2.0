@@ -6,10 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { environment } from '@env/environment';
 import { NotificationService } from '@core/services/notification.service';
 import { CanComponentDeactivate } from '@core/guards/can-deactivate.guard';
+import { PageHeaderComponent } from '@shared';
 import { PomodoroService, PomodoroDto } from '../../services/pomodoro.service';
 
 interface Session {
@@ -26,7 +27,8 @@ interface Session {
     MatIconModule,
     MatCardModule,
     MatTooltipModule,
-    TranslocoModule,
+    TranslocoDirective,
+    PageHeaderComponent,
   ],
   templateUrl: './pomodoros.component.html',
   styles: ``,

@@ -1,5 +1,75 @@
-@import "tailwindcss";
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 @source "./**/*.{html,ts}";
+
+/* Minimal reset (replaces Tailwind preflight) — only what we need,
+   without conflicting with Angular Material's own normalization */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: currentColor;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-slate-300) transparent;
+}
+
+body {
+  margin: 0;
+  line-height: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+ol, ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+hr {
+  border-top-width: 1px;
+  margin: 0;
+}
 
 @theme {
   --color-primary: #2563EB;
@@ -39,11 +109,6 @@ app-sidebar nav a:hover mat-icon { color: #fff; }
 
 /* Quick Actions links - prevent global a { color: var(--link-color) } override */
 .text-slate-700 a, a.text-slate-700, a span.text-slate-700 { color: var(--color-slate-700); }
-
-/* Fix: Tailwind v4 preflight resets button cursor to default */
-button, [role="button"] {
-  cursor: pointer;
-}
 
 /* Minimal Material Design fixes for Tailwind conflicts */
 .mat-mdc-form-field {
@@ -90,4 +155,43 @@ router-outlet + * {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Snackbar notification colors (unlayered to override Material) */
+.snackbar-success .mdc-snackbar__surface {
+  --mdc-snackbar-container-color: var(--color-green-600);
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+.snackbar-warn .mdc-snackbar__surface {
+  --mdc-snackbar-container-color: var(--color-red-600);
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+.snackbar-warning .mdc-snackbar__surface {
+  --mdc-snackbar-container-color: var(--color-amber-600);
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+.snackbar-info .mdc-snackbar__surface {
+  --mdc-snackbar-container-color: var(--color-blue-600);
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+/* Action button color for all severities */
+.snackbar-success .mat-mdc-button.mat-mdc-snack-bar-action,
+.snackbar-warn .mat-mdc-button.mat-mdc-snack-bar-action,
+.snackbar-warning .mat-mdc-button.mat-mdc-snack-bar-action,
+.snackbar-info .mat-mdc-button.mat-mdc-snack-bar-action {
+  --mat-snack-bar-button-color: #fff;
+}
+
+/* Confirm dialog button colors (unlayered to override MDC filled button) */
+button.confirm-btn-error {
+  --mdc-filled-button-container-color: var(--color-red-600);
+  --mdc-filled-button-label-text-color: #fff;
+}
+button.confirm-btn-primary {
+  --mdc-filled-button-container-color: var(--color-blue-600);
+  --mdc-filled-button-label-text-color: #fff;
+}
+button.confirm-btn-accent {
+  --mdc-filled-button-container-color: var(--color-teal-600);
+  --mdc-filled-button-label-text-color: #fff;
 }
