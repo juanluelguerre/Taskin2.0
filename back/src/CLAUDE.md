@@ -28,18 +28,6 @@ public abstract class TrackedEntity : Entity
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
-
-// Domain entity
-public sealed class Project : TrackedEntity
-{
-    public required string Name { get; set; }
-    public string? Description { get; set; }
-    public ProjectStatus Status { get; set; } = ProjectStatus.Active;
-    public DateTime? DueDate { get; set; }
-    public string? ImageUrl { get; set; }
-    public string? BackgroundColor { get; set; }
-    public ICollection<Task> Tasks { get; init; } = new List<Task>();
-}
 ```
 
 Rules:
@@ -49,6 +37,52 @@ Rules:
 - Use `sealed` on concrete entities
 - Enums defined alongside their entity
 
+### Detailed Entity Examples
+
+All three domain entities in the Taskin domain model:
+
+```csharp
+// Project entity — top-level aggregate
+public sealed class Project : TrackedEntity
+{
+    public required string Name { get; set; }
+    public string? Description { get; set; }
+    public ProjectStatus Status { get; set; } = ProjectStatus.Active;
+    public DateTime? DueDate { get; set; }
+    public string? ImageUrl { get; set; }
+    public string? BackgroundColor { get; set; }
+    public string? Notes { get; set; }
+    public ICollection<TaskItem> Tasks { get; init; } = new List<TaskItem>();
+}
+
+// Task entity (note: named TaskItem to avoid System.Threading.Tasks.Task conflict)
+public sealed class TaskItem : TrackedEntity
+{
+    public required string Title { get; set; }
+    public string? Description { get; set; }
+    public TaskItemStatus Status { get; set; } = TaskItemStatus.Todo;
+    public TaskPriority Priority { get; set; } = TaskPriority.Medium;
+    public DateTime? DueDate { get; set; }
+    public int EstimatedPomodoros { get; set; }
+    public string? Notes { get; set; }
+    public Guid ProjectId { get; set; }
+    public Project Project { get; set; } = null!;
+    public ICollection<Pomodoro> Pomodoros { get; init; } = new List<Pomodoro>();
+}
+
+// Pomodoro entity — tracks focused work sessions
+public sealed class Pomodoro : TrackedEntity
+{
+    public DateTime StartTime { get; set; }
+    public DateTime? EndTime { get; set; }
+    public int DurationMinutes { get; set; } = 25;
+    public PomodoroStatus Status { get; set; } = PomodoroStatus.Running;
+    public string? Notes { get; set; }
+    public Guid TaskId { get; set; }
+    public TaskItem Task { get; set; } = null!;
+}
+```
+
 ## CQRS Pattern (Command)
 
 Every command needs 3 files: Command + Handler + Validator.
@@ -56,7 +90,6 @@ Every command needs 3 files: Command + Handler + Validator.
 ### Command
 ```csharp
 using MediatR;
-
 namespace ElGuerre.Taskin.Application.Features.Commands;
 
 public class CreateFeatureCommand : IRequest<Guid>
@@ -68,12 +101,6 @@ public class CreateFeatureCommand : IRequest<Guid>
 
 ### Handler (primary constructor)
 ```csharp
-using ElGuerre.Taskin.Application.Data;
-using ElGuerre.Taskin.Application.Observability;
-using ElGuerre.Taskin.Domain.Entities;
-using ElGuerre.Taskin.Domain.SeedWork;
-using MediatR;
-
 namespace ElGuerre.Taskin.Application.Features.Commands;
 
 public class CreateFeatureCommandHandler(
@@ -81,9 +108,7 @@ public class CreateFeatureCommandHandler(
     IUnitOfWork unitOfWork,
     TaskinMetrics metrics) : IRequestHandler<CreateFeatureCommand, Guid>
 {
-    public async Task<Guid> Handle(
-        CreateFeatureCommand request,
-        CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateFeatureCommand request, CancellationToken cancellationToken)
     {
         var entity = new Feature
         {
@@ -94,7 +119,6 @@ public class CreateFeatureCommandHandler(
         context.Features.Add(entity);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         metrics.RecordFeatureCreated();
-
         return entity.Id;
     }
 }
@@ -102,17 +126,13 @@ public class CreateFeatureCommandHandler(
 
 ### Validator (FluentValidation)
 ```csharp
-using FluentValidation;
-
 namespace ElGuerre.Taskin.Application.Features.Commands;
 
 public class CreateFeatureCommandValidator : AbstractValidator<CreateFeatureCommand>
 {
     public CreateFeatureCommandValidator()
     {
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .MaximumLength(200);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
     }
 }
 ```
@@ -120,7 +140,6 @@ public class CreateFeatureCommandValidator : AbstractValidator<CreateFeatureComm
 ## CQRS Pattern (Query)
 
 ```csharp
-// Query
 public class GetFeaturesQuery : IRequest<CollectionResponse<FeatureListDto>>
 {
     public int Page { get; set; } = 1;
@@ -128,13 +147,11 @@ public class GetFeaturesQuery : IRequest<CollectionResponse<FeatureListDto>>
     public string? Search { get; set; }
 }
 
-// Handler
 public class GetFeaturesQueryHandler(ITaskinDbContext context)
     : IRequestHandler<GetFeaturesQuery, CollectionResponse<FeatureListDto>>
 {
     public async Task<CollectionResponse<FeatureListDto>> Handle(
-        GetFeaturesQuery request,
-        CancellationToken cancellationToken)
+        GetFeaturesQuery request, CancellationToken cancellationToken)
     {
         var query = context.Features.AsNoTracking();
 
@@ -156,9 +173,6 @@ public class GetFeaturesQueryHandler(ITaskinDbContext context)
 ## Controller Pattern
 
 ```csharp
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-
 namespace ElGuerre.Taskin.Api.Controllers;
 
 [ApiController]
@@ -167,9 +181,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<CollectionResponse<FeatureListDto>>> GetFeatures(
-        [FromQuery] int page = 1,
-        [FromQuery] int size = 10,
-        [FromQuery] string? search = null)
+        [FromQuery] int page = 1, [FromQuery] int size = 10, [FromQuery] string? search = null)
     {
         var result = await mediator.Send(new GetFeaturesQuery { Page = page, Size = size, Search = search });
         return Ok(result);
@@ -178,16 +190,14 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<FeatureDetailsDto>> GetFeature(Guid id)
     {
-        var result = await mediator.Send(new GetFeatureByIdQuery { Id = id });
-        return Ok(result);
+        return Ok(await mediator.Send(new GetFeatureByIdQuery { Id = id }));
     }
 
     [HttpPost]
     public async Task<ActionResult<ActionResponse>> CreateFeature([FromBody] CreateFeatureCommand command)
     {
         var id = await mediator.Send(command);
-        var response = new ActionResponse(id, "Feature created successfully");
-        return CreatedAtAction(nameof(GetFeature), new { id }, response);
+        return CreatedAtAction(nameof(GetFeature), new { id }, new ActionResponse(id, "Feature created successfully"));
     }
 
     [HttpPut("{id:guid}")]
@@ -210,16 +220,12 @@ public class FeaturesController(IMediator mediator) : ControllerBase
 Rules:
 - Primary constructor with `IMediator`
 - `[ApiController]` + `[Route("api/[controller]")]`
-- POST returns `CreatedAtAction` (201)
-- PUT/DELETE returns `Ok` (200)
+- POST returns `CreatedAtAction` (201), PUT/DELETE returns `Ok` (200)
 - Use `{id:guid}` route constraint
 
 ## EF Core Configuration
 
 ```csharp
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace ElGuerre.Taskin.Infrastructure.EntityFramework.EntityConfigurations;
 
 public class FeatureEntityTypeConfiguration : IEntityTypeConfiguration<Feature>
@@ -262,11 +268,20 @@ public class FeatureDetailsDto : FeatureListDto
 }
 ```
 
+### DTO Naming Conventions
+
+| DTO Type | Pattern | Example |
+|----------|---------|---------|
+| List DTO | `{Entity}ListDto` | `ProjectListDto` |
+| Details DTO | `{Entity}DetailsDto` | `ProjectDetailsDto` |
+| Create DTO | `Create{Entity}Command` | `CreateProjectCommand` |
+| Update DTO | `Update{Entity}Command` | `UpdateProjectCommand` |
+| Collection Response | `CollectionResponse<T>` | `CollectionResponse<ProjectListDto>` |
+| Action Response | `ActionResponse` | `ActionResponse(id, "Created")` |
+
 ## Metrics (Observability)
 
 ```csharp
-using System.Diagnostics.Metrics;
-
 namespace ElGuerre.Taskin.Application.Observability;
 
 public class TaskinMetrics
@@ -286,6 +301,28 @@ public class TaskinMetrics
 }
 ```
 
+### Adding Metrics to a New Feature
+
+```csharp
+// 1. Add counter to TaskinMetrics
+private readonly Counter<long> _tasksCreated;
+_tasksCreated = meter.CreateCounter<long>("taskin.tasks.created");
+public void RecordTaskCreated() => _tasksCreated.Add(1);
+
+// 2. Inject in handler via primary constructor and call after mutation
+public class CreateTaskCommandHandler(
+    ITaskinDbContext context, IUnitOfWork unitOfWork, TaskinMetrics metrics)
+    : IRequestHandler<CreateTaskCommand, Guid>
+{
+    public async Task<Guid> Handle(CreateTaskCommand request, CancellationToken ct)
+    {
+        // ... create entity, save changes
+        metrics.RecordTaskCreated();
+        return entity.Id;
+    }
+}
+```
+
 ## Migration Commands
 
 ```bash
@@ -299,6 +336,17 @@ dotnet ef database update \
   --startup-project ElGuerre.Taskin.Api \
   --project ElGuerre.Taskin.Infrastructure
 ```
+
+### Migration Workflow
+
+1. **Modify entity** -- Update domain entity class in `ElGuerre.Taskin.Domain/Entities/`
+2. **Update EF config** -- Modify `IEntityTypeConfiguration<T>` in Infrastructure if needed
+3. **Add migration** -- Run `dotnet ef migrations add MigrationName` command (see above)
+4. **Review migration** -- Check generated `Up()` and `Down()` methods for correctness
+5. **Update database** -- Run `dotnet ef database update`
+6. **Test** -- Verify API endpoints work with the new schema
+
+**Rollback**: `dotnet ef database update PreviousMigrationName`
 
 ## File Structure for New Features
 
@@ -324,6 +372,30 @@ Application/
         └── FeatureDetailsDto.cs
 ```
 
+## Error Handling Middleware
+
+```csharp
+// Middleware catches exceptions and returns ProblemDetails
+public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+{
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try { await next(context); }
+        catch (Exception ex) { await HandleExceptionAsync(context, ex); }
+    }
+}
+```
+
+Exception mapping:
+
+| Exception | HTTP Status | Description |
+|-----------|-------------|-------------|
+| `KeyNotFoundException` | 404 | Entity not found |
+| `ValidationException` | 400 | Invalid input |
+| `UnauthorizedAccessException` | 401 | Not authenticated |
+| `InvalidOperationException` | 409 | Conflict/business rule violation |
+| `Exception` | 500 | Unhandled error |
+
 ## Quality Checklist
 
 - [ ] Every command has a corresponding validator
@@ -336,3 +408,9 @@ Application/
 - [ ] `{id:guid}` route constraints on endpoints
 - [ ] EF config uses `IEntityTypeConfiguration<T>`
 - [ ] No business logic in controllers — delegate to handlers
+- [ ] File-scoped namespaces (`namespace X;`)
+- [ ] `sealed` on concrete entity classes
+- [ ] `init` on immutable properties (Id, CreatedAt, collections)
+- [ ] `AsNoTracking()` on read-only queries
+- [ ] `CancellationToken` forwarded in all async methods
+- [ ] Records used for immutable DTOs

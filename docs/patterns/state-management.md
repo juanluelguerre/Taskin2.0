@@ -274,6 +274,102 @@ export class ItemsService {
 
 Prefer `signal()` over `BehaviorSubject` for local state. Use `BehaviorSubject` only for cross-service reactive streams.
 
+## Store Scoping Rules
+
+### Global Store (`providedIn: 'root'`)
+
+- Use for data shared across multiple features (e.g., user preferences, app settings)
+- Use for domain stores accessed by multiple routes (e.g., ProjectStore used by dashboard AND projects feature)
+- Instantiated once, lives for app lifetime
+
+### Component-Scoped Store (in component `providers`)
+
+- Use for page-specific state that should reset on navigation
+- Use for stores that only serve a single route/page
+- Destroyed when component is destroyed
+- Place store file in same folder as the page component
+
+```typescript
+// Component-scoped: in providers array
+@Component({
+  selector: 'app-project-details',
+  templateUrl: './project-details.html',
+  providers: [ProjectDetailsStore], // Scoped to this component
+})
+export class ProjectDetails {
+  readonly store = inject(ProjectDetailsStore);
+}
+```
+
+## Page Store Convention
+
+Page-specific stores live in the same folder as the page component:
+```
+features/projects/pages/
+├── projects/
+│   ├── projects.ts              # List page component
+│   ├── projects.html            # Template
+│   └── projects.store.ts        # Page-specific store (optional)
+├── project-details/
+│   ├── project-details.ts
+│   ├── project-details.html
+│   └── project-details.store.ts
+```
+
+Feature-wide stores live in the feature's `stores/` folder:
+```
+features/projects/
+├── stores/
+│   └── project.store.ts         # Shared across all project pages
+├── services/
+│   └── project.service.ts
+└── pages/...
+```
+
+## rxMethod + tapResponse Pattern
+
+**CRITICAL**: Use `rxMethod` for ALL async operations. Never manually subscribe in stores.
+
+The `tap({ next, error })` pattern is the standard approach:
+```typescript
+loadProjects: rxMethod<void>(
+  pipe(
+    switchMap(() => {
+      patchState(store, { loading: true, error: null });
+      return service.getProjects().pipe(
+        tap({
+          next: (response) => {
+            patchState(store, {
+              projects: response.data,
+              totalCount: response.total,
+              loading: false,
+            });
+          },
+          error: (error: unknown) => {
+            patchState(store, { loading: false, error: 'Failed to load projects' });
+            notification.notifyError('projects.errors.loadFailed');
+            console.error('Load projects error:', error);
+          },
+        })
+      );
+    })
+  )
+),
+```
+
+## Signal-Observable Interop Rules
+
+**DO:**
+- Call `toSignal()` at class field level
+- Use `toSignal()` with `initialValue` for sync-available signals
+- Use `toObservable()` only at boundary layers (third-party libs, legacy code)
+
+**DON'T:**
+- Call `toSignal()` inside `computed()` — causes NG0602
+- Call `toSignal()` inside `effect()` — causes NG0602
+- Call `toSignal()` multiple times on same cold Observable — duplicates requests
+- Mix `BehaviorSubject` + `signal()` for same state — pick one source
+
 ## Anti-Patterns
 
 1. **`toSignal()` inside `computed()`** — causes NG0602 error
@@ -282,6 +378,10 @@ Prefer `signal()` over `BehaviorSubject` for local state. Use `BehaviorSubject` 
 4. **`BehaviorSubject` + `signal()` for same state** — pick one canonical source
 5. **Manual `subscribe()` in components** — prefer `toSignal()` or `rxMethod`
 6. **`shareReplay` without refresh** — may serve stale data; add explicit triggers
+7. **Mutating state directly** — always use `patchState()` or `signal.update()`
+8. **Global store for page-specific state** — use component-scoped store instead
+9. **Missing loading/saving flags** — always track async operation status
+10. **No error reset** — always clear error state before starting new operations
 
 ## Local Component State
 

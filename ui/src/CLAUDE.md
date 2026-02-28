@@ -15,6 +15,37 @@ Angular 21.1.3 | Material 21 (MD3) | Tailwind CSS 4 | NgRx Signals 21 | Transloc
 7. **No `any` type** — use `unknown` when uncertain
 8. **Path aliases** — `@core`, `@shared`, `@theme`, `@env`
 
+## File Naming Convention
+
+**NEW files** use the no-suffix convention. Existing files keep their current names.
+
+| Type | File Name | Template | Class Name |
+|------|-----------|----------|------------|
+| Component | `task-card.ts` | `task-card.html` | `TaskCard` |
+| Page | `projects.ts` | `projects.html` | `Projects` |
+| Service | `project.service.ts` | — | `ProjectService` |
+| Store | `project.store.ts` | — | `ProjectStore` |
+| Guard | `auth.guard.ts` | — | `authGuard` (function) |
+| Pipe | `time-ago.pipe.ts` | — | `TimeAgoPipe` |
+| Model | `project.model.ts` | — | `ProjectListDto` |
+
+Only components drop the `.component` suffix. Services, stores, guards, pipes keep their type suffix.
+
+## Page Naming Convention
+
+**STRICT rules for page components:**
+
+| Page Type | Folder | File | Class |
+|-----------|--------|------|-------|
+| List | `pages/projects/` | `projects.ts` | `Projects` |
+| Create | `pages/project-new/` | `project-new.ts` | `ProjectNew` |
+| Details | `pages/project-details/` | `project-details.ts` | `ProjectDetails` |
+
+- Folder name matches the file name (without extension).
+- List pages use the **plural** entity name.
+- Create and details pages use the **singular** entity name with a `-new` or `-details` suffix.
+- Class names are PascalCase with no `Component` suffix.
+
 ## Component Generation
 
 ```bash
@@ -68,6 +99,35 @@ app-sidebar nav a { color: var(--color-slate-300); }
 - Use `flex` + `gap-*` (never `space-y` / `space-x`)
 - Use `rounded-xl`, `border-gray-100` for cards
 - Use `tracking-tight` / `tracking-wider` for typography
+
+### Custom Breakpoints (aligned with Material)
+```css
+/* Defined in styles.css @theme block */
+@theme {
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 960px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1440px;
+}
+```
+
+Usage: `sm:`, `md:`, `lg:`, `xl:` prefixes in templates.
+
+### Dark Mode Pattern
+```html
+<div class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+```
+
+### Gap Patterns (STRICT)
+```html
+<!-- CORRECT: flex + gap -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2">
+<div class="grid grid-cols-3 gap-6">
+
+<!-- WRONG: never use space-y or space-x -->
+<div class="space-y-4">  <!-- FORBIDDEN -->
+```
 
 ## Component Pattern
 
@@ -211,6 +271,20 @@ export class FeatureStore extends signalStore(
 ) {}
 ```
 
+### Store Scoping Rules
+
+**Global stores** (`providedIn: 'root'`): Shared data across features.
+**Component-scoped stores** (in `providers`): Page-specific state, destroyed on navigation.
+
+```typescript
+// Component-scoped store
+@Component({
+  providers: [ProjectDetailsStore], // Dies with component
+})
+```
+
+Page-specific stores go in the same folder as the page component.
+
 ## Service Pattern
 
 ```typescript
@@ -330,6 +404,56 @@ Import `TranslocoDirective` (not `TranslocoModule` or `TranslocoPipe`).
 
 When adding features, always add keys to BOTH translation files.
 
+## Routing Patterns
+
+```typescript
+// Lazy-loaded feature routes
+export const PROJECTS_ROUTES: Routes = [
+  {
+    path: '',
+    component: Projects,
+    title: 'Projects',
+  },
+  {
+    path: 'new',
+    component: ProjectNew,
+    title: 'New Project',
+  },
+  {
+    path: ':id',
+    component: ProjectDetails,
+    title: 'Project Details',
+  },
+];
+
+// App routes with lazy loading
+{ path: 'projects', loadChildren: () => import('./features/projects/projects.routes').then(m => m.PROJECTS_ROUTES) }
+```
+
+Guard usage:
+```typescript
+{ path: 'admin', canActivate: [authGuard], loadChildren: ... }
+```
+
+- Route constants are exported as `FEATURE_ROUTES` (e.g., `PROJECTS_ROUTES`, `TASKS_ROUTES`).
+- Use `loadChildren` for feature modules, never `loadComponent` for route groups.
+- Title is set per route for browser tab and accessibility.
+
+## Accessibility Checklist
+
+Before submitting any component work, verify accessibility:
+
+- [ ] ARIA labels on buttons without visible text (`aria-label="Delete task"`)
+- [ ] Semantic HTML: `<nav>`, `<main>`, `<header>`, `<footer>`, `<section>`
+- [ ] Keyboard navigation: all interactive elements focusable via Tab
+- [ ] Enter/Space activates buttons and links
+- [ ] Focus management on route changes
+- [ ] `mat-label` inside every `mat-form-field`
+- [ ] `mat-error` for validation messages
+- [ ] Color contrast WCAG 2.1 AA
+- [ ] `alt` text on images
+- [ ] `aria-live` regions for dynamic content updates
+
 ## Quality Checklist
 
 Before submitting any component work, verify:
@@ -347,3 +471,8 @@ Before submitting any component work, verify:
 - [ ] `flex` + `gap-*` for layout (never `space-y`/`space-x`)
 - [ ] Path aliases (`@core`, `@shared`) — no relative `../../`
 - [ ] No `any` type
+- [ ] No `NgModule` or `@NgModule()` usage
+- [ ] No zone.js imports
+- [ ] `host` object used (never `@HostBinding`/`@HostListener`)
+- [ ] `@defer` for heavy below-fold components
+- [ ] Store scoping matches usage (global vs component-scoped)

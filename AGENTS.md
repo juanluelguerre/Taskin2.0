@@ -1,6 +1,6 @@
-# CLAUDE.md — Taskin 2.0
+# AGENTS.md — Taskin 2.0
 
-> This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
+> This file provides guidance to AI Agents working with this repository.
 
 ## Documentation Structure
 
@@ -23,22 +23,6 @@
 Taskin 2.0 is a **full-stack Pomodoro task management application**. Users organize work into Projects, break Projects into Tasks, and track focused work sessions as Pomodoros.
 
 **Core domain:** `Project` → has many `Task` → has many `Pomodoro`
-
----
-
-## CRITICAL: Agent Delegation
-
-**Before starting ANY task, delegate to the appropriate agent:**
-
-| Task Type | Agent | Trigger |
-|-----------|-------|---------|
-| Components, templates, forms, Material, Tailwind, a11y | `angular-ui-developer` | Any UI work in `ui/src/` |
-| Stores, services, guards, interceptors, RxJS | `angular-state-architect` | State/business logic |
-| Entities, CQRS, controllers, EF Core, validation | `dotnet-architect` | Any backend code |
-| Docker, Aspire, OpenTelemetry, Prometheus, Grafana | `dotnet-infrastructure` | Infrastructure/observability |
-| Code review, pattern compliance, security audit | `code-reviewer` | PR reviews, audits |
-
-**Custom skills available:** `/generate-component`, `/create-cqrs-handler`, `/create-ef-migration`, `/create-feature`, `/update-translations`, `/review-pr`
 
 ---
 

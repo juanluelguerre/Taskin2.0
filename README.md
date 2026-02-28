@@ -1,223 +1,271 @@
-﻿# Task[in] 2.0
+# Task[in] 2.0
 
-Task[in] 2.0 is a productivity application backend built using ASP.NET Core Web API, following Clean Architecture principles. It provides RESTful APIs for managing projects, tasks, and Pomodoros, utilizing the Pomodoro Technique to enhance productivity.
+Task[in] 2.0 is a full-stack productivity application for managing projects, tasks, and Pomodoros using the Pomodoro Technique. Built with Angular 21 and .NET 10, following Clean Architecture principles, with a complete observability stack.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Architecture](#architecture)
-- [Technologies Used](#technologies-used)
+- [Technology Stack](#technology-stack)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Setup Instructions](#setup-instructions)
-  - [Running the Application](#running-the-application)
+- [Development](#development)
 - [API Endpoints](#api-endpoints)
-- [Database Migrations](#database-migrations)
+- [Observability](#observability)
+- [Documentation](#documentation)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Features
 
-- **Project Management**: Create, read, update, and delete projects.
-- **Task Management**: CRUD operations for tasks within projects.
-- **Pomodoro Management**: Manage Pomodoros associated with tasks.
-- **CQRS and MediatR**: Implements Command and Query patterns for separation of concerns.
-- **Entity Framework Core**: Uses EF Core for data access with SQL Server.
-- **Clean Architecture**: Ensures a maintainable and testable codebase.
+- **Project Management**: Create, read, update, and delete projects with status tracking and statistics.
+- **Task Management**: CRUD operations for tasks within projects, with priority, deadline, and status tracking.
+- **Pomodoro Timer**: Manage Pomodoros associated with tasks, tracking focus sessions and productivity.
+- **Dashboard**: Overview of projects, tasks, and Pomodoro statistics.
+- **CQRS with MediatR**: Command/Query separation for clean, testable business logic.
+- **Full Observability**: OpenTelemetry, Prometheus, Grafana, Loki, Tempo, and Seq integration.
+- **Internationalization**: English and Spanish language support via Transloco.
 
 ## Architecture
 
-The backend follows the **Clean Architecture** pattern, dividing the solution into four projects:
+```
+┌──────────────────────────────────────────────────┐
+│                   Angular 21 SPA                 │
+│   Material 21 + Tailwind CSS 4 + NgRx Signals   │
+├──────────────────────────────────────────────────┤
+│                REST API (HTTPS)                  │
+├──────────────────────────────────────────────────┤
+│              .NET 10 Web API                     │
+│     Clean Architecture + CQRS/MediatR            │
+├──────────────────────────────────────────────────┤
+│  SQL Server  │  Redis  │  Seq  │  OTel Collector │
+└──────────────────────────────────────────────────┘
+```
 
-1. **ElGuerre.Taskin.Api**: The presentation layer containing controllers.
-2. **ElGuerre.Taskin.Application**: Contains application logic, commands, queries, and handlers.
-3. **ElGuerre.Taskin.Domain**: Defines domain entities and interfaces.
-4. **ElGuerre.Taskin.Infrastructure**: Implements data access and persistence using Entity Framework Core.
+**Backend layers:**
 
-## Technologies Used
+1. **ElGuerre.Taskin.Api** — Controllers, middleware, Program.cs
+2. **ElGuerre.Taskin.Application** — CQRS commands, queries, handlers, validators, DTOs
+3. **ElGuerre.Taskin.Domain** — Entities, enums, seed work (zero dependencies)
+4. **ElGuerre.Taskin.Infrastructure** — EF Core DbContext, configurations, migrations
 
-- **.NET 6 SDK**
-- **ASP.NET Core Web API**
-- **Entity Framework Core**
-- **MediatR**
-- **SQL Server**
-- **Swagger** (for API documentation)
+**Domain model:** `Project` → has many `Task` → has many `Pomodoro`
+
+## Technology Stack
+
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Frontend | Angular | 21.1.3 |
+| UI Components | Angular Material (MD3) | 21.1.3 |
+| CSS Framework | Tailwind CSS | 4.1.18 |
+| State Management | NgRx Signals | 21.0.1 |
+| i18n | Transloco | 8.x |
+| TypeScript | TypeScript | 5.9.3 |
+| Backend | .NET / ASP.NET Core | 10.0 |
+| ORM | Entity Framework Core | 10.0.2 |
+| CQRS | MediatR | 14.0.0 |
+| Validation | FluentValidation | 11.x |
+| Logging | Serilog | 10.0.0 |
+| API Docs | Scalar | 2.12.36 |
+| Orchestration | .NET Aspire | Latest |
+| Database | SQL Server | 2022 |
+| Cache | Redis | Latest |
+| Telemetry | OpenTelemetry | 1.15.0 |
+| Metrics | Prometheus | v2.45.0 |
+| Dashboards | Grafana | 10.3.3 |
+| Tracing | Tempo | 2.3.1 |
+| Log Aggregation | Loki | 3.0.0 |
+| Structured Logs | Seq | Latest |
 
 ## Project Structure
 
 ```
-ElGuerre.Taskin.sln
-├── ElGuerre.Taskin.Api
-│   ├── Controllers
-│   ├── Program.cs
-│   └── appsettings.json
-├── ElGuerre.Taskin.Application
-│   ├── Projects
-│   ├── Tasks
-│   └── Pomodoros
-├── ElGuerre.Taskin.Domain
-│   └── Entities
-└── ElGuerre.Taskin.Infrastructure
-    ├── EntityFramework
-    │   ├── TaskinDbContext.cs
-    │   └── Configurations
-    └── Migrations
+taskin2.0/
+├── back/src/                              # Backend (.NET 10 Clean Architecture)
+│   ├── ElGuerre.Taskin.Api/               # Controllers, middleware, Program.cs
+│   ├── ElGuerre.Taskin.Application/       # CQRS commands/queries, handlers, validators
+│   ├── ElGuerre.Taskin.Domain/            # Entities, enums, seed work
+│   ├── ElGuerre.Taskin.Infrastructure/    # EF Core DbContext, configurations, migrations
+│   ├── Taskin2.0.AppHost/                 # .NET Aspire orchestrator
+│   └── Taskin2.0.ServiceDefaults/         # Shared observability config
+├── ui/src/                                # Frontend (Angular 21)
+│   └── src/app/
+│       ├── core/                          # Auth, services, interceptors, guards
+│       ├── features/                      # dashboard, projects, tasks, pomodoros
+│       ├── layout/                        # header, sidenav, footer
+│       └── shared/                        # Reusable components, pipes, directives
+├── deploy/                                # Observability configs (Grafana, Prometheus, etc.)
+└── docs/                                  # Architecture and pattern documentation
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- **.NET 6 SDK**: Download and install from [Microsoft .NET](https://dotnet.microsoft.com/download).
-- **SQL Server**: Install SQL Server or use SQL Server Express.
-- **Visual Studio 2022** or **Visual Studio Code**
+- **.NET 10 SDK**: Download from [Microsoft .NET](https://dotnet.microsoft.com/download)
+- **Node.js 22+**: Download from [Node.js](https://nodejs.org/)
+- **SQL Server**: Install SQL Server or use the Aspire-managed container
+- **Docker Desktop**: Required for .NET Aspire container orchestration
 
 ### Setup Instructions
 
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/your-username/taskin-backend.git
-   cd taskin-backend
+   git clone https://github.com/elguerre/Taskin2.0.git
+   cd Taskin2.0
    ```
 
-2. **Restore NuGet Packages**
-
-   Open the solution in Visual Studio or use the command line:
+2. **Backend Setup**
 
    ```bash
+   cd back/src
    dotnet restore
+   dotnet build
    ```
 
-3. **Configure Database Connection**
-
-   Update the `appsettings.json` file in `ElGuerre.Taskin.Api` with your SQL Server connection string:
-
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Server=your_server;Database=TaskinDB;Trusted_Connection=True;MultipleActiveResultSets=true"
-     }
-   }
-   ```
-
-4. **Apply Database Migrations**
-
-   Navigate to the `back/src/` directory and run:
+3. **Frontend Setup**
 
    ```bash
-   # Add a migration
-   dotnet ef migrations add InitialCreate --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure
+   cd ui/src
+   npm install
+   ```
 
-   # Update the database
+4. **Database Setup**
+
+   If using .NET Aspire (recommended), the database is provisioned automatically. Otherwise, update `appsettings.json` in `ElGuerre.Taskin.Api` and run migrations:
+
+   ```bash
+   cd back/src
    dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure
    ```
 
-   Ensure that the `ElGuerre.Taskin.Api` project is set as the startup project.
+## Development
 
-## Running the Application
+### Running with .NET Aspire (Recommended)
 
-1. **Start the API**
-
-   Navigate to the `back/src/` directory and run:
-
-   ```bash
-   dotnet run --project ElGuerre.Taskin.Api
-   ```
-
-   The API will start and listen on `https://localhost:6001` by default.
-
-2. **Test the API**
-
-   Open a browser and navigate to `https://localhost:6001/swagger` to view the Swagger UI and test the endpoints.
-
-## API Endpoints
-
-### Projects
-
-- **GET** `/api/Projects` - Get a list of projects.
-- **GET** `/api/Projects/{id}` - Get a project by ID.
-- **POST** `/api/Projects` - Create a new project.
-- **PUT** `/api/Projects/{id}` - Update an existing project.
-- **DELETE** `/api/Projects/{id}` - Delete a project.
-
-### Tasks
-
-- **GET** `/api/Tasks?projectId={projectId}` - Get tasks by project ID.
-- **GET** `/api/Tasks/{id}` - Get a task by ID.
-- **POST** `/api/Tasks` - Create a new task.
-- **PUT** `/api/Tasks/{id}` - Update an existing task.
-- **DELETE** `/api/Tasks/{id}` - Delete a task.
-
-### Pomodoros
-
-- **GET** `/api/Pomodoros?taskId={taskId}` - Get pomodoros by task ID.
-- **GET** `/api/Pomodoros/{id}` - Get a pomodoro by ID.
-- **POST** `/api/Pomodoros` - Create a new pomodoro.
-- **PUT** `/api/Pomodoros/{id}` - Update an existing pomodoro.
-- **DELETE** `/api/Pomodoros/{id}` - Delete a pomodoro.
-
-## Database Migrations
-
-To manage database schema changes, use Entity Framework Core migrations. Run these commands from the `back/src/` directory:
-
-### Adding a Migration
+Start the full stack (API + SQL Server + Redis + Seq) via Aspire:
 
 ```bash
-dotnet ef migrations add MigrationName --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure -o EntityFramework/Migrations
+cd back/src
+dotnet run --project Taskin2.0.AppHost
 ```
 
-### Updating the Database
+The Aspire Dashboard will open automatically, showing all services and their health.
+
+### Running Individually
+
+**Backend API:**
+```bash
+cd back/src
+dotnet run --project ElGuerre.Taskin.Api
+# API: https://localhost:6001
+# API Docs: https://localhost:6001/scalar/v1
+# OpenAPI: https://localhost:6001/openapi/v1.json
+```
+
+**Frontend:**
+```bash
+cd ui/src
+npm start
+# App: http://localhost:4200
+```
+
+### Database Migrations
 
 ```bash
+cd back/src
+
+# Add a migration
+dotnet ef migrations add MigrationName --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure -o EntityFramework/Migrations
+
+# Update the database
 dotnet ef database update --startup-project ElGuerre.Taskin.Api --project ElGuerre.Taskin.Infrastructure
 ```
 
+## API Endpoints
+
+Base URL: `https://localhost:6001/api`
+
+### Projects
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/Projects` | List projects (page, size, search, status, sort, order) |
+| GET | `/Projects/{id}` | Get project details |
+| POST | `/Projects` | Create project |
+| PUT | `/Projects/{id}` | Update project |
+| DELETE | `/Projects/{id}` | Delete project |
+| GET | `/Projects/stats` | Project statistics |
+
+### Tasks
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/Tasks?projectId={id}` | List tasks by project |
+| GET | `/Tasks/{id}` | Get task details |
+| POST | `/Tasks` | Create task |
+| PUT | `/Tasks/{id}` | Update task |
+| DELETE | `/Tasks/{id}` | Delete task |
+
+### Pomodoros
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/Pomodoros?taskId={id}` | List pomodoros by task |
+| GET | `/Pomodoros/{id}` | Get pomodoro details |
+| POST | `/Pomodoros` | Create pomodoro |
+| PUT | `/Pomodoros/{id}` | Update pomodoro |
+| DELETE | `/Pomodoros/{id}` | Delete pomodoro |
+
+## Observability
+
+### Core Services (Always Available)
+
+| Service | URL | Purpose |
+|---------|-----|---------|
+| Seq | `http://localhost:5341` | Structured log search |
+| Aspire Dashboard | Auto-opens | Service health and traces |
+
+### Production Stack (Enable via `Observability:EnableProductionStack=true`)
+
+| Service | URL | Purpose |
+|---------|-----|---------|
+| Grafana | `http://localhost:3000` | Dashboards (admin/admin) |
+| Prometheus | `http://localhost:9090` | Metrics collection |
+| Tempo | `http://localhost:3200` | Distributed tracing |
+| Loki | `http://localhost:3100` | Log aggregation |
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/architecture/project-structure.md) | Full project structure and dependency rules |
+| [Code Style](docs/patterns/code-style.md) | TypeScript and C# conventions |
+| [State Management](docs/patterns/state-management.md) | NgRx Signal Store patterns |
+| [Internationalization](docs/patterns/internationalization.md) | Transloco i18n setup |
+| [Error Handling](docs/patterns/error-handling.md) | Frontend and backend error patterns |
+| [Refactoring Guide](docs/refactoring-guide.md) | Migration patterns and checklists |
+| [Frontend Guide](ui/src/CLAUDE.md) | Angular 21 patterns and conventions |
+| [Backend Guide](back/src/CLAUDE.md) | .NET 10 Clean Architecture patterns |
+
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
-
-1. **Fork the Repository**
-
-   Click the "Fork" button at the top right of the repository page.
-
-2. **Create a Feature Branch**
-
-   ```bash
-   git checkout -b feature/YourFeature
-   ```
-
-3. **Commit Your Changes**
-
-   ```bash
-   git commit -m "Add your message here"
-   ```
-
-4. **Push to Your Fork**
-
-   ```bash
-   git push origin feature/YourFeature
-   ```
-
-5. **Create a Pull Request**
-
-   Open a pull request to the `main` branch of the original repository.
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "Add your feature"`
+4. Push to your fork: `git push origin feature/your-feature`
+5. Create a Pull Request to the `main` branch
 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Contact
-
-For questions or support, please open an issue on the [GitHub repository](https://github.com/your-username/taskin-backend/issues).
-
 ## Acknowledgments
 
-- **ASP.NET Core**: [https://docs.microsoft.com/aspnet/core](https://docs.microsoft.com/aspnet/core)
-- **Entity Framework Core**: [https://docs.microsoft.com/ef/core](https://docs.microsoft.com/ef/core)
-- **MediatR**: [https://github.com/jbogard/MediatR](https://github.com/jbogard/MediatR)
-- **Clean Architecture**: [https://github.com/jasontaylordev/CleanArchitecture](https://github.com/jasontaylordev/CleanArchitecture)
-- **Swagger**: [https://swagger.io/](https://swagger.io/)
-
-Thank you for using Task[in] 2.0 Backend! We hope this tool helps you build efficient and scalable applications.
+- [Angular](https://angular.dev) | [Angular Material](https://material.angular.dev)
+- [.NET](https://dotnet.microsoft.com) | [Entity Framework Core](https://learn.microsoft.com/ef/core)
+- [MediatR](https://github.com/jbogard/MediatR) | [FluentValidation](https://docs.fluentvalidation.net)
+- [NgRx Signals](https://ngrx.io/guide/signals) | [Transloco](https://jsverse.github.io/transloco)
+- [Tailwind CSS](https://tailwindcss.com) | [Scalar](https://scalar.com)
+- [Grafana](https://grafana.com) | [Prometheus](https://prometheus.io) | [OpenTelemetry](https://opentelemetry.io)
